@@ -18,13 +18,13 @@ describe('Model - delete', () => {
       removeImmediately: false,
       removeOnError: false
     }
-    const persistenceConfig = 'config'
+    const transportConfig = 'config'
     const response = { status: 'response', data: {} }
     jest
       .spyOn(transport, 'delete')
       .mockImplementation(() => Promise.resolve(response))
 
-    const result = await model.delete(config, persistenceConfig)
+    const result = await model.delete(config, transportConfig)
 
     expect(result).toEqual({ response, error: undefined })
   })
@@ -108,23 +108,23 @@ describe('Model - delete', () => {
         removeImmediately: false,
         removeOnError: false
       }
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const deleteStartSpy = jest.spyOn(model, 'onDeleteStart')
       // @ts-expect-error - protected method
       const collectionStartSpy = jest.spyOn(collection, 'onDeleteStart')
 
       collection.add(model)
 
-      await model.delete(config, persistenceConfig)
+      await model.delete(config, transportConfig)
 
       expect(deleteStartSpy).toBeCalledWith({
         config,
-        persistenceConfig
+        transportConfig
       })
       expect(collectionStartSpy).toBeCalledWith({
         model,
         config,
-        persistenceConfig
+        transportConfig
       })
     })
 
@@ -137,7 +137,7 @@ describe('Model - delete', () => {
         removeImmediately: false,
         removeOnError: false
       }
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const response = { status: 'response', data: { status: 'ok' } }
       jest
         .spyOn(transport, 'delete')
@@ -148,20 +148,20 @@ describe('Model - delete', () => {
 
       collection.add(model)
 
-      await model.delete(config, persistenceConfig)
+      await model.delete(config, transportConfig)
 
       expect(onDeleteSuccessSpy).toBeCalledWith({
         response,
         data: response.data,
         config,
-        persistenceConfig
+        transportConfig
       })
 
       expect(collectionSuccessSpy).toBeCalledWith({
         model,
         response,
         config,
-        persistenceConfig
+        transportConfig
       })
     })
 
@@ -175,7 +175,7 @@ describe('Model - delete', () => {
         removeImmediately: false,
         removeOnError: false
       }
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const response = 'response'
       jest
         .spyOn(transport, 'delete')
@@ -185,18 +185,18 @@ describe('Model - delete', () => {
 
       collection.add(model)
 
-      model.delete(config, persistenceConfig).catch((error) => {
+      model.delete(config, transportConfig).catch(error => {
         expect(deleteErrorSpy).toBeCalledWith({
           error,
           config,
-          persistenceConfig
+          transportConfig
         })
 
         expect(collectionErrorSpy).toBeCalledWith({
           model,
           error,
           config,
-          persistenceConfig
+          transportConfig
         })
       })
     })

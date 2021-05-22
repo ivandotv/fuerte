@@ -187,7 +187,7 @@ describe('Model - save', () => {
     test('On save start, start callbacks are called', async () => {
       const transport = fixtures.transport()
       const model = fixtures.model()
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const config: SaveConfig = {
         insertPosition: 'end',
         addOnError: true,
@@ -199,16 +199,16 @@ describe('Model - save', () => {
       const collectionSaveStartSpy = jest.spyOn(collection, 'onSaveStart')
       const modelSaveStartSpy = jest.spyOn(model, 'onSaveStart')
 
-      await model.save(config, persistenceConfig)
+      await model.save(config, transportConfig)
 
       expect(collectionSaveStartSpy).toBeCalledWith({
         model,
-        persistenceConfig,
+        transportConfig,
         config
       })
 
       expect(modelSaveStartSpy).toBeCalledWith({
-        persistenceConfig,
+        transportConfig,
         config
       })
     })
@@ -217,7 +217,7 @@ describe('Model - save', () => {
       const transport = fixtures.transport()
       const model = fixtures.model()
       const response = { data: { id: '123' } }
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const config: SaveConfig = {
         insertPosition: 'end',
         addOnError: true,
@@ -232,20 +232,20 @@ describe('Model - save', () => {
 
       collection.add(model)
 
-      await model.save(config, persistenceConfig)
+      await model.save(config, transportConfig)
 
       expect(onSaveSuccessSpy).toBeCalledWith({
         model,
         config,
         response,
         data: response.data,
-        persistenceConfig
+        transportConfig
       })
       expect(modelSaveSuccessSpy).toBeCalledWith({
         response,
         data: response.data,
         config,
-        persistenceConfig
+        transportConfig
       })
     })
 
@@ -254,7 +254,7 @@ describe('Model - save', () => {
       const transport = fixtures.transport()
       jest.spyOn(transport, 'save').mockRejectedValue(response)
       const model = fixtures.model()
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const config: SaveConfig = {
         insertPosition: 'end',
         addOnError: true,
@@ -267,12 +267,12 @@ describe('Model - save', () => {
       const dataToSave = model.payload
 
       const result = await collection
-        .save(model, config, persistenceConfig)
-        .catch((error) => {
+        .save(model, config, transportConfig)
+        .catch(error => {
           expect.assertions(2)
           expect(modelSaveErrorSpy).toBeCalledWith({
             error,
-            persistenceConfig,
+            transportConfig,
             config,
             dataToSave
           })
@@ -281,7 +281,7 @@ describe('Model - save', () => {
             model,
             error,
             config,
-            persistenceConfig
+            transportConfig
           })
         })
     })

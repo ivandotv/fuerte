@@ -119,22 +119,22 @@ describe('Model - delete', () => {
       const config: ReloadConfig = {
         removeOnError: false
       }
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const modelSpy = jest.spyOn(model, 'onReloadStart')
       const collectionSpy = jest.spyOn(collection, 'onReloadStart')
 
       await collection.save(model)
 
-      await model.reload(config, persistenceConfig)
+      await model.reload(config, transportConfig)
 
       expect(modelSpy).toBeCalledWith({
         config,
-        persistenceConfig
+        transportConfig
       })
       expect(collectionSpy).toBeCalledWith({
         model,
         config,
-        persistenceConfig
+        transportConfig
       })
     })
 
@@ -145,7 +145,7 @@ describe('Model - delete', () => {
       const config: ReloadConfig = {
         removeOnError: false
       }
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const response = { data: { foo: 'foo-new', bar: 'bar-new' } }
       jest
         .spyOn(transport, 'reload')
@@ -156,13 +156,13 @@ describe('Model - delete', () => {
 
       await collection.save(model)
 
-      await model.reload(config, persistenceConfig)
+      await model.reload(config, transportConfig)
 
       expect(modelSpy).toBeCalledWith({
         response,
         data: response.data,
         config,
-        persistenceConfig
+        transportConfig
       })
 
       expect(collectionSpy).toBeCalledWith({
@@ -170,7 +170,7 @@ describe('Model - delete', () => {
         response,
         data: response.data,
         config,
-        persistenceConfig
+        transportConfig
       })
     })
     test('When there is an error, error callback is called', async () => {
@@ -181,7 +181,7 @@ describe('Model - delete', () => {
       const config: ReloadConfig = {
         removeOnError: false
       }
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const response = 'response'
       jest
         .spyOn(transport, 'reload')
@@ -190,19 +190,19 @@ describe('Model - delete', () => {
       const collectionSpy = jest.spyOn(collection, 'onReloadError')
       await collection.save(model)
 
-      const { error } = await model.reload(config, persistenceConfig)
+      const { error } = await model.reload(config, transportConfig)
 
       expect(modelSpy).toBeCalledWith({
         error,
         config,
-        persistenceConfig
+        transportConfig
       })
 
       expect(collectionSpy).toBeCalledWith({
         model,
         error,
         config,
-        persistenceConfig
+        transportConfig
       })
     })
   })

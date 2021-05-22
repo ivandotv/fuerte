@@ -544,7 +544,7 @@ describe('Collection load', () => {
   describe('Callbacks', () => {
     test('On load start, start callback is called', async () => {
       const transport = fixtures.transport()
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const config: LoadConfig = {
         duplicateModelStrategy: DuplicateModelStrategy.COMPARE,
         reset: false,
@@ -554,10 +554,10 @@ describe('Collection load', () => {
       const collection = fixtures.collection(fixtures.factory(), transport)
       const loadStartSpy = jest.spyOn(collection, 'onLoadStart')
 
-      await collection.load(config, persistenceConfig)
+      await collection.load(config, transportConfig)
 
       expect(loadStartSpy).toBeCalledWith({
-        persistenceConfig,
+        transportConfig,
         config
       })
     })
@@ -568,17 +568,17 @@ describe('Collection load', () => {
       const response = {
         data: [{ foo: 'foo-reload', bar: 'bar-reload', id: '1' }]
       }
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const config: LoadConfig = collection.config.load
       const onLoadSuccessSpy = jest.spyOn(collection, 'onLoadSuccess')
       jest.spyOn(transport, 'load').mockResolvedValue(response)
 
-      await collection.load(config, persistenceConfig)
+      await collection.load(config, transportConfig)
 
       expect(onLoadSuccessSpy).toBeCalledWith({
         config,
         response,
-        persistenceConfig,
+        transportConfig,
         added: collection.models,
         removed: []
       })
@@ -588,7 +588,7 @@ describe('Collection load', () => {
       const transport = fixtures.transport()
       const model = fixtures.model()
       const response = 'response'
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const collection = fixtures.collection(fixtures.factory(), transport)
 
       const config = collection.config.load
@@ -600,12 +600,12 @@ describe('Collection load', () => {
 
       await collection.save(model)
 
-      const result = await collection.load(config, persistenceConfig)
+      const result = await collection.load(config, transportConfig)
 
       expect(loadErrorSpy).toBeCalledWith({
         error: result.error,
         config,
-        persistenceConfig
+        transportConfig
       })
     })
   })

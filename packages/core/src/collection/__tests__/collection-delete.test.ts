@@ -117,7 +117,7 @@ describe('Collection - delete models', () => {
       const transport = fixtures.transport()
       const model = fixtures.model()
       const response = { data: 'deleted' }
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
 
       const config: DeleteConfig = {
         remove: true,
@@ -135,15 +135,15 @@ describe('Collection - delete models', () => {
       const onDeleteStartSpy = jest.spyOn(collection, 'onDeleteStart')
       const modelDeleteStartSpy = jest.spyOn(model, 'onDeleteStart')
 
-      await collection.delete(model, config, persistenceConfig)
+      await collection.delete(model, config, transportConfig)
       expect(onDeleteStartSpy).toBeCalledWith({
         model,
         config,
-        persistenceConfig
+        transportConfig
       })
       expect(modelDeleteStartSpy).toBeCalledWith({
         config,
-        persistenceConfig
+        transportConfig
       })
     })
     test('On delete success, success callbacks are called', async () => {
@@ -156,7 +156,7 @@ describe('Collection - delete models', () => {
         removeImmediately: false,
         removeOnError: false
       }
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const collection = fixtures.collection(fixtures.factory(), transport)
       collection.add(model)
       const onDeleteSuccessSpy = jest.spyOn(collection, 'onDeleteSuccess')
@@ -165,18 +165,18 @@ describe('Collection - delete models', () => {
         .spyOn(transport, 'delete')
         .mockImplementation(() => Promise.resolve(response))
 
-      await collection.delete(model, config, persistenceConfig)
+      await collection.delete(model, config, transportConfig)
       expect(onDeleteSuccessSpy).toBeCalledWith({
         model,
         response,
         config,
-        persistenceConfig
+        transportConfig
       })
       expect(modelOnDeleteSuccessSpy).toBeCalledWith({
         response,
         config,
         data: response.data,
-        persistenceConfig
+        transportConfig
       })
     })
 
@@ -184,7 +184,7 @@ describe('Collection - delete models', () => {
       const transport = fixtures.transport()
       const model = fixtures.model()
       const response = { data: 'deleted' }
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const config: DeleteConfig = {
         remove: true,
         removeImmediately: false,
@@ -198,23 +198,19 @@ describe('Collection - delete models', () => {
         .spyOn(transport, 'delete')
         .mockImplementation(() => Promise.reject(response))
 
-      const { error } = await collection.delete(
-        model,
-        config,
-        persistenceConfig
-      )
+      const { error } = await collection.delete(model, config, transportConfig)
 
       expect(onDeleteErrorSpy).toBeCalledWith({
         model,
         error,
-        persistenceConfig,
+        transportConfig,
         config
       })
       expect(modelOnDeleteErrorSpy).toBeCalledWith({
         error,
         config,
         data: response.data,
-        persistenceConfig
+        transportConfig
       })
     })
   })

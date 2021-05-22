@@ -1,4 +1,5 @@
 import { Collection } from '../collection/Collection'
+import { HttpTransport } from '../transport/http-transport'
 import {
   CollectionConfig,
   DeleteConfig,
@@ -11,24 +12,21 @@ import {
 } from '../utils/types'
 import { TestFactory } from './TestFactory'
 import { TestModel } from './TestModel'
-import { TestPersistence } from './TestPersistence'
+import { TestTransport } from './TestTransport'
 
 export class TestCollection extends Collection<
   TestModel,
-  TestPersistence,
+  TestTransport,
   TestFactory
 > {
   constructor(
     factory: TestFactory,
-    transport: TestPersistence,
+    transport: TestTransport,
     config?: CollectionConfig,
     public foo = 'foo',
     public bar = 'bar'
   ) {
     super(factory, transport, config)
-
-    // const model = this.models[0]
-    // model.testMethod(true)
   }
 
   testMethod(a: string): string {
@@ -49,11 +47,11 @@ export class TestCollection extends Collection<
     model: TestModel
     response: any
     config: SaveConfig
-    persistenceConfig: any
+    transportConfig: any
     test: boolean
   }): void {}
 
-  onSaveStart(_data: SaveStart<TestPersistence, TestModel>): void {}
+  onSaveStart(_data: SaveStart<TestTransport, TestModel>): void {}
 
   onSaveError(data: {
     model: TestModel
@@ -62,11 +60,11 @@ export class TestCollection extends Collection<
     transportConfig: any
   }): void {}
 
-  onReloadStart(_data: ReloadStart<TestPersistence, TestModel>): void {}
+  onReloadStart(_data: ReloadStart<TestTransport, TestModel>): void {}
 
-  onReloadSuccess(_data: ReloadSuccess<TestPersistence, TestModel>): void {}
+  onReloadSuccess(_data: ReloadSuccess<TestTransport, TestModel>): void {}
 
-  onReloadError(_data: ReloadError<TestPersistence, TestModel>): void {}
+  onReloadError(_data: ReloadError<TestTransport, TestModel>): void {}
 
   onDeleteSuccess(_data: {
     model: TestModel
@@ -82,11 +80,11 @@ export class TestCollection extends Collection<
     transportConfig: any
   }): void {}
 
-  onLoadStart(_data: { config: LoadConfig; persistenceConfig?: any }): void {}
+  onLoadStart(_data: { config: LoadConfig; transportConfig?: any }): void {}
 
   onLoadSuccess(_data: {
     config: LoadConfig
-    persistenceConfig?: any
+    transportConfig?: any
     response: any
     added: TestModel[]
     removed: TestModel[]
@@ -94,7 +92,7 @@ export class TestCollection extends Collection<
 
   onLoadError(_data: {
     config: LoadConfig
-    persistenceConfig?: any
+    transportConfig?: any
     error: any
   }): void {}
 
@@ -110,8 +108,16 @@ export class TestCollection extends Collection<
 // const tt = new TestFactory()
 // const ttModel = tt.create({ foo: 'a', bar: 'a' })
 
-// const cc = new TestCollection(new TestFactory(), new TestPersistence())
+// const cc = new TestCollection(new TestFactory(), new HttpTransport(''))
 
 // const testModel = cc.create({ foo: 'a', bar: 'a' })
 
-// cc.save({ foo: 'a', bar: 'a' })
+// cc.save({ foo: 'a', bar: 'a' }, undefined, {
+//   request: {
+//     method: 'POST'
+//   }
+// }).then(result => {
+//   if (!result.error) {
+//     result.response.data
+//   }
+// })
