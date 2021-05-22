@@ -1,4 +1,5 @@
 import { Collection } from '../collection/Collection'
+import { FetchPersistence } from '../transport/fetch-persistence'
 import {
   CollectionConfig,
   DeleteConfig,
@@ -15,12 +16,12 @@ import { TestPersistence } from './TestPersistence'
 
 export class TestCollection extends Collection<
   TestModel,
-  TestPersistence,
+  FetchPersistence<TestModel>,
   TestFactory
 > {
   constructor(
     factory: TestFactory,
-    transport: TestPersistence,
+    transport: FetchPersistence<TestModel>,
     config?: CollectionConfig,
     public foo = 'foo',
     public bar = 'bar'
@@ -110,8 +111,12 @@ export class TestCollection extends Collection<
 // const tt = new TestFactory()
 // const ttModel = tt.create({ foo: 'a', bar: 'a' })
 
-// const cc = new TestCollection(new TestFactory(), new TestPersistence())
+const cc = new TestCollection(new TestFactory(), new FetchPersistence(''))
 
-// const testModel = cc.create({ foo: 'a', bar: 'a' })
+const testModel = cc.create({ foo: 'a', bar: 'a' })
 
-// cc.save({ foo: 'a', bar: 'a' })
+cc.save({ foo: 'a', bar: 'a' }).then((result) => {
+  if (!result.error) {
+    result.response.data
+  }
+})

@@ -1,7 +1,7 @@
 import { NormalizedPromiseResult } from '../../utils/utils'
 import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
 import { TransportConfig, Model } from '../..'
-import { Persistence, TransportResult } from '../Transport'
+import { Persistence, TransportResult } from '../persistence'
 
 const factory = fixtureFactory()
 describe('Base Transport', () => {

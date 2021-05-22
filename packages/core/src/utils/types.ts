@@ -4,7 +4,7 @@ import {
   ModelCompareResult
 } from '../collection/collection-config'
 import { Model } from '../model/Model'
-import { Persistence } from '../transport/Transport'
+import { Persistence } from '../transport/persistence'
 
 export type UnwrapPromise<T> = T extends Promise<infer U> ? U : T
 
@@ -14,123 +14,100 @@ export type Factory<T, K extends any = any> = {
 }
 
 /* RELOAD TYPES */
-export type PersistenceReloadReturn<T extends Persistence<any, any>> =
-  UnwrapPromise<ReturnType<T['reload']>>
+export type PersistenceReloadReturn<T extends Persistence<any>> = UnwrapPromise<
+  ReturnType<T['reload']>
+>
 
-export type PersistenceReloadConfig<T extends Persistence<any, any>> =
-  Parameters<T['reload']>[1]
+export type PersistenceReloadConfig<T extends Persistence<any>> = Parameters<
+  T['reload']
+>[1]
 
-export type ReloadStart<
-  T extends Persistence<K, any>,
-  K extends Model<any, any>
-> = {
+export type ReloadStart<T extends Persistence<K>, K extends Model<any, any>> = {
   model: K
   config: ReloadConfig
   persistenceConfig?: PersistenceReloadConfig<T>
 }
 
-export type ReloadSuccess<
-  T extends Persistence<K, any>,
-  K extends Model<any, any>
-> = {
-  response: PersistenceReloadReturn<T>
-  data: PersistenceReloadReturn<T>['data']
-} & ReloadStart<T, K>
+export type ReloadSuccess<T extends Persistence<K>, K extends Model<any, any>> =
+  {
+    response: PersistenceReloadReturn<T>
+    data: PersistenceReloadReturn<T>['data']
+  } & ReloadStart<T, K>
 
-export type ReloadError<
-  T extends Persistence<K, any>,
-  K extends Model<any, any>
-> = ReloadStart<T, K> & { error: any }
+export type ReloadError<T extends Persistence<K>, K extends Model<any, any>> =
+  ReloadStart<T, K> & { error: any }
 
 /* SAVE TYPES */
-export type PersistenceSaveReturn<T extends Persistence<any, any>> =
-  UnwrapPromise<ReturnType<T['save']>>
+export type PersistenceSaveReturn<T extends Persistence<any>> = UnwrapPromise<
+  ReturnType<T['save']>
+>
 
-export type PersistenceSaveConfig<T extends Persistence<any, any>> = Parameters<
+export type PersistenceSaveConfig<T extends Persistence<any>> = Parameters<
   T['save']
 >[1]
 
-export type SaveStart<
-  T extends Persistence<K, any>,
-  K extends Model<any, any>
-> = {
+export type SaveStart<T extends Persistence<K>, K extends Model<any, any>> = {
   model: K
   config: SaveConfig
   persistenceConfig?: PersistenceSaveConfig<T>
 }
 
-export type SaveSuccess<
-  T extends Persistence<K, any>,
-  K extends Model<any, any>
-> = {
+export type SaveSuccess<T extends Persistence<K>, K extends Model<any, any>> = {
   response: PersistenceSaveReturn<T>
   data?: PersistenceSaveReturn<T>['data']
 } & SaveStart<T, K>
 
-export type SaveError<
-  T extends Persistence<K, any>,
-  K extends Model<any, any>
-> = SaveStart<T, K> & { error: any }
+export type SaveError<T extends Persistence<K>, K extends Model<any, any>> =
+  SaveStart<T, K> & { error: any }
 
 /* DELETE TYPES */
 
-export type PersistenceDeleteReturn<T extends Persistence<any, any>> =
-  UnwrapPromise<ReturnType<T['delete']>>
+export type PersistenceDeleteReturn<T extends Persistence<any>> = UnwrapPromise<
+  ReturnType<T['delete']>
+>
 
-export type PersistenceDeleteConfig<T extends Persistence<any, any>> =
-  Parameters<T['delete']>[1]
+export type PersistenceDeleteConfig<T extends Persistence<any>> = Parameters<
+  T['delete']
+>[1]
 
-export type DeleteStart<
-  T extends Persistence<K, any>,
-  K extends Model<any, any>
-> = {
+export type DeleteStart<T extends Persistence<K>, K extends Model<any, any>> = {
   model: K
   config: DeleteConfig
   persistenceConfig?: PersistenceDeleteConfig<T>
 }
 
-export type DeleteSuccess<
-  T extends Persistence<K, any>,
-  K extends Model<any, any>
-> = {
-  response: PersistenceDeleteReturn<T>
-} & DeleteStart<T, K>
+export type DeleteSuccess<T extends Persistence<K>, K extends Model<any, any>> =
+  {
+    response: PersistenceDeleteReturn<T>
+  } & DeleteStart<T, K>
 
-export type DeleteError<
-  T extends Persistence<K, any>,
-  K extends Model<any, any>
-> = DeleteStart<T, K> & { error: any }
+export type DeleteError<T extends Persistence<K>, K extends Model<any, any>> =
+  DeleteStart<T, K> & { error: any }
 
 /* LOAD TYPES */
 
-export type PersistenceLoadReturn<T extends Persistence<any, any>> =
-  UnwrapPromise<ReturnType<T['load']>>
+export type PersistenceLoadReturn<T extends Persistence<any>> = UnwrapPromise<
+  ReturnType<T['load']>
+>
 
-export type PersistenceLoadConfig<T extends Persistence<any, any>> = Parameters<
+export type PersistenceLoadConfig<T extends Persistence<any>> = Parameters<
   T['load']
 >[0]
 
-export type LoadStart<
-  T extends Persistence<K, any>,
-  K extends Model<any, any>
-> = {
+export type LoadStart<T extends Persistence<K>, K extends Model<any, any>> = {
   config: SaveConfig
   persistenceConfig?: PersistenceLoadConfig<T>
 }
 
-export type LoadSuccess<
-  T extends Persistence<K, any>,
-  K extends Model<any, any>
-> = LoadStart<T, K> & {
-  added: K[]
-  removed: K[]
-  response: PersistenceLoadReturn<T>
-}
+export type LoadSuccess<T extends Persistence<K>, K extends Model<any, any>> =
+  LoadStart<T, K> & {
+    added: K[]
+    removed: K[]
+    response: PersistenceLoadReturn<T>
+  }
 
-export type LoadError<
-  T extends Persistence<K, any>,
-  K extends Model<any, any>
-> = LoadStart<T, K> & { error: any }
+export type LoadError<T extends Persistence<K>, K extends Model<any, any>> =
+  LoadStart<T, K> & { error: any }
 
 export type CollectionConfig = {
   autoSave?: AutoSaveConfig

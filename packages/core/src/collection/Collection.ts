@@ -10,7 +10,7 @@ import {
 import { v4 as uuid } from 'uuid'
 import { IdentityError } from '../model/identity-error'
 import { Model } from '../model/Model'
-import { Persistence } from '../transport/Transport'
+import { Persistence } from '../transport/persistence'
 import {
   AddConfig,
   CollectionConfig,

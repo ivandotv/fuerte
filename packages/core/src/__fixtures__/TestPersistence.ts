@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid'
-import { Persistence } from '../transport/Transport'
+import { Persistence } from '../transport/persistence'
 import { TestModel } from './TestModel'
 /* eslint-disable @typescript-eslint/explicit-function-return-type  */
 export class TestPersistence extends Persistence<TestModel> {
