@@ -17,7 +17,8 @@ export type RequestConfig = {
 }
 
 export class HttpTransport<TModel extends Model<any>>
-  implements Transport<TModel> {
+  implements Transport<TModel>
+{
   protected fetchRef: typeof fetch
 
   constructor(
@@ -32,10 +33,10 @@ export class HttpTransport<TModel extends Model<any>>
     model: TModel,
     config?: RequestConfig
   ): Promise<{ data?: T; response: Response }> {
-    const cfg = (merge(
+    const cfg = merge(
       this.config?.saveRequest || {},
       config?.request || {}
-    ) as unknown) as Required<RequestConfig>
+    ) as unknown as Required<RequestConfig>
 
     cfg.request.method = cfg.request.method
       ? cfg.request.method
@@ -94,6 +95,6 @@ export class HttpTransport<TModel extends Model<any>>
 
 const test = new HttpTransport('')
 
-test.save<{ name: string }>(new TestModel()).then(result => {
+test.save<{ name: string }>(new TestModel()).then((result) => {
   result.data?.name
 })

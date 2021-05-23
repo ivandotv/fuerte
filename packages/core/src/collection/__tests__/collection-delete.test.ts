@@ -15,6 +15,50 @@ beforeEach(() => {
 })
 
 describe('Collection - delete models', () => {
+  test('Delete model', async () => {
+    const transport = fixtures.transport()
+    const model = fixtures.model()
+    const collection = fixtures.collection(fixtures.factory(), transport)
+    collection.add(model)
+
+    await collection.delete(model)
+
+    expect(collection.models).toHaveLength(0)
+  })
+
+  test('Delete model, but leave it in collection', async () => {
+    const transport = fixtures.transport()
+    const model = fixtures.model()
+    const collection = fixtures.collection(fixtures.factory(), transport)
+    collection.add(model)
+
+    await collection.delete(model, { remove: false })
+
+    expect(collection.models).toStrictEqual([model])
+    expect(model.isDeleted).toBe(true)
+    expect(collection.deletedModels).toStrictEqual([model])
+  })
+
+  test('When delete is in progress, can retrieve all models that are deleting', async () => {
+    const transport = fixtures.transport()
+    const model = fixtures.model()
+    const modelTwo = fixtures.model()
+    const collection = fixtures.collection(fixtures.factory(), transport)
+    collection.add(model)
+    collection.add(modelTwo)
+
+    const p1 = collection.delete(model)
+    const p2 = collection.delete(modelTwo)
+
+    expect(collection.modelsDeleting).toEqual([model, modelTwo])
+    expect(collection.modelsSyncing).toEqual([model, modelTwo])
+
+    await Promise.all([p1, p2])
+
+    expect(collection.modelsDeleting).toHaveLength(0)
+    expect(collection.modelsSyncing).toHaveLength(0)
+  })
+
   test('Delete returns object with response and model that was deleted', async () => {
     const transport = fixtures.transport()
     const response = { data: 'deleted' }
@@ -26,16 +70,6 @@ describe('Collection - delete models', () => {
     const result = await collection.delete(model)
 
     expect(result).toEqual({ response, model })
-  })
-  test('Delete model', async () => {
-    const transport = fixtures.transport()
-    const model = fixtures.model()
-    const collection = fixtures.collection(fixtures.factory(), transport)
-    collection.add(model)
-
-    await collection.delete(model)
-
-    expect(collection.models.length).toBe(0)
   })
 
   test('When the model is in the process of deleting, "modelsDeleting" property reflects that', async () => {

@@ -7,7 +7,6 @@ import {
   reaction,
   runInAction
 } from 'mobx'
-import { v4 as uuid } from 'uuid'
 import { IdentityError } from '../model/identity-error'
 import { Model } from '../model/Model'
 import { Transport } from '../transport/transport'
@@ -23,14 +22,7 @@ import {
   LoadError,
   LoadStart,
   LoadSuccess,
-  TransportDeleteConfig,
-  TransportDeleteReturn,
-  TransportLoadConfig,
-  TransportLoadReturn,
-  TransportReloadConfig,
-  TransportReloadReturn,
-  TransportSaveConfig,
-  TransportSaveReturn,
+  ModelInsertPosition,
   ReloadConfig,
   ReloadError,
   ReloadStart,
@@ -40,6 +32,14 @@ import {
   SaveError,
   SaveStart,
   SaveSuccess,
+  TransportDeleteConfig,
+  TransportDeleteReturn,
+  TransportLoadConfig,
+  TransportLoadReturn,
+  TransportReloadConfig,
+  TransportReloadReturn,
+  TransportSaveConfig,
+  TransportSaveReturn,
   UnwrapPromise
 } from '../utils/types'
 import { ASYNC_STATUS, debounceReaction, wrapInArray } from '../utils/utils'
@@ -67,13 +67,13 @@ export class Collection<
   // holds models that are saving but are not yet added to collection
   protected _modelsSaving: Map<
     string,
-    { token: string; model: TModel }
+    { token: Record<string, never>; model: TModel }
   > = new Map()
 
   // holds models that are reloading but are not yet added to collection
   protected _modelsReloading: Map<
     string,
-    { token: string; model: TModel }
+    { token: Record<string, never>; model: TModel }
   > = new Map()
 
   protected modelByCid: Map<string, TModel> = new Map()
@@ -84,7 +84,7 @@ export class Collection<
 
   protected autoSaveReactionByCid: Map<string, IReactionDisposer> = new Map()
 
-  config: RequiredCollectionConfig
+  protected config: RequiredCollectionConfig
 
   constructor(
     protected factory: TFactory,
@@ -122,7 +122,6 @@ export class Collection<
       this,
       | 'addToCollection'
       | 'removeFromCollection'
-      | 'parseBulkSaveResponse'
       | 'modelByCid'
       | '_modelsDeleting'
       | '_modelsSaving'
@@ -167,7 +166,7 @@ export class Collection<
       onLoadError: action,
       addToCollection: action,
       removeFromCollection: action,
-      parseBulkSaveResponse: action,
+      destroy: action,
       modelsSyncing: computed,
       modelsReloading: computed,
       modelsDeleting: computed,
@@ -177,6 +176,10 @@ export class Collection<
       loadStatus: observable,
       loadError: observable
     })
+  }
+
+  getConfig(): RequiredCollectionConfig {
+    return this.config
   }
 
   getTransport(): TTransport {
@@ -211,8 +214,9 @@ export class Collection<
 
   protected addToCollection(
     model: TModel | TModel[],
-    config: AddConfig,
-    fromReset = false
+    config: Omit<AddConfig, 'insertPosition'> & {
+      insertPosition?: number | ModelInsertPosition
+    }
   ): TModel[] {
     const models = wrapInArray(model)
 
@@ -254,7 +258,7 @@ export class Collection<
     } else if (addConfig.insertPosition === 'start') {
       this._models.unshift(...newModels)
     } else {
-      //number ad at index
+      //number at index
       if (
         addConfig.insertPosition > this._models.length ||
         addConfig.insertPosition < 0
@@ -288,10 +292,8 @@ export class Collection<
 
     const idReaction = reaction(
       () => model.identity,
-      value => {
-        if (value) {
-          this.modelByIdentity.set(value, model)
-        }
+      (value) => {
+        this.modelByIdentity.set(value, model)
       },
       { name: `id-${model.cid}` }
     )
@@ -320,7 +322,7 @@ export class Collection<
       : this._models
 
     const modelsStarted: TModel[] = []
-    modelsArr.forEach(model => {
+    modelsArr.forEach((model) => {
       const disposerHit = this.autoSaveReactionByCid.get(model.cid)
       if (!disposerHit) {
         modelsStarted.push(model)
@@ -375,7 +377,7 @@ export class Collection<
       : this._models
 
     const modelsStopped: TModel[] = []
-    modelsArr.forEach(model => {
+    modelsArr.forEach((model) => {
       const disposer = this.autoSaveReactionByCid.get(model.cid)
       if (disposer) {
         disposer()
@@ -403,10 +405,8 @@ export class Collection<
   // protected notifyStopAtu
   protected removeFromInternalTracking(model: TModel): void {
     this.modelByCid.delete(model.cid)
-    const identifier = model.identity
-    if (identifier) {
-      this.modelByIdentity.delete(identifier)
-    }
+    this.modelByIdentity.delete(model.identity)
+
     const identityR = this.identityReactionByCid.get(model.cid)
     identityR ? identityR() : null
 
@@ -482,7 +482,7 @@ export class Collection<
       this.assertIsModel(model)
     }
 
-    const token = uuid()
+    const token = {}
     runInAction(() => {
       this._modelsSaving.set(model.cid, { token: token, model })
     })
@@ -609,7 +609,7 @@ export class Collection<
     const model = this.resolveModel(cidOrModel)
     this.modelCanBeReloaded(model)
 
-    const token = uuid()
+    const token = {}
     try {
       this._modelsReloading.set(model.cid, { token, model })
       this.onReloadStart({
@@ -712,6 +712,26 @@ export class Collection<
     return this.modelByIdentity.get(values)
   }
 
+  getByCid(value: string): TModel | undefined
+
+  getByCid(values: string[]): TModel[] | undefined
+
+  getByCid(values: string | string[]): TModel | TModel[] | undefined {
+    if (Array.isArray(values)) {
+      const result = []
+      for (const value of values) {
+        const model = this.modelByCid.get(value)
+        if (model) {
+          result.push(model)
+        }
+      }
+
+      return result
+    }
+
+    return this.modelByCid.get(values)
+  }
+
   protected parseLoadResponse<T>(
     response: T,
     _loadConfig: Required<LoadConfig>,
@@ -744,30 +764,6 @@ export class Collection<
     return response
   }
 
-  protected parseBulkSaveResponse<T>(
-    response: T,
-    _saveConfig: SaveConfig,
-    _transportConfig: any
-  ): T {
-    return response
-  }
-
-  protected parseBulkDeleteResponse<T>(
-    response: T,
-    _deleteConfig: DeleteConfig,
-    _transportConfig: any
-  ): T {
-    return response
-  }
-
-  protected parseBulkReloadResponse<T>(
-    response: T,
-    _reloadConfig: ReloadConfig,
-    _transportConfig: any
-  ): T {
-    return response
-  }
-
   protected onSaveStart(_data: SaveStart<TTransport, TModel>): void {}
 
   protected onSaveSuccess(_data: SaveSuccess<TTransport, TModel>): void {}
@@ -779,11 +775,11 @@ export class Collection<
   }
 
   get newModels(): TModel[] {
-    return this._models.filter(model => model.isNew)
+    return this.models.filter((model) => model.isNew)
   }
 
   get deletedModels(): TModel[] {
-    return this.models.filter(model => model.isDeleted)
+    return this.models.filter((model) => model.isDeleted)
   }
 
   get modelsSyncing(): TModel[] {
@@ -791,8 +787,12 @@ export class Collection<
   }
 
   get modelsReloading(): TModel[] {
-    // return this._models.filter((model) => model.isReloading)
-    return [...this._modelsReloading.values()].map(data => data.model)
+    const models: TModel[] = []
+    this._modelsReloading.forEach((data) => {
+      models.push(data.model)
+    })
+
+    return models
   }
 
   get modelsDeleting(): TModel[] {
@@ -800,7 +800,12 @@ export class Collection<
   }
 
   get modelsSaving(): TModel[] {
-    return [...this._modelsSaving.values()].map(data => data.model)
+    const models: TModel[] = []
+    this._modelsSaving.forEach((data) => {
+      models.push(data.model)
+    })
+
+    return models
   }
 
   pop(): TModel | undefined {
@@ -823,7 +828,7 @@ export class Collection<
 
   remove(cidOrModel: string | TModel | (string | TModel)[]): TModel[] {
     return this.removeFromCollection(
-      this.resolveModels(cidOrModel).map(model => model.cid)
+      this.resolveModels(cidOrModel).map((model) => model.cid)
     )
   }
 
@@ -834,7 +839,7 @@ export class Collection<
     const model = this._models[index]
     const removed = this.removeFromCollection([model.cid])
 
-    return removed.length ? removed[0] : undefined
+    return removed[0]
   }
 
   protected removeFromCollection(cid: string[]): TModel[] {
@@ -1223,7 +1228,7 @@ export class Collection<
   protected async resetCollection<T>(data?: T[]): Promise<TModel[][]> {
     if (!data) {
       const removed = this.removeFromCollection(
-        this._models.map(model => model.cid)
+        this._models.map((model) => model.cid)
       )
 
       this.onReset([], removed)
@@ -1245,7 +1250,7 @@ export class Collection<
     }
 
     const removed = this.removeFromCollection(
-      this._models.map(model => model.cid)
+      this._models.map((model) => model.cid)
     )
     const added = this.addToCollection(modelsToAdd, { insertPosition: 'end' })
 
@@ -1268,20 +1273,20 @@ export class Collection<
   }
 
   destroy(): void {
-    this.identityReactionByCid.forEach(dispose => {
+    this.onDestroy()
+
+    this.stopAutoSave()
+    this.identityReactionByCid.forEach((dispose) => {
       dispose()
     })
 
-    this.stopAutoSave()
+    const models = this.removeFromCollection(
+      this._models.map((model) => model.cid)
+    )
 
-    this.identityReactionByCid.clear()
-    this.autoSaveReactionByCid.clear()
-
-    this._models.forEach(model => {
-      model._onDestroy()
+    models.forEach((model) => {
+      model.destroy()
     })
-
-    this.onDestroy()
   }
 
   protected onDestroy(): void {}

@@ -31,23 +31,6 @@ describe('Model', () => {
       // expect(model.identity).toBe(newId)
     })
 
-    test('-------', () => {
-      // const model = fixtures.model()
-      const identityKey = 'isbn'
-      class Test extends TestModel {
-        static config: ModelConfig = {
-          identityKey: identityKey,
-          setIdentityFromResponse: true
-        }
-
-        constructor(public isbn?: string) {
-          super()
-          makeObservable(this, { isbn: observable })
-        }
-      }
-      const model = new Test()
-      expect(true).toBe(true)
-    })
     test('Use custom identifier key', async () => {
       const identityKey = 'isbn'
       class Test extends TestModel {
@@ -86,7 +69,34 @@ describe('Model', () => {
 
       expect(model.isDirty).toBe(true)
     })
+
+    test('When model props change, payload is updated', () => {
+      const newFooValue = 'new foo'
+      const newBarValue = 'new bar'
+      const model = fixtures.model()
+
+      runInAction(() => {
+        model.foo = newFooValue
+      })
+
+      expect(model.payload).toStrictEqual({
+        foo: newFooValue,
+        bar: model.bar,
+        id: ''
+      })
+
+      runInAction(() => {
+        model.bar = newBarValue
+      })
+
+      expect(model.payload).toStrictEqual({
+        foo: newFooValue,
+        bar: newBarValue,
+        id: ''
+      })
+    })
   })
+
   describe('When model is created', () => {
     test('It is new', () => {
       const model = fixtures.model()
@@ -109,5 +119,20 @@ describe('Model', () => {
       const model = fixtures.model()
       expect(model.isDirty).toBe(true)
     })
+  })
+
+  test('Destroy the model', () => {
+    const model = fixtures.model({ foo: 'f', bar: 'b', id: '1' })
+    const collection = fixtures.collection()
+    const onDestroySpy = jest.spyOn(model, 'onDestroy')
+    const onRemovedSpy = jest.spyOn(model, 'onRemoved')
+
+    collection.add(model)
+    model.destroy()
+
+    expect(onDestroySpy).toHaveBeenCalledTimes(1)
+    expect(onRemovedSpy).toHaveBeenCalledTimes(1)
+    expect(model.isDestroyed).toBe(true)
+    expect(collection.models).toHaveLength(0)
   })
 })

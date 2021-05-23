@@ -8,8 +8,9 @@ describe('Model Autosave', () => {
   test('By default autosave option is disabled', async () => {
     const collection = fixtures.collection()
 
-    expect(collection.getConfig().autoSave.enabled).toBe(false)
-    expect(collection.getConfig().autoSave.debounceMs).toBe(0)
+    const config = collection.getConfig()
+    expect(config.autoSave.enabled).toBe(false)
+    expect(config.autoSave.debounceMs).toBe(0)
   })
 
   test('When model is changed autosave is called immediately', () => {
@@ -37,7 +38,6 @@ describe('Model Autosave', () => {
     expect(autoSaveSpy.mock.calls[0][0]).toEqual({ model, data: newDataOne })
     expect(autoSaveSpy.mock.calls[1][0]).toEqual({ model, data: newDataTwo })
   })
-
   test('When model is changed autosave is debounced', () => {
     jest.useFakeTimers()
     const transport = fixtures.transport()
@@ -147,6 +147,62 @@ describe('Model Autosave', () => {
     expect(result).toStrictEqual([model, modelTwo])
   })
 
+  test('Start autosave for multiple models', () => {
+    const transport = fixtures.transport()
+    const collection = fixtures.collection(fixtures.factory(), transport, {
+      autoSave: {
+        enabled: false
+      }
+    })
+    const autoSaveSpy = jest.spyOn(collection, 'autoSave')
+    const transportSaveSpy = jest.spyOn(transport, 'save')
+    const callbackSpy = jest.spyOn(collection, 'onStartAutoSave')
+    const model = fixtures.model()
+    const modelTwo = fixtures.model()
+
+    collection.add(model)
+    collection.add(modelTwo)
+
+    const result = collection.startAutoSave([model, modelTwo])
+
+    model.foo = 'new foo'
+    modelTwo.foo = 'new foo'
+
+    expect(autoSaveSpy).toBeCalledTimes(2)
+    expect(transportSaveSpy).toBeCalledTimes(2)
+    expect(callbackSpy).toBeCalledTimes(1)
+    expect(callbackSpy).toBeCalledWith([model, modelTwo])
+    expect(result).toStrictEqual([model, modelTwo])
+  })
+
+  test('Start autosave for all models', () => {
+    const transport = fixtures.transport()
+    const collection = fixtures.collection(fixtures.factory(), transport, {
+      autoSave: {
+        enabled: false
+      }
+    })
+    const autoSaveSpy = jest.spyOn(collection, 'autoSave')
+    const transportSaveSpy = jest.spyOn(transport, 'save')
+    const callbackSpy = jest.spyOn(collection, 'onStartAutoSave')
+    const model = fixtures.model()
+    const modelTwo = fixtures.model()
+
+    collection.add(model)
+    collection.add(modelTwo)
+
+    const result = collection.startAutoSave()
+
+    model.foo = 'new foo'
+    modelTwo.foo = 'new foo'
+
+    expect(autoSaveSpy).toBeCalledTimes(2)
+    expect(transportSaveSpy).toBeCalledTimes(2)
+    expect(callbackSpy).toBeCalledTimes(1)
+    expect(callbackSpy).toBeCalledWith(collection.models)
+    expect(result).toStrictEqual(collection.models)
+  })
+
   test('Dont start autosave for already started model', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport, {
@@ -225,6 +281,36 @@ describe('Model Autosave', () => {
     expect(callbackSpy).toBeCalledTimes(1)
     expect(callbackSpy).toBeCalledWith([model, modelTwo])
     expect(result).toEqual([model, modelTwo])
+  })
+
+  test('Stop autosave for all models', () => {
+    const transport = fixtures.transport()
+    const collection = fixtures.collection(fixtures.factory(), transport, {
+      autoSave: {
+        enabled: true
+      }
+    })
+    const autoSaveSpy = jest.spyOn(collection, 'autoSave')
+    const transportSaveSpy = jest.spyOn(transport, 'save')
+    const callbackSpy = jest.spyOn(collection, 'onStopAutoSave')
+    const model = fixtures.model()
+    const modelTwo = fixtures.model()
+
+    collection.add(model)
+    collection.add(modelTwo)
+
+    const result = collection.stopAutoSave()
+
+    model.foo = 'new foo'
+    model.bar = 'new bar'
+
+    modelTwo.foo = 'new foo'
+
+    expect(autoSaveSpy).toBeCalledTimes(0)
+    expect(transportSaveSpy).toBeCalledTimes(0)
+    expect(callbackSpy).toBeCalledTimes(1)
+    expect(callbackSpy).toBeCalledWith(collection.models)
+    expect(result).toEqual(collection.models)
   })
 
   test('Dont stop autosave for already stoped model', () => {

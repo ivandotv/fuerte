@@ -81,8 +81,6 @@ describe('Model identity', () => {
 
     const { error } = await collection.save(model)
     expect(error).toBeInstanceOf(IdentityError)
-    expect((error as Error).message).toMatch(
-      /identity key: id could not be extracted/
-    )
+    expect((error as Error).message).toMatch(/could not set identity/i)
   })
 })

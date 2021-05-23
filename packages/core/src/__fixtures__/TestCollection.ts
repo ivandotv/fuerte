@@ -1,5 +1,4 @@
 import { Collection } from '../collection/Collection'
-import { HttpTransport } from '../transport/http-transport'
 import {
   CollectionConfig,
   DeleteConfig,
@@ -33,76 +32,118 @@ export class TestCollection extends Collection<
     return a
   }
 
-  onReset(added: TestModel[], removed: TestModel[], fromLoad = false): void {}
+  onReset(added: TestModel[], removed: TestModel[], fromLoad = false): void {
+    super.onReset(added, removed)
+  }
 
-  onRemoved(_model: TestModel): void {}
+  onRemoved(model: TestModel): void {
+    super.onRemoved(model)
+  }
 
-  onAdded(_model: TestModel): void {}
+  onAdded(model: TestModel): void {
+    super.onAdded(model)
+  }
 
   onModelCreateData(data: any): void {
+    super.onModelCreateData(data)
+
     return data
   }
 
-  onSaveSuccess(_data: {
+  onSaveSuccess(data: {
     model: TestModel
     response: any
     config: SaveConfig
     transportConfig: any
     test: boolean
-  }): void {}
+  }): void {
+    super.onSaveSuccess(data)
+  }
 
-  onSaveStart(_data: SaveStart<TestTransport, TestModel>): void {}
+  onSaveStart(data: SaveStart<TestTransport, TestModel>): void {
+    super.onSaveStart(data)
+  }
 
   onSaveError(data: {
     model: TestModel
     error: any
     config: SaveConfig
     transportConfig: any
-  }): void {}
+  }): void {
+    super.onSaveError(data)
+  }
 
-  onReloadStart(_data: ReloadStart<TestTransport, TestModel>): void {}
+  onReloadStart(data: ReloadStart<TestTransport, TestModel>): void {
+    super.onReloadStart(data)
+  }
 
-  onReloadSuccess(_data: ReloadSuccess<TestTransport, TestModel>): void {}
+  onReloadSuccess(data: ReloadSuccess<TestTransport, TestModel>): void {
+    super.onReloadSuccess(data)
+  }
 
-  onReloadError(_data: ReloadError<TestTransport, TestModel>): void {}
+  onReloadError(data: ReloadError<TestTransport, TestModel>): void {
+    super.onReloadError(data)
+  }
 
-  onDeleteSuccess(_data: {
+  onDeleteSuccess(data: {
     model: TestModel
     response: any
     config: DeleteConfig
     transportConfig: any
-  }): void {}
+  }): void {
+    super.onDeleteSuccess(data)
+  }
 
-  onDeleteError(_data: {
+  onDeleteError(data: {
     model: TestModel
     error: any
     config: DeleteConfig
     transportConfig: any
-  }): void {}
+  }): void {
+    super.onDeleteError(data)
+  }
 
-  onLoadStart(_data: { config: LoadConfig; transportConfig?: any }): void {}
+  onLoadStart(data: { config: LoadConfig; transportConfig?: any }): void {
+    super.onLoadStart(data)
+  }
 
-  onLoadSuccess(_data: {
+  onLoadSuccess(data: {
     config: LoadConfig
     transportConfig?: any
     response: any
     added: TestModel[]
     removed: TestModel[]
-  }): void {}
+  }): void {
+    super.onLoadSuccess(data)
+  }
 
-  onLoadError(_data: {
+  onLoadError(data: {
     config: LoadConfig
     transportConfig?: any
     error: any
-  }): void {}
+  }): void {
+    super.onLoadError(data)
+  }
 
   autoSave(payload: { model: TestModel; data: any }): void {
     return super.autoSave(payload)
   }
 
-  onStartAutoSave(models: TestModel[]): void {}
+  onStartAutoSave(models: TestModel[]): void {
+    super.onStartAutoSave(models)
+  }
 
-  onStopAutoSave(models: TestModel[]): void {}
+  onStopAutoSave(models: TestModel[]): void {
+    super.onStopAutoSave(models)
+  }
+
+  onSerialize() {
+    super.onSerialize()
+  }
+
+  onDestroy() {
+    super.onDestroy()
+  }
 }
 
 // const tt = new TestFactory()
