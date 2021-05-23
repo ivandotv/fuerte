@@ -89,7 +89,7 @@ describe('Collection - save models', () => {
 
     jest.spyOn(transport, 'save').mockImplementationOnce(
       () =>
-        new Promise((resolve) =>
+        new Promise(resolve =>
           setTimeout(() => {
             resolve({ data: { id: '123' } })
           }, 10)
@@ -172,7 +172,7 @@ describe('Collection - save models', () => {
     test('On save start, start callbacks are called', async () => {
       const transport = fixtures.transport()
       const model = fixtures.model()
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const config: SaveConfig = {
         insertPosition: 'end',
         addOnError: true,
@@ -183,14 +183,14 @@ describe('Collection - save models', () => {
       const collectionSaveStartSpy = jest.spyOn(collection, 'onSaveStart')
       const modelSaveStartSpy = jest.spyOn(model, 'onSaveStart')
 
-      await collection.save(model, config, persistenceConfig)
+      await collection.save(model, config, transportConfig)
       expect(collectionSaveStartSpy).toBeCalledWith({
         model,
-        persistenceConfig,
+        transportConfig,
         config
       })
       expect(modelSaveStartSpy).toBeCalledWith({
-        persistenceConfig,
+        transportConfig,
         config
       })
     })
@@ -199,7 +199,7 @@ describe('Collection - save models', () => {
       const transport = fixtures.transport()
       const model = fixtures.model()
       const response = { data: { id: '123' } }
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const config: SaveConfig = {
         insertPosition: 'end',
         addOnError: true,
@@ -212,21 +212,21 @@ describe('Collection - save models', () => {
         .spyOn(transport, 'save')
         .mockImplementation(() => Promise.resolve(response))
 
-      await collection.save(model, config, persistenceConfig)
+      await collection.save(model, config, transportConfig)
 
       expect(onSaveSuccessSpy).toBeCalledWith({
         model,
         config,
         response,
         data: response.data,
-        persistenceConfig
+        transportConfig
       })
 
       expect(modelSaveSuccessSpy).toBeCalledWith({
         response,
         data: response.data,
         config,
-        persistenceConfig
+        transportConfig
       })
     })
 
@@ -239,7 +239,7 @@ describe('Collection - save models', () => {
         addOnError: true,
         addImmediately: true
       }
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const collection = fixtures.collection(fixtures.factory(), transport)
       const collectionSaveErrorSpy = jest.spyOn(collection, 'onSaveError')
       const modelSaveErrorSpy = jest.spyOn(model, 'onSaveError')
@@ -247,17 +247,17 @@ describe('Collection - save models', () => {
 
       expect.assertions(2)
 
-      const result = await collection.save(model, config, persistenceConfig)
+      const result = await collection.save(model, config, transportConfig)
 
       expect(collectionSaveErrorSpy).toBeCalledWith({
         model,
         error: result.error,
         config,
-        persistenceConfig
+        transportConfig
       })
       expect(modelSaveErrorSpy).toBeCalledWith({
         error: result.error,
-        persistenceConfig,
+        transportConfig,
         config,
         dataToSave: model.payload
       })

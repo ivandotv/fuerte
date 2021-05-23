@@ -1,5 +1,5 @@
 import { Model } from '../model/Model'
-import { Persistence } from './persistence'
+import { Transport } from './transport'
 import merge from 'deepmerge'
 import { TestModel } from '../__fixtures__/TestModel'
 
@@ -16,9 +16,8 @@ export type RequestConfig = {
   callback?: <T = any>(response: Response) => T
 }
 
-export class FetchPersistence<TModel extends Model<any>>
-  implements Persistence<TModel>
-{
+export class HttpTransport<TModel extends Model<any>>
+  implements Transport<TModel> {
   protected fetchRef: typeof fetch
 
   constructor(
@@ -26,17 +25,17 @@ export class FetchPersistence<TModel extends Model<any>>
     public config?: FetchConfig,
     fetchRef?: typeof fetch
   ) {
-    this.fetchRef = fetchRef ? fetchRef : fetch.bind(window)
+    this.fetchRef = fetchRef ? fetchRef : window ? fetch.bind(window) : fetch
   }
 
   async save<T>(
     model: TModel,
     config?: RequestConfig
   ): Promise<{ data?: T; response: Response }> {
-    const cfg = merge(
+    const cfg = (merge(
       this.config?.saveRequest || {},
       config?.request || {}
-    ) as unknown as Required<RequestConfig>
+    ) as unknown) as Required<RequestConfig>
 
     cfg.request.method = cfg.request.method
       ? cfg.request.method
@@ -93,8 +92,8 @@ export class FetchPersistence<TModel extends Model<any>>
   }
 }
 
-const test = new FetchPersistence('')
+const test = new HttpTransport('')
 
-test.save<{ name: string }>(new TestModel()).then((result) => {
+test.save<{ name: string }>(new TestModel()).then(result => {
   result.data?.name
 })

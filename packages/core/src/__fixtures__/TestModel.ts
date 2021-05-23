@@ -69,30 +69,30 @@ export class TestModel extends Model<TestCollection> {
   onSaveSuccess(data: {
     response: any
     config: SaveConfig
-    persistenceConfig: any
+    transportConfig: any
   }): void {}
 
   onSaveError(data: {
     error: any
     config: SaveConfig
-    persistenceConfig: any
+    transportConfig: any
     dataToSave: any
   }): void {
     super.onSaveError(data)
   }
 
-  onSaveStart(data: { config: SaveConfig; persistenceConfig: any }): void {}
+  onSaveStart(data: { config: SaveConfig; transportConfig: any }): void {}
 
   onReloadStart(data: {
     config: ReloadConfig
-    persistenceConfig: any
+    transportConfig: any
     isBulk: boolean
   }): void {}
 
   onReloadSuccess(data: {
     response: { data: any }
     config: ReloadConfig
-    persistenceConfig: any
+    transportConfig: any
     isBulk: boolean
     data: any
   }): void {}
@@ -101,7 +101,7 @@ export class TestModel extends Model<TestCollection> {
     error: any
     data: any
     config: ReloadConfig
-    persistenceConfig: any
+    transportConfig: any
   }): void {}
 
   onRemoved(_collection: TestCollection): void {}

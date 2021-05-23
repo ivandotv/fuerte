@@ -279,7 +279,7 @@ export abstract class Model<
 
   async reload<T extends TCollection = TCollection>(
     config?: ReloadConfig,
-    persistenceConfig?: any
+    transportConfig?: any
   ): Promise<
     Pick<UnwrapPromise<ReturnType<T['reload']>>, 'response' | 'error'>
   > {
@@ -288,7 +288,7 @@ export abstract class Model<
     const { response, error } = await this.collection.reload(
       this,
       config,
-      persistenceConfig
+      transportConfig
     )
 
     return { response, error }
@@ -296,14 +296,14 @@ export abstract class Model<
 
   async save<T extends TCollection = TCollection>(
     config?: SaveConfig,
-    persistenceConfig?: any
+    transportConfig?: any
   ): Promise<Pick<UnwrapPromise<ReturnType<T['save']>>, 'response' | 'error'>> {
     assertCollectionExists(this.collection)
 
     const { response, error } = await this.collection.save(
       this,
       config,
-      persistenceConfig
+      transportConfig
     )
 
     return { response, error }
@@ -312,11 +312,11 @@ export abstract class Model<
   // @internal
   _onSaveStart({
     config,
-    persistenceConfig,
+    transportConfig,
     token
   }: {
     config: SaveConfig
-    persistenceConfig: any
+    transportConfig: any
     token: string
   }): void {
     this._isSaving = true
@@ -325,12 +325,12 @@ export abstract class Model<
       state: 'pending'
     }
     this.errors.save = undefined
-    this.onSaveStart({ config, persistenceConfig })
+    this.onSaveStart({ config, transportConfig })
   }
 
   protected onSaveStart(_data: {
     config: SaveConfig
-    persistenceConfig: any
+    transportConfig: any
   }): void {}
 
   // @internal
@@ -338,14 +338,14 @@ export abstract class Model<
     response,
     data,
     config,
-    persistenceConfig,
+    transportConfig,
     savedData,
     token
   }: {
     response: any
     data: any
     config: SaveConfig
-    persistenceConfig: any
+    transportConfig: any
     savedData: any
     token: string
   }): void {
@@ -369,7 +369,7 @@ export abstract class Model<
       const identityValue = this.extractIdentityValue(
         data,
         config,
-        persistenceConfig
+        transportConfig
       )
 
       if (!identityValue) {
@@ -385,7 +385,7 @@ export abstract class Model<
     }
     this.onSaveSuccess({
       config,
-      persistenceConfig,
+      transportConfig,
       response,
       data: response.data
     })
@@ -395,19 +395,19 @@ export abstract class Model<
     response: any
     data: any
     config: SaveConfig
-    persistenceConfig: any
+    transportConfig: any
   }): void {}
 
   _onSaveError({
     error,
     config,
-    persistenceConfig,
+    transportConfig,
     token,
     dataToSave
   }: {
     error: any
     config: SaveConfig
-    persistenceConfig: any
+    transportConfig: any
     token: string
     dataToSave: any
   }): void {
@@ -420,7 +420,7 @@ export abstract class Model<
     this.onSaveError({
       error,
       config,
-      persistenceConfig,
+      transportConfig,
       dataToSave
     })
   }
@@ -428,14 +428,14 @@ export abstract class Model<
   protected onSaveError(_data: {
     error: any
     config: SaveConfig
-    persistenceConfig: any
+    transportConfig: any
     dataToSave: TDTO
   }): void {}
 
   protected extractIdentityValue(
     data: any,
-    transportConfig: any, // collection save config
-    persistenceConfig: any // persistenceConfig - save
+    config: any, // collection save config
+    transportConfig: any // transportConfig - save
   ): string | undefined {
     //todo - ovde mozda da odradim varijantu da se uvek vraca id
     return data && data[this.identityKey]
@@ -466,27 +466,27 @@ export abstract class Model<
   // @internal
   _onReloadStart({
     config,
-    persistenceConfig
+    transportConfig
   }: {
     config: ReloadConfig
-    persistenceConfig: any
+    transportConfig: any
   }): void {
     this._isReloading = true
     this.pendingReloadCalls++
     this.errors.reload = undefined
-    this.onReloadStart({ config, persistenceConfig })
+    this.onReloadStart({ config, transportConfig })
   }
 
   protected onReloadStart(_data: {
     config: ReloadConfig
-    persistenceConfig: any
+    transportConfig: any
   }): void {}
 
   // @internal
   _onReloadSuccess(payload: {
     response: any
     config: ReloadConfig
-    persistenceConfig: any
+    transportConfig: any
     data?: any
   }): void {
     if (payload.data) {
@@ -505,7 +505,7 @@ export abstract class Model<
   protected onReloadSuccess(_data: {
     response: any
     config: ReloadConfig
-    persistenceConfig: any
+    transportConfig: any
     data?: any
   }): void {}
 
@@ -513,7 +513,7 @@ export abstract class Model<
     error: any
     data: any
     config: any
-    persistenceConfig: any
+    transportConfig: any
   }): void {
     this.pendingReloadCalls--
     if (this.pendingReloadCalls === 0) {
@@ -527,7 +527,7 @@ export abstract class Model<
     error: any
     data: any
     config: any
-    persistenceConfig: any
+    transportConfig: any
   }): void {}
 
   /* END RELOAD */
@@ -539,21 +539,21 @@ export abstract class Model<
   protected onDeleteFromDataPush(_data?: any): void {}
 
   // @internal
-  _onDeleteStart(data: { config: DeleteConfig; persistenceConfig: any }): void {
+  _onDeleteStart(data: { config: DeleteConfig; transportConfig: any }): void {
     this._isDeleting = true
     this.onDeleteStart(data)
   }
 
   protected onDeleteStart(_data: {
     config: DeleteConfig
-    persistenceConfig: any
+    transportConfig: any
   }): void {}
 
   _onDeleteSuccess(data: {
     response: any
     data?: any
     config: DeleteConfig
-    persistenceConfig: any
+    transportConfig: any
   }): void {
     this._isDeleting = false
     this.errors.delete = undefined
@@ -566,14 +566,14 @@ export abstract class Model<
     response: any
     data?: any
     config: DeleteConfig
-    persistenceConfig: any
+    transportConfig: any
   }): void {}
 
   _onDeleteError(data: {
     error: any
     data?: any
     config: DeleteConfig
-    persistenceConfig: any
+    transportConfig: any
   }): void {
     this.errors.delete = data.error
     this._isDeleting = false
@@ -586,7 +586,7 @@ export abstract class Model<
     error: any
     data?: any
     config: DeleteConfig
-    persistenceConfig: any
+    transportConfig: any
   }): void {}
 
   get isDirty(): boolean {

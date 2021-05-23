@@ -1,6 +1,6 @@
 import { Model } from '../model/Model'
 
-export interface Persistence<TModel extends Model<any> = Model<any>> {
+export interface Transport<TModel extends Model<any> = Model<any>> {
   load(config?: any): Promise<{ data: any[] }>
 
   save(model: TModel, config?: any): Promise<{ data?: any }>
@@ -10,7 +10,7 @@ export interface Persistence<TModel extends Model<any> = Model<any>> {
   delete(model: TModel, config?: any): Promise<{ data?: any }>
 }
 
-export class InMemoryPersistance implements Persistence {
+export class InMemoryTransport implements Transport {
   load(): Promise<{ data: any[] }> {
     return Promise.resolve({ data: [] })
   }

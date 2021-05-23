@@ -2,7 +2,7 @@ import { CollectionConfig } from '../utils/types'
 import { TestCollection } from './TestCollection'
 import { TestFactory } from './TestFactory'
 import { TestModel, TestModelData } from './TestModel'
-import { TestPersistence } from './TestPersistence'
+import { TestTransport } from './TestTransport'
 
 // eslint-disable-next-line
 export function fixtureFactory() {
@@ -15,7 +15,7 @@ export function fixtureFactory() {
     },
     collection(
       factory?: TestFactory,
-      transport?: TestPersistence,
+      transport?: TestTransport,
       config?: CollectionConfig
     ) {
       // modelClass = modelClass || TestModel
@@ -25,8 +25,8 @@ export function fixtureFactory() {
 
       return new TestCollection(factory, transport, config)
     },
-    transport(): TestPersistence {
-      return new TestPersistence()
+    transport(): TestTransport {
+      return new TestTransport()
     },
     rawModelData: [
       { foo: '1', bar: '1', id: '1' },

@@ -10,7 +10,7 @@ import {
 import { v4 as uuid } from 'uuid'
 import { IdentityError } from '../model/identity-error'
 import { Model } from '../model/Model'
-import { Persistence } from '../transport/persistence'
+import { Transport } from '../transport/transport'
 import {
   AddConfig,
   CollectionConfig,
@@ -23,14 +23,14 @@ import {
   LoadError,
   LoadStart,
   LoadSuccess,
-  PersistenceDeleteConfig,
-  PersistenceDeleteReturn,
-  PersistenceLoadConfig,
-  PersistenceLoadReturn,
-  PersistenceReloadConfig,
-  PersistenceReloadReturn,
-  PersistenceSaveConfig,
-  PersistenceSaveReturn,
+  TransportDeleteConfig,
+  TransportDeleteReturn,
+  TransportLoadConfig,
+  TransportLoadReturn,
+  TransportReloadConfig,
+  TransportReloadReturn,
+  TransportSaveConfig,
+  TransportSaveReturn,
   ReloadConfig,
   ReloadError,
   ReloadStart,
@@ -52,7 +52,7 @@ import {
 
 export class Collection<
   TModel extends Model<Collection<any, any, any>>,
-  TPersistence extends Persistence<TModel>,
+  TTransport extends Transport<TModel>,
   TFactory extends Factory<TModel>
 > {
   loadError = undefined
@@ -88,7 +88,7 @@ export class Collection<
 
   constructor(
     protected factory: TFactory,
-    protected persistence: TPersistence,
+    protected transport: TTransport,
     config?: CollectionConfig
   ) {
     this.config = {
@@ -179,8 +179,8 @@ export class Collection<
     })
   }
 
-  getTransport(): TPersistence {
-    return this.persistence
+  getTransport(): TTransport {
+    return this.transport
   }
 
   protected assertIsModel(model: unknown): asserts model is TModel {
@@ -450,10 +450,10 @@ export class Collection<
   async save(
     modelOrModelData: TModel | Parameters<TFactory['create']>[0],
     config?: SaveConfig,
-    persistenceConfig?: PersistenceSaveConfig<TPersistence>
+    loadConfig?: TransportSaveConfig<TTransport>
   ): Promise<
     | {
-        response: PersistenceSaveReturn<TPersistence>
+        response: TransportSaveReturn<TTransport>
         model: TModel
         error: undefined
       }
@@ -490,20 +490,24 @@ export class Collection<
     try {
       // model take current data // todo - ovo u stvari treba da ide u transport
 
-      this.onSaveStart({ model, config: saveConfig, persistenceConfig })
+      this.onSaveStart({
+        model,
+        config: saveConfig,
+        transportConfig: loadConfig
+      })
       // model.clearSaveError()
       model._onSaveStart({
         config: saveConfig,
-        persistenceConfig,
+        transportConfig: loadConfig,
         token
       })
 
-      let response = (await this.persistence.save(
+      let response = (await this.transport.save(
         model,
-        persistenceConfig
-      )) as PersistenceSaveReturn<TPersistence>
+        loadConfig
+      )) as TransportSaveReturn<TTransport>
 
-      response = this.parseSaveResponse(response, saveConfig, persistenceConfig)
+      response = this.parseSaveResponse(response, saveConfig, loadConfig)
 
       // add it to the collection after save
       if (!saveConfig.addImmediately) {
@@ -517,14 +521,14 @@ export class Collection<
         response,
         data: response.data,
         config: saveConfig,
-        persistenceConfig
+        transportConfig: loadConfig
       })
 
       model._onSaveSuccess({
         response,
         data: response.data,
         config: saveConfig,
-        persistenceConfig,
+        transportConfig: loadConfig,
         savedData: dataToSave,
         token
       })
@@ -554,13 +558,13 @@ export class Collection<
         model,
         error,
         config: saveConfig,
-        persistenceConfig
+        transportConfig: loadConfig
       })
 
       model._onSaveError({
         error,
         config: saveConfig,
-        persistenceConfig,
+        transportConfig: loadConfig,
         token,
         dataToSave
       })
@@ -584,10 +588,10 @@ export class Collection<
   async reload(
     cidOrModel: TModel | string,
     config?: ReloadConfig,
-    persistenceConfig?: PersistenceReloadConfig<TPersistence>
+    transportConfig?: TransportReloadConfig<TTransport>
   ): Promise<
     | {
-        response: PersistenceReloadReturn<TPersistence>
+        response: TransportReloadReturn<TTransport>
         model: TModel
         error: undefined
       }
@@ -611,21 +615,21 @@ export class Collection<
       this.onReloadStart({
         model,
         config: reloadConfig,
-        persistenceConfig
+        transportConfig: transportConfig
       })
       model._onReloadStart({
         config: reloadConfig,
-        persistenceConfig
+        transportConfig: transportConfig
       })
 
-      let response = (await this.persistence.reload(
+      let response = (await this.transport.reload(
         model,
-        persistenceConfig
-      )) as PersistenceReloadReturn<TPersistence>
+        transportConfig
+      )) as TransportReloadReturn<TTransport>
       response = this.parseReloadResponse(
         response,
         reloadConfig,
-        persistenceConfig
+        transportConfig
       )
 
       this.onReloadSuccess({
@@ -633,14 +637,14 @@ export class Collection<
         response,
         data: response.data,
         config: reloadConfig,
-        persistenceConfig
+        transportConfig: transportConfig
       })
 
       model._onReloadSuccess({
         response,
         data: response.data,
         config: reloadConfig,
-        persistenceConfig
+        transportConfig: transportConfig
       })
 
       return {
@@ -653,14 +657,14 @@ export class Collection<
         model,
         error,
         config: reloadConfig,
-        persistenceConfig
+        transportConfig: transportConfig
       })
 
       model._onReloadError({
         error,
         data: error?.data,
         config: reloadConfig,
-        persistenceConfig
+        transportConfig: transportConfig
       })
 
       if (reloadConfig.removeOnError) {
@@ -682,11 +686,11 @@ export class Collection<
     }
   }
 
-  onReloadStart(data: ReloadStart<TPersistence, TModel>): void {}
+  onReloadStart(data: ReloadStart<TTransport, TModel>): void {}
 
-  onReloadSuccess(data: ReloadSuccess<TPersistence, TModel>): void {}
+  onReloadSuccess(data: ReloadSuccess<TTransport, TModel>): void {}
 
-  onReloadError(data: ReloadError<TPersistence, TModel>): void {}
+  onReloadError(data: ReloadError<TTransport, TModel>): void {}
 
   getByIdentity(value: string): TModel | undefined
 
@@ -717,10 +721,10 @@ export class Collection<
   }
 
   protected parseSaveResponse(
-    response: UnwrapPromise<ReturnType<TPersistence['save']>>,
+    response: UnwrapPromise<ReturnType<TTransport['save']>>,
     _saveConfig: SaveConfig,
-    _transportConfig?: Parameters<TPersistence['save']>[1]
-  ): UnwrapPromise<ReturnType<TPersistence['save']>> {
+    _transportConfig?: Parameters<TTransport['save']>[1]
+  ): UnwrapPromise<ReturnType<TTransport['save']>> {
     return response
   }
 
@@ -764,11 +768,11 @@ export class Collection<
     return response
   }
 
-  protected onSaveStart(_data: SaveStart<TPersistence, TModel>): void {}
+  protected onSaveStart(_data: SaveStart<TTransport, TModel>): void {}
 
-  protected onSaveSuccess(_data: SaveSuccess<TPersistence, TModel>): void {}
+  protected onSaveSuccess(_data: SaveSuccess<TTransport, TModel>): void {}
 
-  protected onSaveError(_data: SaveError<TPersistence, TModel>): void {}
+  protected onSaveError(_data: SaveError<TTransport, TModel>): void {}
 
   get models(): ReadonlyArray<TModel> {
     return this._models as ReadonlyArray<TModel>
@@ -882,10 +886,10 @@ export class Collection<
   async delete(
     cidOrModel: string | TModel,
     config?: DeleteConfig,
-    persistenceConfig?: PersistenceDeleteConfig<TPersistence>
+    transportConfig?: TransportDeleteConfig<TTransport>
   ): Promise<
     | {
-        response: PersistenceDeleteReturn<TPersistence>
+        response: TransportDeleteReturn<TTransport>
         model: TModel
         error: undefined
       }
@@ -913,22 +917,22 @@ export class Collection<
       this.onDeleteStart({
         model,
         config: deleteConfig,
-        persistenceConfig
+        transportConfig: transportConfig
       })
       model._onDeleteStart({
         config: deleteConfig,
-        persistenceConfig
+        transportConfig: transportConfig
       })
 
-      let response = (await this.persistence.delete(
+      let response = (await this.transport.delete(
         model,
-        persistenceConfig
-      )) as UnwrapPromise<ReturnType<TPersistence['delete']>>
+        transportConfig
+      )) as UnwrapPromise<ReturnType<TTransport['delete']>>
 
       response = this.parseDeleteResponse(
         response,
         deleteConfig,
-        persistenceConfig
+        transportConfig
       )
 
       if (deleteConfig.remove && !deleteConfig.removeImmediately) {
@@ -938,13 +942,13 @@ export class Collection<
         model,
         response,
         config: deleteConfig,
-        persistenceConfig
+        transportConfig: transportConfig
       })
       model._onDeleteSuccess({
         response,
         data: response.data,
         config: deleteConfig,
-        persistenceConfig
+        transportConfig: transportConfig
       })
 
       return {
@@ -964,13 +968,13 @@ export class Collection<
         model,
         error,
         config: deleteConfig,
-        persistenceConfig
+        transportConfig: transportConfig
       })
       model._onDeleteError({
         error,
         config: deleteConfig,
         data: error?.data,
-        persistenceConfig
+        transportConfig: transportConfig
       })
 
       // throw error
@@ -1011,11 +1015,11 @@ export class Collection<
     }
   }
 
-  protected onDeleteStart(_data: DeleteStart<TPersistence, TModel>): void {}
+  protected onDeleteStart(_data: DeleteStart<TTransport, TModel>): void {}
 
-  protected onDeleteSuccess(_data: DeleteSuccess<TPersistence, TModel>): void {}
+  protected onDeleteSuccess(_data: DeleteSuccess<TTransport, TModel>): void {}
 
-  protected onDeleteError(_data: DeleteError<TPersistence, TModel>): void {}
+  protected onDeleteError(_data: DeleteError<TTransport, TModel>): void {}
 
   protected onRemoved(_model: TModel): void {}
 
@@ -1043,11 +1047,11 @@ export class Collection<
 
   // protected addModel
   async load(
-    loadConfig?: LoadConfig,
-    persistenceConfig?: PersistenceLoadConfig<TPersistence>
+    config?: LoadConfig,
+    transportConfig?: TransportLoadConfig<TTransport>
   ): Promise<
     | {
-        response: PersistenceLoadReturn<TPersistence>
+        response: TransportLoadReturn<TTransport>
         added: TModel[]
         removed: TModel[]
         error: undefined
@@ -1061,39 +1065,42 @@ export class Collection<
   > {
     this.loadError = undefined
 
-    const config = {
+    const loadConfig = {
       ...this.config.load,
-      ...loadConfig
+      ...config
     }
 
     try {
       // throw immediately if the compare function is not provided
       if (
-        loadConfig?.duplicateModelStrategy === DuplicateModelStrategy.COMPARE &&
-        typeof loadConfig.compareFn === 'undefined'
+        config?.duplicateModelStrategy === DuplicateModelStrategy.COMPARE &&
+        typeof config.compareFn === 'undefined'
       ) {
         throw new CompareError(
           'No compare function found for duplicate model strategy'
         )
       }
       this.loadStatus = ASYNC_STATUS.PENDING
-      this.onLoadStart({ config, persistenceConfig })
-      let response = (await this.persistence.load(
-        persistenceConfig
-      )) as PersistenceLoadReturn<TPersistence>
-      response = this.parseLoadResponse(response, config, persistenceConfig)
+      this.onLoadStart({
+        config: loadConfig,
+        transportConfig: transportConfig
+      })
+      let response = (await this.transport.load(
+        transportConfig
+      )) as TransportLoadReturn<TTransport>
+      response = this.parseLoadResponse(response, loadConfig, transportConfig)
 
       runInAction(() => {
         this.loadStatus = ASYNC_STATUS.RESOLVED
       })
 
       // run reset instead of the rest of the load function
-      if (config.reset) {
+      if (loadConfig.reset) {
         const [added, removed] = await this.resetCollection(response.data)
         // this.loaded = true
         this.onLoadSuccess({
-          config,
-          persistenceConfig,
+          config: loadConfig,
+          transportConfig: transportConfig,
           response,
           added,
           removed
@@ -1128,9 +1135,9 @@ export class Collection<
           const oldModel = this.modelByIdentity.get(model.identity)!
           /* eslint-enable */
 
-          const compareResult = config.compareFn(model, oldModel)
+          const compareResult = loadConfig.compareFn(model, oldModel)
 
-          switch (config.duplicateModelStrategy) {
+          switch (loadConfig.duplicateModelStrategy) {
             case DuplicateModelStrategy.KEEP_NEW:
               modelsToRemove.push(oldModel)
               modelsToAdd.push(model)
@@ -1163,14 +1170,14 @@ export class Collection<
 
       const removed = this.remove(modelsToRemove)
       const added = this.addToCollection(modelsToAdd, {
-        insertPosition: config.insertPosition
+        insertPosition: loadConfig.insertPosition
       })
 
       // this.loaded = true
       // this.load
       this.onLoadSuccess({
-        config,
-        persistenceConfig,
+        config: loadConfig,
+        transportConfig: transportConfig,
         response,
         added,
         removed
@@ -1192,8 +1199,8 @@ export class Collection<
       })
 
       this.onLoadError({
-        config,
-        persistenceConfig,
+        config: loadConfig,
+        transportConfig: transportConfig,
         error
       })
 
@@ -1207,11 +1214,11 @@ export class Collection<
     }
   }
 
-  protected onLoadStart(_data: LoadStart<TPersistence, TModel>): void {}
+  protected onLoadStart(_data: LoadStart<TTransport, TModel>): void {}
 
-  protected onLoadSuccess(_data: LoadSuccess<TPersistence, TModel>): void {}
+  protected onLoadSuccess(_data: LoadSuccess<TTransport, TModel>): void {}
 
-  protected onLoadError(_data: LoadError<TPersistence, TModel>): void {}
+  protected onLoadError(_data: LoadError<TTransport, TModel>): void {}
 
   protected async resetCollection<T>(data?: T[]): Promise<TModel[][]> {
     if (!data) {

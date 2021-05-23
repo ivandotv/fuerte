@@ -135,7 +135,7 @@ describe('Collection - reload models', () => {
     test('On reload start, start callbacks are called', async () => {
       const transport = fixtures.transport()
       const model = fixtures.model()
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const config: ReloadConfig = {
         removeOnError: false
       }
@@ -145,15 +145,15 @@ describe('Collection - reload models', () => {
       const collectionReloadStartSpy = jest.spyOn(collection, 'onReloadStart')
       const modelReloadStartSpy = jest.spyOn(model, 'onReloadStart')
 
-      await collection.reload(model, config, persistenceConfig)
+      await collection.reload(model, config, transportConfig)
 
       expect(collectionReloadStartSpy).toBeCalledWith({
         model,
-        persistenceConfig,
+        transportConfig,
         config
       })
       expect(modelReloadStartSpy).toBeCalledWith({
-        persistenceConfig,
+        transportConfig,
         config
       })
     })
@@ -162,7 +162,7 @@ describe('Collection - reload models', () => {
       const transport = fixtures.transport()
       const model = fixtures.model()
       const response = { data: { foo: 'foo-reload', bar: 'bar-reload' } }
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const config: ReloadConfig = {
         removeOnError: false
       }
@@ -176,20 +176,20 @@ describe('Collection - reload models', () => {
 
       await collection.save(model)
 
-      await collection.reload(model, config, persistenceConfig)
+      await collection.reload(model, config, transportConfig)
 
       expect(collectionOnReloadSuccess).toBeCalledWith({
         model,
         config,
         response,
         data: response.data,
-        persistenceConfig
+        transportConfig
       })
       expect(modelOnReloadSuccessSpy).toBeCalledWith({
         response,
         config,
         data: response.data,
-        persistenceConfig
+        transportConfig
       })
     })
 
@@ -197,7 +197,7 @@ describe('Collection - reload models', () => {
       const transport = fixtures.transport()
       const model = fixtures.model()
       const response = 'response'
-      const persistenceConfig = 'config'
+      const transportConfig = 'config'
       const config: ReloadConfig = {
         removeOnError: false
       }
@@ -208,20 +208,16 @@ describe('Collection - reload models', () => {
 
       await collection.save(model)
 
-      const { error } = await collection.reload(
-        model,
-        config,
-        persistenceConfig
-      )
+      const { error } = await collection.reload(model, config, transportConfig)
       expect(collectionOnReloadError).toBeCalledWith({
         model,
         error,
         config,
-        persistenceConfig
+        transportConfig
       })
       expect(modelOnReloadError).toBeCalledWith({
         error,
-        persistenceConfig,
+        transportConfig,
         config
       })
     })
@@ -271,7 +267,7 @@ describe('Collection - reload models', () => {
 
     jest.spyOn(transport, 'reload').mockImplementationOnce(
       () =>
-        new Promise((resolve) =>
+        new Promise(resolve =>
           setTimeout(() => {
             resolve({ data: { foo: '', bar: '' } })
           }, 10)
