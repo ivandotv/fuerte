@@ -108,14 +108,18 @@ export class TestCollection extends Collection<
   onStopAutoSave(models: TestModel[]): void {}
 }
 
-// const tt = new TestFactory()
-// const ttModel = tt.create({ foo: 'a', bar: 'a' })
+const tt = new TestFactory()
+const ttModel = tt.create({ foo: 'a', bar: 'a' })
 
 const cc = new TestCollection(new TestFactory(), new FetchPersistence(''))
 
 const testModel = cc.create({ foo: 'a', bar: 'a' })
 
-cc.save({ foo: 'a', bar: 'a' }).then((result) => {
+cc.save({ foo: 'a', bar: 'a' }, undefined, {
+  request: {
+    method: 'POST'
+  }
+}).then(result => {
   if (!result.error) {
     result.response.data
   }

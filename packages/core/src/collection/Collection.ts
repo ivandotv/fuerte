@@ -65,12 +65,16 @@ export class Collection<
   _modelsDeleting: Map<string, TModel> = new Map()
 
   // holds models that are saving but are not yet added to collection
-  protected _modelsSaving: Map<string, { token: string; model: TModel }> =
-    new Map()
+  protected _modelsSaving: Map<
+    string,
+    { token: string; model: TModel }
+  > = new Map()
 
   // holds models that are reloading but are not yet added to collection
-  protected _modelsReloading: Map<string, { token: string; model: TModel }> =
-    new Map()
+  protected _modelsReloading: Map<
+    string,
+    { token: string; model: TModel }
+  > = new Map()
 
   protected modelByCid: Map<string, TModel> = new Map()
 
@@ -284,7 +288,7 @@ export class Collection<
 
     const idReaction = reaction(
       () => model.identity,
-      (value) => {
+      value => {
         if (value) {
           this.modelByIdentity.set(value, model)
         }
@@ -316,7 +320,7 @@ export class Collection<
       : this._models
 
     const modelsStarted: TModel[] = []
-    modelsArr.forEach((model) => {
+    modelsArr.forEach(model => {
       const disposerHit = this.autoSaveReactionByCid.get(model.cid)
       if (!disposerHit) {
         modelsStarted.push(model)
@@ -371,7 +375,7 @@ export class Collection<
       : this._models
 
     const modelsStopped: TModel[] = []
-    modelsArr.forEach((model) => {
+    modelsArr.forEach(model => {
       const disposer = this.autoSaveReactionByCid.get(model.cid)
       if (disposer) {
         disposer()
@@ -771,11 +775,11 @@ export class Collection<
   }
 
   get newModels(): TModel[] {
-    return this._models.filter((model) => model.isNew)
+    return this._models.filter(model => model.isNew)
   }
 
   get deletedModels(): TModel[] {
-    return this.models.filter((model) => model.isDeleted)
+    return this.models.filter(model => model.isDeleted)
   }
 
   get modelsSyncing(): TModel[] {
@@ -784,7 +788,7 @@ export class Collection<
 
   get modelsReloading(): TModel[] {
     // return this._models.filter((model) => model.isReloading)
-    return [...this._modelsReloading.values()].map((data) => data.model)
+    return [...this._modelsReloading.values()].map(data => data.model)
   }
 
   get modelsDeleting(): TModel[] {
@@ -792,7 +796,7 @@ export class Collection<
   }
 
   get modelsSaving(): TModel[] {
-    return [...this._modelsSaving.values()].map((data) => data.model)
+    return [...this._modelsSaving.values()].map(data => data.model)
   }
 
   pop(): TModel | undefined {
@@ -815,7 +819,7 @@ export class Collection<
 
   remove(cidOrModel: string | TModel | (string | TModel)[]): TModel[] {
     return this.removeFromCollection(
-      this.resolveModels(cidOrModel).map((model) => model.cid)
+      this.resolveModels(cidOrModel).map(model => model.cid)
     )
   }
 
@@ -1212,7 +1216,7 @@ export class Collection<
   protected async resetCollection<T>(data?: T[]): Promise<TModel[][]> {
     if (!data) {
       const removed = this.removeFromCollection(
-        this._models.map((model) => model.cid)
+        this._models.map(model => model.cid)
       )
 
       this.onReset([], removed)
@@ -1234,7 +1238,7 @@ export class Collection<
     }
 
     const removed = this.removeFromCollection(
-      this._models.map((model) => model.cid)
+      this._models.map(model => model.cid)
     )
     const added = this.addToCollection(modelsToAdd, { insertPosition: 'end' })
 
@@ -1257,7 +1261,7 @@ export class Collection<
   }
 
   destroy(): void {
-    this.identityReactionByCid.forEach((dispose) => {
+    this.identityReactionByCid.forEach(dispose => {
       dispose()
     })
 
@@ -1266,7 +1270,7 @@ export class Collection<
     this.identityReactionByCid.clear()
     this.autoSaveReactionByCid.clear()
 
-    this._models.forEach((model) => {
+    this._models.forEach(model => {
       model._onDestroy()
     })
 
