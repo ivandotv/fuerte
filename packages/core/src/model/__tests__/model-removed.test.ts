@@ -27,7 +27,7 @@ describe('Model - remove from collection', () => {
 
       collection.remove(model)
 
-      expect(onRemovedSpy).toBeCalledWith(collection)
+      expect(onRemovedSpy).toHaveBeenCalledTimes(1)
     })
   })
 })

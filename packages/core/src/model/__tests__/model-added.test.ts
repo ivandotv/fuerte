@@ -42,7 +42,7 @@ describe('Model - add to collection', () => {
 
       secondCollection.add(model)
 
-      expect(onRemovedSpy).toBeCalledWith(firstCollection)
+      expect(onRemovedSpy).toBeCalledTimes(1)
       expect(onAddedSpy).toBeCalled()
       expect(model.getCollection()).toBe(secondCollection)
     })

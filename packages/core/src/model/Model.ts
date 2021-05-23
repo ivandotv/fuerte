@@ -3,7 +3,6 @@ import {
   action,
   autorun,
   computed,
-  IActionFactory,
   IReactionDisposer,
   makeObservable,
   observable
@@ -12,10 +11,9 @@ import { v4 as uuid } from 'uuid'
 import { Collection } from '../collection/Collection'
 import {
   DeleteConfig,
-  UnwrapPromise,
   ReloadConfig,
   SaveConfig,
-  SaveStart
+  UnwrapPromise
 } from '../utils/types'
 import { assertCollectionExists } from '../utils/utils'
 import { IdentityError } from './identity-error'
@@ -73,7 +71,7 @@ export abstract class Model<
 
   protected pendingSaveCall:
     | {
-        token: string
+        token: Record<string, never>
         state: 'pending' | 'resolved' | 'rejected'
       }
     | undefined
@@ -82,12 +80,6 @@ export abstract class Model<
 
   lastSavedData: TDTO | undefined = undefined
 
-  // protected lastSerializedData: TDTO | undefined = undefined
-
-  // protected _identityValue: string
-
-  // readonly identityKey: string
-
   get identityKey(): string {
     return (this.constructor as typeof Model).config.identityKey
   }
@@ -95,32 +87,16 @@ export abstract class Model<
   constructor() {
     this.cid = uuid()
 
-    // this.identityKey = (this.constructor as typeof Model).config.identityKey
-
-    // this.identity
-    // this[this.identityKey] = this.cid
-    // if (!this.identityKey) {
-    //   throw new Error('must set identity key')
-    // }
-
     makeObservable<
       this,
       | '_isDeleted'
       | '_isSaving'
       | '_isReloading'
       | '_isDestroyed'
-      // | '_isDirty'
       | 'errors'
       | '_isDeleting'
       | 'computePayload'
-      // | 'identityValue'
-      // | 'ignoreChange'
-      // | 'lastSerializedData'
-      // | 'onSerialize'
     >(this, {
-      // ignoreChange: observable,
-
-      // [this.identityKey]: observable,
       _isDeleted: observable,
       isDeleted: computed,
 
@@ -137,7 +113,6 @@ export abstract class Model<
       isReloading: computed,
 
       isSyncing: computed,
-      // lastSerializedData: observable,
       lastSavedData: observable,
 
       isNew: computed,
@@ -145,13 +120,8 @@ export abstract class Model<
       computePayload: computed.struct,
       payload: computed,
 
-      // identityValue: observable,
-      // getIdentityKey: action,
       setIdentity: action,
-      // getIdentityValue: action,
       identity: computed,
-      // cid: observable,
-      // [this.identityKey]: observable,
       hasErrors: computed,
       errors: observable,
       saveError: computed,
@@ -169,15 +139,15 @@ export abstract class Model<
       _onReloadError: action,
       _onDeleteError: action,
       _onDeleteStart: action,
-      _onDeleteSuccess: action
+      _onDeleteSuccess: action,
+      destroy: action
     })
+
+    // this.payloadActionDisposer = this.startPayloadCompute()
   }
 
   // https://alexhisen.gitbook.io/mobx-recipes/use-computedstruct-for-computed-objects
-  //computed
   get payload(): TDTO {
-    // return this.lastSerializedData || this.onSerialize()
-
     return this.computePayload
   }
 
@@ -188,15 +158,14 @@ export abstract class Model<
 
   protected createPayload(): TDTO {
     // - serialize the model
-    throw new Error('Child class should implement getPayload')
+    throw new Error('Method not implemented')
   }
 
-  protected startPayloadComputeCache(): IReactionDisposer {
+  protected startPayloadCompute(): IReactionDisposer {
     return autorun(() => {
       return this.payload
     })
   }
-  // onHydrated(_data: any): void {}
 
   get hasErrors(): boolean {
     return !!this.errors.save || !!this.errors.reload || !!this.errors.delete
@@ -217,26 +186,22 @@ export abstract class Model<
   // @internal
   _onAdded(collection: TCollection): void {
     this.collection = collection
+    this.payloadActionDisposer = this.startPayloadCompute()
     this.onAdded()
-    this.startPayloadComputeCache()
   }
 
   protected onAdded(): void {}
 
   // @internal
   _onRemoved(): void {
-    const old = this.collection
+    this.onRemoved()
     this.collection = undefined
-    this.onRemoved(old!)
     this.payloadActionDisposer && this.payloadActionDisposer()
   }
 
-  protected onRemoved(_collection: TCollection): void {}
+  protected onRemoved(): void {}
 
-  // todo - marked for removal
-  // why does this exist?
   get isDeleted(): boolean {
-    // return this._isRemoved
     return this._isDeleted
   }
 
@@ -317,7 +282,7 @@ export abstract class Model<
   }: {
     config: SaveConfig
     transportConfig: any
-    token: string
+    token: Record<string, never>
   }): void {
     this._isSaving = true
     this.pendingSaveCall = {
@@ -328,7 +293,7 @@ export abstract class Model<
     this.onSaveStart({ config, transportConfig })
   }
 
-  protected onSaveStart(_data: {
+  protected onSaveStart(data: {
     config: SaveConfig
     transportConfig: any
   }): void {}
@@ -347,7 +312,7 @@ export abstract class Model<
     config: SaveConfig
     transportConfig: any
     savedData: any
-    token: string
+    token: Record<string, never>
   }): void {
     if (
       token === this.pendingSaveCall?.token ||
@@ -374,7 +339,7 @@ export abstract class Model<
 
       if (!identityValue) {
         throw new IdentityError(
-          `Identity value for identity key: ${modelConfig?.identityKey} could not be extracted from the response.`
+          `Could not set identity for key: ${modelConfig.identityKey} `
         )
       }
 
@@ -391,7 +356,7 @@ export abstract class Model<
     })
   }
 
-  protected onSaveSuccess(_data: {
+  protected onSaveSuccess(data: {
     response: any
     data: any
     config: SaveConfig
@@ -408,7 +373,7 @@ export abstract class Model<
     error: any
     config: SaveConfig
     transportConfig: any
-    token: string
+    token: Record<string, never>
     dataToSave: any
   }): void {
     if (this.pendingSaveCall?.token === token) {
@@ -425,7 +390,7 @@ export abstract class Model<
     })
   }
 
-  protected onSaveError(_data: {
+  protected onSaveError(data: {
     error: any
     config: SaveConfig
     transportConfig: any
@@ -477,7 +442,7 @@ export abstract class Model<
     this.onReloadStart({ config, transportConfig })
   }
 
-  protected onReloadStart(_data: {
+  protected onReloadStart(data: {
     config: ReloadConfig
     transportConfig: any
   }): void {}
@@ -495,6 +460,7 @@ export abstract class Model<
     }
 
     this.pendingReloadCalls--
+
     if (this.pendingReloadCalls === 0) {
       this._isReloading = false
     }
@@ -502,7 +468,7 @@ export abstract class Model<
     this.onReloadSuccess(payload)
   }
 
-  protected onReloadSuccess(_data: {
+  protected onReloadSuccess(data: {
     response: any
     config: ReloadConfig
     transportConfig: any
@@ -523,7 +489,7 @@ export abstract class Model<
     this.onReloadError(payload)
   }
 
-  protected onReloadError(_data: {
+  protected onReloadError(data: {
     error: any
     data: any
     config: any
@@ -532,11 +498,7 @@ export abstract class Model<
 
   /* END RELOAD */
 
-  protected updateFromReload(_data: any): void {
-    throw new Error('Child class should implement updateFromReload')
-  }
-
-  protected onDeleteFromDataPush(_data?: any): void {}
+  protected updateFromReload(data: any): void {}
 
   // @internal
   _onDeleteStart(data: { config: DeleteConfig; transportConfig: any }): void {
@@ -544,7 +506,7 @@ export abstract class Model<
     this.onDeleteStart(data)
   }
 
-  protected onDeleteStart(_data: {
+  protected onDeleteStart(data: {
     config: DeleteConfig
     transportConfig: any
   }): void {}
@@ -562,7 +524,7 @@ export abstract class Model<
     this.onDeleteSuccess(data)
   }
 
-  protected onDeleteSuccess(_data: {
+  protected onDeleteSuccess(data: {
     response: any
     data?: any
     config: DeleteConfig
@@ -601,9 +563,13 @@ export abstract class Model<
     return this.collection
   }
 
-  // @internal
-  _onDestroy(): void {
+  destroy(): void {
     this.onDestroy()
+    this._isDestroyed = true
+    if (this.collection) {
+      this.collection.remove(this)
+    }
+    this.payloadActionDisposer && this.payloadActionDisposer()
   }
 
   onDestroy(): void {}

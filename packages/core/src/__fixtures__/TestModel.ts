@@ -1,6 +1,6 @@
 import { makeObservable, observable } from 'mobx'
 import { Model, ModelConfig } from '../model/Model'
-import { ReloadConfig, SaveConfig, SaveStart } from '../utils/types'
+import { ReloadConfig, SaveConfig } from '../utils/types'
 import { TestCollection } from './TestCollection'
 
 export type TestModelData = {
@@ -27,26 +27,13 @@ export class TestModel extends Model<TestCollection> {
     super()
     this.foo = foo
     this.bar = bar
-
-    // if (id) {
-    //   this.setIdentity(id)
-    // }
-
     this.id = id
 
-    // console.log('test model identity key ', this.identityKey)
-    // console.log('test model identity value ', this.identity)
     makeObservable(this, {
       foo: observable,
       bar: observable,
       id: observable
     })
-
-    // assertCollectionExists(this.collection)
-    if (this.collection) {
-      this.collection.testMethod('a')
-      const _newModel = this.collection.create({ foo: 'a', bar: 'a' })
-    }
   }
 
   testMethod(b: boolean): boolean {
@@ -54,6 +41,12 @@ export class TestModel extends Model<TestCollection> {
   }
 
   createPayload(): TestModelData {
+    // get that sweet code coverage
+    try {
+      super.createPayload()
+      // eslint-disable-next-line
+    } catch (e) {}
+
     return {
       foo: this.foo,
       bar: this.bar,
@@ -62,6 +55,7 @@ export class TestModel extends Model<TestCollection> {
   }
 
   updateFromReload(data: TestModelData): void {
+    super.updateFromReload(data)
     this.foo = data.foo
     this.bar = data.bar
   }
@@ -70,7 +64,10 @@ export class TestModel extends Model<TestCollection> {
     response: any
     config: SaveConfig
     transportConfig: any
-  }): void {}
+    data: any
+  }): void {
+    super.onSaveSuccess(data)
+  }
 
   onSaveError(data: {
     error: any
@@ -81,13 +78,17 @@ export class TestModel extends Model<TestCollection> {
     super.onSaveError(data)
   }
 
-  onSaveStart(data: { config: SaveConfig; transportConfig: any }): void {}
+  onSaveStart(data: { config: SaveConfig; transportConfig: any }): void {
+    super.onSaveStart(data)
+  }
 
   onReloadStart(data: {
     config: ReloadConfig
     transportConfig: any
     isBulk: boolean
-  }): void {}
+  }): void {
+    super.onReloadStart(data)
+  }
 
   onReloadSuccess(data: {
     response: { data: any }
@@ -95,31 +96,36 @@ export class TestModel extends Model<TestCollection> {
     transportConfig: any
     isBulk: boolean
     data: any
-  }): void {}
+  }): void {
+    super.onReloadSuccess(data)
+  }
 
   onReloadError(data: {
     error: any
     data: any
     config: ReloadConfig
     transportConfig: any
-  }): void {}
+  }): void {
+    super.onReloadError(data)
+  }
 
-  onRemoved(_collection: TestCollection): void {}
+  onRemoved(): void {
+    super.onRemoved()
+  }
 
-  onDeleteStart(data: any): void {}
+  onDeleteStart(data: any): void {
+    super.onDeleteStart(data)
+  }
 
-  onDeleteSuccess(data: any): void {}
+  onDeleteSuccess(data: any): void {
+    super.onDeleteSuccess(data)
+  }
 
-  onDeleteError(data: any): void {}
+  onDeleteError(data: any): void {
+    super.onDeleteError(data)
+  }
 
-  // onDeleteFromDataPush(data: any): void {}
-
-  // onUpdateFromDataPush(data: any): void {
-  //   super.onUpdateFromDataPush(data)
-  // }
+  onDestroy() {
+    super.onDestroy()
+  }
 }
-
-// decorate(TestModel, {
-//   foo: observable,
-//   bar: observable
-// })

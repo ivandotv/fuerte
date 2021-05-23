@@ -24,7 +24,29 @@ describe('Collection - save models', () => {
 
     expect(collection.models[0]).toBe(model)
   })
-  test('Save model as data', async () => {
+
+  test('When save is in progress, can retrieve all models that are reloading', async () => {
+    const transport = fixtures.transport()
+    const model = fixtures.model()
+    const modelTwo = fixtures.model()
+
+    const collection = fixtures.collection(fixtures.factory(), transport)
+
+    const p1 = collection.save(model)
+    const p2 = collection.save(modelTwo)
+
+    expect(collection.modelsSaving).toEqual([model, modelTwo])
+    expect(collection.modelsSyncing).toEqual([model, modelTwo])
+
+    await Promise.all([p1, p2])
+
+    expect(collection.models[0]).toBe(model)
+
+    expect(collection.modelsSaving).toHaveLength(0)
+    expect(collection.modelsSyncing).toHaveLength(0)
+  })
+
+  test('Create and save models', async () => {
     const transport = fixtures.transport()
     const data = { foo: 'foo-prop', bar: 'bar-prop' }
     const collection = fixtures.collection(fixtures.factory(), transport)
@@ -34,6 +56,7 @@ describe('Collection - save models', () => {
     expect(collection.models[0].foo).toBe(data.foo)
     expect(collection.models[0].bar).toBe(data.bar)
   })
+
   test('Return value is object with response and model', async () => {
     const transport = fixtures.transport()
     const model = fixtures.model()
@@ -89,7 +112,7 @@ describe('Collection - save models', () => {
 
     jest.spyOn(transport, 'save').mockImplementationOnce(
       () =>
-        new Promise(resolve =>
+        new Promise((resolve) =>
           setTimeout(() => {
             resolve({ data: { id: '123' } })
           }, 10)

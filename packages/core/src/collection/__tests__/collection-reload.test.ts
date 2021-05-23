@@ -33,6 +33,26 @@ describe('Collection - reload models', () => {
     expect(collection.models.length).toBe(1)
   })
 
+  test('When reload is in progress, can retrieve  all models that are reloading', async () => {
+    const transport = fixtures.transport()
+    const model = fixtures.model()
+    const modelTwo = fixtures.model()
+    const collection = fixtures.collection(fixtures.factory(), transport)
+    await collection.save(model)
+    await collection.save(modelTwo)
+
+    const p1 = collection.reload(model)
+    const p2 = collection.reload(modelTwo)
+
+    expect(collection.modelsReloading).toEqual([model, modelTwo])
+    expect(collection.modelsSyncing).toEqual([model, modelTwo])
+
+    await Promise.all([p1, p2])
+
+    expect(collection.modelsReloading).toHaveLength(0)
+    expect(collection.modelsSyncing).toHaveLength(0)
+  })
+
   test('Return value is object with response and model', async () => {
     const transport = fixtures.transport()
     const model = fixtures.model()
@@ -267,7 +287,7 @@ describe('Collection - reload models', () => {
 
     jest.spyOn(transport, 'reload').mockImplementationOnce(
       () =>
-        new Promise(resolve =>
+        new Promise((resolve) =>
           setTimeout(() => {
             resolve({ data: { foo: '', bar: '' } })
           }, 10)
