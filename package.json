@@ -10,6 +10,7 @@
     "test:ci": "lerna run test:ci --stream",
     "test": "lerna run test --stream",
     "lint": "lerna run lint --stream",
+    "lint:ci": "lerna run lint:ci --stream",
     "type:check": "lerna run type:check --stream",
     "build": "lerna run build --stream",
     "prepare": "husky install",
