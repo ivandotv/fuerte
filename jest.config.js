@@ -1,5 +1,5 @@
 module.exports = {
-  testEnvironment: 'jsdom',
+  testEnvironment: 'node',
   watchPlugins: [
     'jest-watch-typeahead/filename',
     'jest-watch-typeahead/testname'
