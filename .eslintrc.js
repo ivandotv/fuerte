@@ -18,7 +18,7 @@ module.exports = {
     // 'plugin:@next/next/recommended',
     // 'plugin:react/recommended',
     // 'plugin:react-hooks/recommended',
-    'prettier'
+    'plugin:prettier/recommended'
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
