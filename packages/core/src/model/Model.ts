@@ -7,7 +7,7 @@ import {
   makeObservable,
   observable
 } from 'mobx'
-import { v4 as uuid } from 'uuid'
+import { nanoid } from 'nanoid'
 import { Collection } from '../collection/Collection'
 import {
   DeleteConfig,
@@ -85,7 +85,7 @@ export abstract class Model<
   }
 
   constructor() {
-    this.cid = uuid()
+    this.cid = nanoid()
 
     makeObservable<
       this,
