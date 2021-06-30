@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const pkg = require('./package.json')
 const { execSync } = require('child_process')
 
@@ -41,6 +42,7 @@ module.exports = {
     ['@babel/plugin-proposal-nullish-coalescing-operator'], //node v10
     ['@babel/plugin-proposal-optional-chaining'], // node v10
     ['@babel/proposal-class-properties', { loose: true }], // stage-3 proposal
+    ['@babel/plugin-proposal-private-methods', { loose: true }],
     'dev-expression',
     [
       'transform-define',
