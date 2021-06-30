@@ -1,0 +1,49 @@
+{
+  "name": "@fuerte/transport-idb",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Ivan Vlatkovic",
+  "description": "IndexedDB transport mechanism for @fuerte/core",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/fuerte.esm.js",
+  "unpkg": "dist/unpkg/fuerte.js",
+  "jsdelivr": "dist/unpkg/fuerte.js",
+  "sideEffects": false,
+  "types": "dist/types/",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "lint": "eslint --fix \"src/**/\"",
+    "lint:check": "eslint \"src/**/\"",
+    "lint:ci": "yarn lint:check",
+    "docs": "del docs/api && typedoc --theme markdown --readme none --excludePrivate  --excludeInternal --exclude ./src/globals.d.ts --out docs/api ./src",
+    "test": "cross-env BABEL_ENV=test jest --verbose --coverage --no-cache",
+    "test:watch": "cross-env BABEL_ENV=test jest --watch",
+    "test:ci": "cross-env BABEL_ENV=test jest --runInBand --ci --coverage --coverageDirectory=coverage",
+    "type:check": "tsc -p tsconfig.check-types.json",
+    "type:build": "del dist/types && del .buildcache && tsc -p tsconfig.build-types.json",
+    "type:watch": "yarn type:check --watch",
+    "browser:watch": "del dist/cjs && cross-env BABEL_ENV=browserWatch NODE_ENV=development babel src --out-dir dist/cjs --extensions .ts,.tsx,.js,.jsx --source-maps --watch",
+    "browser:build": "yarn type:build && yarn test && node ../../scripts/build-browser.js --bundle=umd,cjs,esm",
+    "build": "yarn browser:build",
+    "prepublishOnly": "yarn build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ivandotv/fuerte.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ivandotv/fuerte/issues"
+  },
+  "homepage": "https://github.com/ivandotv/fuerte#readme",
+  "keywords": [],
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jest": "^26.0.23"
+  },
+  "peerDependencies": {
+    "@fuerte/core": "*"
+  }
+}

@@ -1,9 +1,0 @@
-yarn run v1.22.10
-$ eslint --fix "src/**/" --debug
-
-/home/ivan/development/fuerte/packages/core/src/scratch/data-push.ts
-  3:2  error  Parsing error: Declaration or statement expected
-
-✖ 1 problem (1 error, 0 warnings)
-
-info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
