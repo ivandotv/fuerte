@@ -1,4 +1,3 @@
-import { toBindingIdentifierName } from '@babel/types'
 import { configure } from 'mobx'
 import { CollectionConfig } from '../../utils/types'
 import { fixtureFactory } from '../../__fixtures__/fixtureFactory'

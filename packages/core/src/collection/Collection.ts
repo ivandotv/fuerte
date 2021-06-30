@@ -33,13 +33,13 @@ import {
   SaveStart,
   SaveSuccess,
   TransportDeleteConfig,
-  TransportDeleteReturn,
+  TransportDeleteResponse,
   TransportLoadConfig,
-  TransportLoadReturn,
+  TransportLoadResponse,
   TransportReloadConfig,
-  TransportReloadReturn,
+  TransportReloadResponse,
   TransportSaveConfig,
-  TransportSaveReturn,
+  TransportSaveResponse,
   UnwrapPromise
 } from '../utils/types'
 import { ASYNC_STATUS, debounceReaction, wrapInArray } from '../utils/utils'
@@ -453,7 +453,7 @@ export class Collection<
     loadConfig?: TransportSaveConfig<TTransport>
   ): Promise<
     | {
-        response: TransportSaveReturn<TTransport>
+        response: TransportSaveResponse<TTransport>
         model: TModel
         error: undefined
       }
@@ -505,7 +505,7 @@ export class Collection<
       let response = (await this.transport.save(
         model,
         loadConfig
-      )) as TransportSaveReturn<TTransport>
+      )) as TransportSaveResponse<TTransport>
 
       response = this.parseSaveResponse(response, saveConfig, loadConfig)
 
@@ -519,14 +519,12 @@ export class Collection<
       this.onSaveSuccess({
         model,
         response,
-        data: response.data,
         config: saveConfig,
         transportConfig: loadConfig
       })
 
       model._onSaveSuccess({
         response,
-        data: response.data,
         config: saveConfig,
         transportConfig: loadConfig,
         savedData: dataToSave,
@@ -591,7 +589,7 @@ export class Collection<
     transportConfig?: TransportReloadConfig<TTransport>
   ): Promise<
     | {
-        response: TransportReloadReturn<TTransport>
+        response: TransportReloadResponse<TTransport>
         model: TModel
         error: undefined
       }
@@ -625,7 +623,7 @@ export class Collection<
       let response = (await this.transport.reload(
         model,
         transportConfig
-      )) as TransportReloadReturn<TTransport>
+      )) as TransportReloadResponse<TTransport>
       response = this.parseReloadResponse(
         response,
         reloadConfig,
@@ -635,14 +633,12 @@ export class Collection<
       this.onReloadSuccess({
         model,
         response,
-        data: response.data,
         config: reloadConfig,
         transportConfig: transportConfig
       })
 
       model._onReloadSuccess({
         response,
-        data: response.data,
         config: reloadConfig,
         transportConfig: transportConfig
       })
@@ -894,7 +890,7 @@ export class Collection<
     transportConfig?: TransportDeleteConfig<TTransport>
   ): Promise<
     | {
-        response: TransportDeleteReturn<TTransport>
+        response: TransportDeleteResponse<TTransport>
         model: TModel
         error: undefined
       }
@@ -951,7 +947,6 @@ export class Collection<
       })
       model._onDeleteSuccess({
         response,
-        data: response.data,
         config: deleteConfig,
         transportConfig: transportConfig
       })
@@ -1056,7 +1051,7 @@ export class Collection<
     transportConfig?: TransportLoadConfig<TTransport>
   ): Promise<
     | {
-        response: TransportLoadReturn<TTransport>
+        response: TransportLoadResponse<TTransport>
         added: TModel[]
         removed: TModel[]
         error: undefined
@@ -1092,7 +1087,7 @@ export class Collection<
       })
       let response = (await this.transport.load(
         transportConfig
-      )) as TransportLoadReturn<TTransport>
+      )) as TransportLoadResponse<TTransport>
       response = this.parseLoadResponse(response, loadConfig, transportConfig)
 
       runInAction(() => {

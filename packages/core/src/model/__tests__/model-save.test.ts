@@ -1,8 +1,7 @@
 import { configure, runInAction } from 'mobx'
-import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
-import { v4 as uuid } from 'uuid'
-import { ASYNC_STATUS } from '../../utils/utils'
+import { nanoid } from 'nanoid'
 import { SaveConfig } from '../../utils/types'
+import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
 
 configure({ enforceActions: 'always' })
 
@@ -20,7 +19,7 @@ describe('Model - save', () => {
       addImmediately: true,
       addOnError: true
     }
-    const response = { data: { id: uuid() } }
+    const response = { data: { id: nanoid() } }
     jest.spyOn(transport, 'save').mockResolvedValue(response)
 
     const result = await model.save(saveConfig, transportConfig)
@@ -238,12 +237,10 @@ describe('Model - save', () => {
         model,
         config,
         response,
-        data: response.data,
         transportConfig
       })
       expect(modelSaveSuccessSpy).toBeCalledWith({
         response,
-        data: response.data,
         config,
         transportConfig
       })

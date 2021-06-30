@@ -160,7 +160,6 @@ describe('Model - delete', () => {
 
       expect(modelSpy).toBeCalledWith({
         response,
-        data: response.data,
         config,
         transportConfig
       })
@@ -168,7 +167,6 @@ describe('Model - delete', () => {
       expect(collectionSpy).toBeCalledWith({
         model,
         response,
-        data: response.data,
         config,
         transportConfig
       })

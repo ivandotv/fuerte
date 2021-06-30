@@ -34,7 +34,7 @@ export type ModelConfig = {
 }
 
 export abstract class Model<
-  TCollection extends Collection<any, any, any>,
+  TCollection extends Collection<any, any, any> = Collection<any, any, any>,
   TDTO = any
 > {
   collection: TCollection | undefined
@@ -301,14 +301,12 @@ export abstract class Model<
   // @internal
   _onSaveSuccess({
     response,
-    data,
     config,
     transportConfig,
     savedData,
     token
   }: {
     response: any
-    data: any
     config: SaveConfig
     transportConfig: any
     savedData: any
@@ -332,7 +330,7 @@ export abstract class Model<
       const key = this.identityKey
 
       const identityValue = this.extractIdentityValue(
-        data,
+        response?.data,
         config,
         transportConfig
       )
@@ -351,14 +349,12 @@ export abstract class Model<
     this.onSaveSuccess({
       config,
       transportConfig,
-      response,
-      data: response.data
+      response
     })
   }
 
   protected onSaveSuccess(data: {
     response: any
-    data: any
     config: SaveConfig
     transportConfig: any
   }): void {}
@@ -398,7 +394,7 @@ export abstract class Model<
   }): void {}
 
   protected extractIdentityValue(
-    data: any,
+    data: any | undefined,
     config: any, // collection save config
     transportConfig: any // transportConfig - save
   ): string | undefined {
@@ -448,14 +444,14 @@ export abstract class Model<
   }): void {}
 
   // @internal
-  _onReloadSuccess(payload: {
+  _onReloadSuccess(data: {
     response: any
     config: ReloadConfig
     transportConfig: any
     data?: any
   }): void {
-    if (payload.data) {
-      this.updateFromReload(payload.data)
+    if (data.response?.data) {
+      this.updateFromReload(data.response.data)
       this.lastSavedData = this.createPayload() // create new object
     }
 
@@ -465,7 +461,7 @@ export abstract class Model<
       this._isReloading = false
     }
 
-    this.onReloadSuccess(payload)
+    this.onReloadSuccess(data)
   }
 
   protected onReloadSuccess(data: {

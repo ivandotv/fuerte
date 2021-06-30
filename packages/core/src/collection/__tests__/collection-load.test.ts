@@ -569,7 +569,7 @@ describe('Collection load', () => {
         data: [{ foo: 'foo-reload', bar: 'bar-reload', id: '1' }]
       }
       const transportConfig = 'config'
-      const config: LoadConfig = collection.config.load
+      const config: LoadConfig = collection.getConfig().load
       const onLoadSuccessSpy = jest.spyOn(collection, 'onLoadSuccess')
       jest.spyOn(transport, 'load').mockResolvedValue(response)
 
@@ -591,7 +591,7 @@ describe('Collection load', () => {
       const transportConfig = 'config'
       const collection = fixtures.collection(fixtures.factory(), transport)
 
-      const config = collection.config.load
+      const config = collection.getConfig().load
 
       // loadConfig.
       const loadErrorSpy = jest.spyOn(collection, 'onLoadError')

@@ -14,7 +14,7 @@ export type Factory<T, K extends any = any> = {
 }
 
 /* RELOAD TYPES */
-export type TransportReloadReturn<T extends Transport<any>> = UnwrapPromise<
+export type TransportReloadResponse<T extends Transport<any>> = UnwrapPromise<
   ReturnType<T['reload']>
 >
 
@@ -29,15 +29,14 @@ export type ReloadStart<T extends Transport<K>, K extends Model<any, any>> = {
 }
 
 export type ReloadSuccess<T extends Transport<K>, K extends Model<any, any>> = {
-  response: TransportReloadReturn<T>
-  data: TransportReloadReturn<T>['data']
+  response: TransportReloadResponse<T>
 } & ReloadStart<T, K>
 
 export type ReloadError<T extends Transport<K>, K extends Model<any, any>> =
   ReloadStart<T, K> & { error: any }
 
 /* SAVE TYPES */
-export type TransportSaveReturn<T extends Transport<any>> = UnwrapPromise<
+export type TransportSaveResponse<T extends Transport<any>> = UnwrapPromise<
   ReturnType<T['save']>
 >
 
@@ -52,8 +51,7 @@ export type SaveStart<T extends Transport<K>, K extends Model<any, any>> = {
 }
 
 export type SaveSuccess<T extends Transport<K>, K extends Model<any, any>> = {
-  response: TransportSaveReturn<T>
-  data?: TransportSaveReturn<T>['data']
+  response: TransportSaveResponse<T>
 } & SaveStart<T, K>
 
 export type SaveError<T extends Transport<K>, K extends Model<any, any>> =
@@ -61,7 +59,7 @@ export type SaveError<T extends Transport<K>, K extends Model<any, any>> =
 
 /* DELETE TYPES */
 
-export type TransportDeleteReturn<T extends Transport<any>> = UnwrapPromise<
+export type TransportDeleteResponse<T extends Transport<any>> = UnwrapPromise<
   ReturnType<T['delete']>
 >
 
@@ -76,7 +74,7 @@ export type DeleteStart<T extends Transport<K>, K extends Model<any, any>> = {
 }
 
 export type DeleteSuccess<T extends Transport<K>, K extends Model<any, any>> = {
-  response: TransportDeleteReturn<T>
+  response: TransportDeleteResponse<T>
 } & DeleteStart<T, K>
 
 export type DeleteError<T extends Transport<K>, K extends Model<any, any>> =
@@ -84,7 +82,7 @@ export type DeleteError<T extends Transport<K>, K extends Model<any, any>> =
 
 /* LOAD TYPES */
 
-export type TransportLoadReturn<T extends Transport<any>> = UnwrapPromise<
+export type TransportLoadResponse<T extends Transport<any>> = UnwrapPromise<
   ReturnType<T['load']>
 >
 
@@ -101,7 +99,7 @@ export type LoadSuccess<T extends Transport<K>, K extends Model<any, any>> =
   LoadStart<T, K> & {
     added: K[]
     removed: K[]
-    response: TransportLoadReturn<T>
+    response: TransportLoadResponse<T>
   }
 
 export type LoadError<T extends Transport<K>, K extends Model<any, any>> =

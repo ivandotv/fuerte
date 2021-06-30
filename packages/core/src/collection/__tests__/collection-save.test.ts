@@ -241,13 +241,11 @@ describe('Collection - save models', () => {
         model,
         config,
         response,
-        data: response.data,
         transportConfig
       })
 
       expect(modelSaveSuccessSpy).toBeCalledWith({
         response,
-        data: response.data,
         config,
         transportConfig
       })
