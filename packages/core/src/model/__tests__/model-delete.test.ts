@@ -152,7 +152,6 @@ describe('Model - delete', () => {
 
       expect(onDeleteSuccessSpy).toBeCalledWith({
         response,
-        data: response.data,
         config,
         transportConfig
       })

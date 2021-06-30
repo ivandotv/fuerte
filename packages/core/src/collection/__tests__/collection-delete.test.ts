@@ -209,7 +209,6 @@ describe('Collection - delete models', () => {
       expect(modelOnDeleteSuccessSpy).toBeCalledWith({
         response,
         config,
-        data: response.data,
         transportConfig
       })
     })

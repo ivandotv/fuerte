@@ -1,7 +1,13 @@
 import { makeObservable, observable } from 'mobx'
 import { Model, ModelConfig } from '../model/Model'
-import { ReloadConfig, SaveConfig } from '../utils/types'
+import {
+  ReloadConfig,
+  SaveConfig,
+  TransportSaveConfig,
+  TransportSaveResponse
+} from '../utils/types'
 import { TestCollection } from './TestCollection'
+import { TestTransport } from './TestTransport'
 
 export type TestModelData = {
   foo: string
@@ -61,10 +67,9 @@ export class TestModel extends Model<TestCollection> {
   }
 
   onSaveSuccess(data: {
-    response: any
+    response: TransportSaveResponse<TestTransport>
     config: SaveConfig
-    transportConfig: any
-    data: any
+    transportConfig: TransportSaveConfig<TestTransport>
   }): void {
     super.onSaveSuccess(data)
   }

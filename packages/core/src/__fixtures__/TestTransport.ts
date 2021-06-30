@@ -1,4 +1,4 @@
-import { v4 as uuid } from 'uuid'
+import { nanoid } from 'nanoid'
 import { Transport } from '../transport/transport'
 import { TestModel } from './TestModel'
 /* eslint-disable @typescript-eslint/explicit-function-return-type  */
@@ -16,7 +16,7 @@ export class TestTransport implements Transport<TestModel> {
   }
 
   save(_model: TestModel, _config?: any) {
-    return Promise.resolve({ data: { id: uuid() } })
+    return Promise.resolve({ data: { id: nanoid() } })
   }
 
   reload(_model: TestModel, _config?: any) {

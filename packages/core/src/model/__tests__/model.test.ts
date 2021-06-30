@@ -1,5 +1,4 @@
 import { configure, makeObservable, observable, runInAction } from 'mobx'
-import { v4 as uuid } from 'uuid'
 import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
 import { TestModel } from '../../__fixtures__/TestModel'
 import { ModelConfig } from '../Model'

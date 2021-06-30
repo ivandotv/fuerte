@@ -202,13 +202,11 @@ describe('Collection - reload models', () => {
         model,
         config,
         response,
-        data: response.data,
         transportConfig
       })
       expect(modelOnReloadSuccessSpy).toBeCalledWith({
         response,
         config,
-        data: response.data,
         transportConfig
       })
     })
