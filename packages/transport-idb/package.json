@@ -39,7 +39,9 @@
   },
   "homepage": "https://github.com/ivandotv/fuerte#readme",
   "keywords": [],
-  "dependencies": {},
+  "dependencies": {
+    "idb": "^6.1.2"
+  },
   "devDependencies": {
     "@types/jest": "^26.0.23"
   },
