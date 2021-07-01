@@ -13,30 +13,6 @@ export type Factory<T, K extends any = any> = {
   create: FactoryFn<T, K>
 }
 
-/* RELOAD TYPES */
-export type TransportReloadResponse<T extends Transport<any>> = UnwrapPromise<
-  ReturnType<T['reload']>
->
-
-export type TransportReloadConfig<T extends Transport<any>> = Parameters<
-  T['reload']
->[1]
-
-export type ReloadStart<T extends Transport<K>, K extends Model<any, any>> = {
-  model: K
-  config: ReloadConfig
-  transportConfig?: TransportReloadConfig<T>
-}
-
-export type ReloadSuccess<T extends Transport<K>, K extends Model<any, any>> = {
-  response: TransportReloadResponse<T>
-} & ReloadStart<T, K>
-
-export type ReloadError<
-  T extends Transport<K>,
-  K extends Model<any, any>
-> = ReloadStart<T, K> & { error: any }
-
 /* SAVE TYPES */
 export type TransportSaveResponse<T extends Transport<any>> = UnwrapPromise<
   ReturnType<T['save']>
@@ -119,7 +95,6 @@ export type CollectionConfig = {
   autoSave?: AutoSaveConfig
   add?: AddConfig
   save?: SaveConfig
-  reload?: ReloadConfig
   delete?: DeleteConfig
   load?: LoadConfig
 }
@@ -128,7 +103,6 @@ export type RequiredCollectionConfig = {
   autoSave: Required<AutoSaveConfig>
   add: Required<AddConfig>
   save: Required<SaveConfig>
-  reload: Required<ReloadConfig>
   delete: Required<DeleteConfig>
   load: Required<LoadConfig>
 }
@@ -148,11 +122,6 @@ export interface SaveConfig {
 export interface DeleteConfig {
   remove?: boolean
   removeImmediately?: boolean
-  removeOnError?: boolean
-}
-
-export interface ReloadConfig {
-  // removeIfNoData?: boolean
   removeOnError?: boolean
 }
 

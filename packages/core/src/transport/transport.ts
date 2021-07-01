@@ -5,22 +5,17 @@ export interface Transport<TModel extends Model<any> = Model<any>> {
 
   save(model: TModel, config?: any): Promise<{ data?: any } | void>
 
-  reload(model: TModel, config?: any): Promise<{ data?: any } | void>
-
   delete(model: TModel, config?: any): Promise<{ data?: any } | void>
 }
 
 export class InMemoryTransport<TModel extends Model<any> = Model<any>>
-  implements Transport<TModel> {
+  implements Transport<TModel>
+{
   load(): Promise<{ data: any[] }> {
     return Promise.resolve({ data: [] })
   }
 
   save(model: TModel): Promise<void> {
-    return Promise.resolve()
-  }
-
-  reload(): Promise<void> {
     return Promise.resolve()
   }
 

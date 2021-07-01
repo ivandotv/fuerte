@@ -22,8 +22,7 @@ describe('Collection', () => {
       save: {
         insertPosition: 'start'
       },
-      delete: { removeOnError: true },
-      reload: { removeOnError: true }
+      delete: { removeOnError: true }
     }
 
     const collection = fixtures.collection(undefined, undefined, customConfig)

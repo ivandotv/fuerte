@@ -41,12 +41,6 @@ export class TransportIDB<T extends Model> implements Transport<T> {
     await db.clear(this.store)
   }
 
-  async reload(model: T) {
-    const db = await this.getDB()
-
-    return db.get(this.store, model.identity)
-  }
-
   async getById(id: string) {
     const db = await this.getDB()
     const data = await db.get(this.store, id)

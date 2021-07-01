@@ -9,22 +9,15 @@ import {
 } from 'mobx'
 import { nanoid } from 'nanoid'
 import { Collection } from '../collection/Collection'
-import {
-  DeleteConfig,
-  ReloadConfig,
-  SaveConfig,
-  UnwrapPromise
-} from '../utils/types'
+import { DeleteConfig, SaveConfig, UnwrapPromise } from '../utils/types'
 import { assertCollectionExists } from '../utils/utils'
 import { IdentityError } from './identity-error'
 
 export interface ModelTransportErrors<
   TSave = any | null,
-  TReload = any | null,
   TDelete = any | null
 > {
   save: TSave
-  reload: TReload
   delete: TDelete
 }
 
@@ -44,8 +37,6 @@ export abstract class Model<
 
   protected errors: ModelTransportErrors = {
     save: null,
-    // update: null,
-    reload: null,
     delete: null
   }
 
@@ -54,8 +45,6 @@ export abstract class Model<
   protected _isSaving = false
 
   protected _isDeleting = false
-
-  protected _isReloading = false
 
   protected ignoreChange = false
 
@@ -70,8 +59,6 @@ export abstract class Model<
       }
     | undefined
 
-  protected pendingReloadCalls = 0
-
   lastSavedData: TDTO | undefined = undefined
 
   get identityKey(): string {
@@ -85,7 +72,6 @@ export abstract class Model<
       this,
       | '_isDeleted'
       | '_isSaving'
-      | '_isReloading'
       | '_isDestroyed'
       | 'errors'
       | '_isDeleting'
@@ -103,8 +89,6 @@ export abstract class Model<
       isDirty: computed,
       _isDestroyed: observable,
       isDestroyed: computed,
-      _isReloading: observable,
-      isReloading: computed,
 
       isSyncing: computed,
       lastSavedData: observable,
@@ -120,17 +104,12 @@ export abstract class Model<
       errors: observable,
       saveError: computed,
       deleteError: computed,
-      reloadError: computed,
-
       _onAdded: action,
       _onRemoved: action,
 
       _onSaveStart: action,
       _onSaveSuccess: action,
       _onSaveError: action,
-      _onReloadStart: action,
-      _onReloadSuccess: action,
-      _onReloadError: action,
       _onDeleteError: action,
       _onDeleteStart: action,
       _onDeleteSuccess: action,
@@ -162,7 +141,7 @@ export abstract class Model<
   }
 
   get hasErrors(): boolean {
-    return !!this.errors.save || !!this.errors.reload || !!this.errors.delete
+    return !!this.errors.save || !!this.errors.delete
   }
 
   get saveError(): any {
@@ -171,10 +150,6 @@ export abstract class Model<
 
   get deleteError(): any {
     return this.errors.delete
-  }
-
-  get reloadError(): any {
-    return this.errors.reload
   }
 
   // @internal
@@ -200,7 +175,7 @@ export abstract class Model<
   }
 
   get isSyncing(): boolean {
-    return this.isSaving || this.isDeleting || this.isReloading
+    return this.isSaving || this.isDeleting
   }
 
   get isDeleting(): boolean {
@@ -215,10 +190,6 @@ export abstract class Model<
     return this._isDestroyed
   }
 
-  get isReloading(): boolean {
-    return this._isReloading
-  }
-
   async delete<T extends TCollection = TCollection>(
     config?: DeleteConfig,
     transportConfig?: any
@@ -228,23 +199,6 @@ export abstract class Model<
     assertCollectionExists(this.collection)
 
     const { response, error } = await this.collection.delete(
-      this,
-      config,
-      transportConfig
-    )
-
-    return { response, error }
-  }
-
-  async reload<T extends TCollection = TCollection>(
-    config?: ReloadConfig,
-    transportConfig?: any
-  ): Promise<
-    Pick<UnwrapPromise<ReturnType<T['reload']>>, 'response' | 'error'>
-  > {
-    assertCollectionExists(this.collection)
-
-    const { response, error } = await this.collection.reload(
       this,
       config,
       transportConfig
@@ -417,79 +371,6 @@ export abstract class Model<
     // return !this.identity
     return this.identity === this.cid || !this.identity
   }
-  /* RELOAD*/
-
-  // @internal
-  _onReloadStart({
-    config,
-    transportConfig
-  }: {
-    config: ReloadConfig
-    transportConfig: any
-  }): void {
-    this._isReloading = true
-    this.pendingReloadCalls++
-    this.errors.reload = undefined
-    this.onReloadStart({ config, transportConfig })
-  }
-
-  protected onReloadStart(data: {
-    config: ReloadConfig
-    transportConfig: any
-  }): void {}
-
-  // @internal
-  _onReloadSuccess(data: {
-    response: any
-    config: ReloadConfig
-    transportConfig: any
-    data?: any
-  }): void {
-    if (data.response?.data) {
-      this.updateFromReload(data.response.data)
-      this.lastSavedData = this.createPayload() // create new object
-    }
-
-    this.pendingReloadCalls--
-
-    if (this.pendingReloadCalls === 0) {
-      this._isReloading = false
-    }
-
-    this.onReloadSuccess(data)
-  }
-
-  protected onReloadSuccess(data: {
-    response: any
-    config: ReloadConfig
-    transportConfig: any
-    data?: any
-  }): void {}
-
-  _onReloadError(payload: {
-    error: any
-    data: any
-    config: any
-    transportConfig: any
-  }): void {
-    this.pendingReloadCalls--
-    if (this.pendingReloadCalls === 0) {
-      this._isReloading = false
-      this.errors.reload = payload.error
-    }
-    this.onReloadError(payload)
-  }
-
-  protected onReloadError(data: {
-    error: any
-    data: any
-    config: any
-    transportConfig: any
-  }): void {}
-
-  /* END RELOAD */
-
-  protected updateFromReload(data: any): void {}
 
   // @internal
   _onDeleteStart(data: { config: DeleteConfig; transportConfig: any }): void {
