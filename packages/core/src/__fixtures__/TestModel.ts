@@ -1,5 +1,5 @@
 import { makeObservable, observable } from 'mobx'
-import { Model, ModelConfig } from '../model/Model'
+import { Model } from '../model/Model'
 import {
   ReloadConfig,
   SaveConfig,
@@ -16,11 +16,7 @@ export type TestModelData = {
 }
 
 export class TestModel extends Model<TestCollection> {
-  static config: ModelConfig = {
-    identityKey: 'id',
-    setIdentityFromResponse: true
-  }
-
+  static identityKey = 'id'
   // id: string | undefined
 
   foo: string

@@ -292,7 +292,7 @@ export class Collection<
 
     const idReaction = reaction(
       () => model.identity,
-      (value) => {
+      value => {
         this.modelByIdentity.set(value, model)
       },
       { name: `id-${model.cid}` }
@@ -322,7 +322,7 @@ export class Collection<
       : this._models
 
     const modelsStarted: TModel[] = []
-    modelsArr.forEach((model) => {
+    modelsArr.forEach(model => {
       const disposerHit = this.autoSaveReactionByCid.get(model.cid)
       if (!disposerHit) {
         modelsStarted.push(model)
@@ -377,7 +377,7 @@ export class Collection<
       : this._models
 
     const modelsStopped: TModel[] = []
-    modelsArr.forEach((model) => {
+    modelsArr.forEach(model => {
       const disposer = this.autoSaveReactionByCid.get(model.cid)
       if (disposer) {
         disposer()
@@ -771,11 +771,11 @@ export class Collection<
   }
 
   get newModels(): TModel[] {
-    return this.models.filter((model) => model.isNew)
+    return this.models.filter(model => model.isNew)
   }
 
   get deletedModels(): TModel[] {
-    return this.models.filter((model) => model.isDeleted)
+    return this.models.filter(model => model.isDeleted)
   }
 
   get modelsSyncing(): TModel[] {
@@ -784,7 +784,7 @@ export class Collection<
 
   get modelsReloading(): TModel[] {
     const models: TModel[] = []
-    this._modelsReloading.forEach((data) => {
+    this._modelsReloading.forEach(data => {
       models.push(data.model)
     })
 
@@ -797,7 +797,7 @@ export class Collection<
 
   get modelsSaving(): TModel[] {
     const models: TModel[] = []
-    this._modelsSaving.forEach((data) => {
+    this._modelsSaving.forEach(data => {
       models.push(data.model)
     })
 
@@ -824,7 +824,7 @@ export class Collection<
 
   remove(cidOrModel: string | TModel | (string | TModel)[]): TModel[] {
     return this.removeFromCollection(
-      this.resolveModels(cidOrModel).map((model) => model.cid)
+      this.resolveModels(cidOrModel).map(model => model.cid)
     )
   }
 
@@ -1223,7 +1223,7 @@ export class Collection<
   protected async resetCollection<T>(data?: T[]): Promise<TModel[][]> {
     if (!data) {
       const removed = this.removeFromCollection(
-        this._models.map((model) => model.cid)
+        this._models.map(model => model.cid)
       )
 
       this.onReset([], removed)
@@ -1245,7 +1245,7 @@ export class Collection<
     }
 
     const removed = this.removeFromCollection(
-      this._models.map((model) => model.cid)
+      this._models.map(model => model.cid)
     )
     const added = this.addToCollection(modelsToAdd, { insertPosition: 'end' })
 
@@ -1271,15 +1271,15 @@ export class Collection<
     this.onDestroy()
 
     this.stopAutoSave()
-    this.identityReactionByCid.forEach((dispose) => {
+    this.identityReactionByCid.forEach(dispose => {
       dispose()
     })
 
     const models = this.removeFromCollection(
-      this._models.map((model) => model.cid)
+      this._models.map(model => model.cid)
     )
 
-    models.forEach((model) => {
+    models.forEach(model => {
       model.destroy()
     })
   }

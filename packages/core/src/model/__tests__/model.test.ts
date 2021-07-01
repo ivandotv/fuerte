@@ -1,14 +1,11 @@
 import { configure, makeObservable, observable, runInAction } from 'mobx'
 import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
 import { TestModel } from '../../__fixtures__/TestModel'
-import { ModelConfig } from '../Model'
 
 configure({ enforceActions: 'always' })
 
-TestModel.config = {
-  identityKey: 'id',
-  setIdentityFromResponse: true
-}
+TestModel.identityKey = 'id'
+TestModel.setIdentityFromResponse = true
 
 const fixtures = fixtureFactory()
 
@@ -33,10 +30,9 @@ describe('Model', () => {
     test('Use custom identifier key', async () => {
       const identityKey = 'isbn'
       class Test extends TestModel {
-        static config: ModelConfig = {
-          identityKey: identityKey,
-          setIdentityFromResponse: true
-        }
+        static identityKey = identityKey
+
+        static setIdentityFromResponse = true
 
         constructor(public isbn?: string) {
           super()

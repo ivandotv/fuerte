@@ -32,8 +32,10 @@ export type ReloadSuccess<T extends Transport<K>, K extends Model<any, any>> = {
   response: TransportReloadResponse<T>
 } & ReloadStart<T, K>
 
-export type ReloadError<T extends Transport<K>, K extends Model<any, any>> =
-  ReloadStart<T, K> & { error: any }
+export type ReloadError<
+  T extends Transport<K>,
+  K extends Model<any, any>
+> = ReloadStart<T, K> & { error: any }
 
 /* SAVE TYPES */
 export type TransportSaveResponse<T extends Transport<any>> = UnwrapPromise<
@@ -54,8 +56,10 @@ export type SaveSuccess<T extends Transport<K>, K extends Model<any, any>> = {
   response: TransportSaveResponse<T>
 } & SaveStart<T, K>
 
-export type SaveError<T extends Transport<K>, K extends Model<any, any>> =
-  SaveStart<T, K> & { error: any }
+export type SaveError<
+  T extends Transport<K>,
+  K extends Model<any, any>
+> = SaveStart<T, K> & { error: any }
 
 /* DELETE TYPES */
 
@@ -77,8 +81,10 @@ export type DeleteSuccess<T extends Transport<K>, K extends Model<any, any>> = {
   response: TransportDeleteResponse<T>
 } & DeleteStart<T, K>
 
-export type DeleteError<T extends Transport<K>, K extends Model<any, any>> =
-  DeleteStart<T, K> & { error: any }
+export type DeleteError<
+  T extends Transport<K>,
+  K extends Model<any, any>
+> = DeleteStart<T, K> & { error: any }
 
 /* LOAD TYPES */
 
@@ -95,15 +101,19 @@ export type LoadStart<T extends Transport<K>, K extends Model<any, any>> = {
   transportConfig?: TransportLoadConfig<T>
 }
 
-export type LoadSuccess<T extends Transport<K>, K extends Model<any, any>> =
-  LoadStart<T, K> & {
-    added: K[]
-    removed: K[]
-    response: TransportLoadResponse<T>
-  }
+export type LoadSuccess<
+  T extends Transport<K>,
+  K extends Model<any, any>
+> = LoadStart<T, K> & {
+  added: K[]
+  removed: K[]
+  response: TransportLoadResponse<T>
+}
 
-export type LoadError<T extends Transport<K>, K extends Model<any, any>> =
-  LoadStart<T, K> & { error: any }
+export type LoadError<
+  T extends Transport<K>,
+  K extends Model<any, any>
+> = LoadStart<T, K> & { error: any }
 
 export type CollectionConfig = {
   autoSave?: AutoSaveConfig

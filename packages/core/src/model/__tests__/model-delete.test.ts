@@ -184,7 +184,7 @@ describe('Model - delete', () => {
 
       collection.add(model)
 
-      model.delete(config, transportConfig).catch((error) => {
+      model.delete(config, transportConfig).catch(error => {
         expect(deleteErrorSpy).toBeCalledWith({
           error,
           config,

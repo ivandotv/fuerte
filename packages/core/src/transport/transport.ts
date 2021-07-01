@@ -11,8 +11,7 @@ export interface Transport<TModel extends Model<any> = Model<any>> {
 }
 
 export class InMemoryTransport<TModel extends Model<any> = Model<any>>
-  implements Transport<TModel>
-{
+  implements Transport<TModel> {
   load(): Promise<{ data: any[] }> {
     return Promise.resolve({ data: [] })
   }
