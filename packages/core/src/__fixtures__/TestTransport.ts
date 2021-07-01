@@ -19,12 +19,6 @@ export class TestTransport implements Transport<TestModel> {
     return Promise.resolve({ data: { id: nanoid() } })
   }
 
-  reload(_model: TestModel, _config?: any) {
-    return Promise.resolve({
-      data: { foo: `${_model.cid}-foo`, bar: `${_model.cid}-bar` }
-    })
-  }
-
   delete(_model: TestModel, _config: any): Promise<{ data: any }> {
     return Promise.resolve({ data: undefined })
   }

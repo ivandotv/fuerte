@@ -23,10 +23,6 @@ import {
   LoadStart,
   LoadSuccess,
   ModelInsertPosition,
-  ReloadConfig,
-  ReloadError,
-  ReloadStart,
-  ReloadSuccess,
   RequiredCollectionConfig,
   SaveConfig,
   SaveError,
@@ -36,8 +32,6 @@ import {
   TransportDeleteResponse,
   TransportLoadConfig,
   TransportLoadResponse,
-  TransportReloadConfig,
-  TransportReloadResponse,
   TransportSaveConfig,
   TransportSaveResponse,
   UnwrapPromise
@@ -70,12 +64,6 @@ export class Collection<
     { token: Record<string, never>; model: TModel }
   > = new Map()
 
-  // holds models that are reloading but are not yet added to collection
-  protected _modelsReloading: Map<
-    string,
-    { token: Record<string, never>; model: TModel }
-  > = new Map()
-
   protected modelByCid: Map<string, TModel> = new Map()
 
   protected modelByIdentity: Map<string | number, TModel> = new Map()
@@ -104,10 +92,6 @@ export class Collection<
         ...defaultConfig.add,
         ...(config?.add ? config.add : undefined)
       },
-      reload: {
-        ...defaultConfig.reload,
-        ...(config?.reload ? config.reload : undefined)
-      },
       delete: {
         ...defaultConfig.delete,
         ...(config?.delete ? config.delete : undefined)
@@ -125,16 +109,12 @@ export class Collection<
       | 'modelByCid'
       | '_modelsDeleting'
       | '_modelsSaving'
-      | '_modelsReloading'
       | 'onSaveStart'
       | 'onSaveError'
       | 'onSaveSuccess'
       | 'onDeleteStart'
       | 'onDeleteSuccess'
       | 'onDeleteError'
-      | 'onReloadStart'
-      | 'onReloadSuccess'
-      | 'onReloadError'
       | 'onLoadStart'
       | 'onLoadSuccess'
       | 'onLoadError'
@@ -144,12 +124,10 @@ export class Collection<
       save: action,
       add: action,
       delete: action,
-      reload: action,
       load: action,
       _models: observable.shallow,
       _modelsSaving: observable.shallow,
       _modelsDeleting: observable.shallow,
-      _modelsReloading: observable.shallow,
       modelByCid: observable.shallow,
       modelByIdentity: observable.shallow,
       onSaveStart: action,
@@ -158,9 +136,6 @@ export class Collection<
       onDeleteStart: action,
       onDeleteSuccess: action,
       onDeleteError: action,
-      onReloadStart: action,
-      onReloadSuccess: action,
-      onReloadError: action,
       onLoadStart: action,
       onLoadSuccess: action,
       onLoadError: action,
@@ -168,7 +143,6 @@ export class Collection<
       removeFromCollection: action,
       destroy: action,
       modelsSyncing: computed,
-      modelsReloading: computed,
       modelsDeleting: computed,
       modelsSaving: computed,
       newModels: computed,
@@ -292,7 +266,7 @@ export class Collection<
 
     const idReaction = reaction(
       () => model.identity,
-      value => {
+      (value) => {
         this.modelByIdentity.set(value, model)
       },
       { name: `id-${model.cid}` }
@@ -322,7 +296,7 @@ export class Collection<
       : this._models
 
     const modelsStarted: TModel[] = []
-    modelsArr.forEach(model => {
+    modelsArr.forEach((model) => {
       const disposerHit = this.autoSaveReactionByCid.get(model.cid)
       if (!disposerHit) {
         modelsStarted.push(model)
@@ -377,7 +351,7 @@ export class Collection<
       : this._models
 
     const modelsStopped: TModel[] = []
-    modelsArr.forEach(model => {
+    modelsArr.forEach((model) => {
       const disposer = this.autoSaveReactionByCid.get(model.cid)
       if (disposer) {
         disposer()
@@ -583,111 +557,6 @@ export class Collection<
     }
   }
 
-  async reload(
-    cidOrModel: TModel | string,
-    config?: ReloadConfig,
-    transportConfig?: TransportReloadConfig<TTransport>
-  ): Promise<
-    | {
-        response: TransportReloadResponse<TTransport>
-        model: TModel
-        error: undefined
-      }
-    | {
-        error: Omit<NonNullable<any>, 'false'>
-        response: undefined
-        model: undefined
-      }
-  > {
-    const reloadConfig = {
-      ...this.config.reload,
-      ...config
-    }
-
-    const model = this.resolveModel(cidOrModel)
-    this.modelCanBeReloaded(model)
-
-    const token = {}
-    try {
-      this._modelsReloading.set(model.cid, { token, model })
-      this.onReloadStart({
-        model,
-        config: reloadConfig,
-        transportConfig: transportConfig
-      })
-      model._onReloadStart({
-        config: reloadConfig,
-        transportConfig: transportConfig
-      })
-
-      let response = (await this.transport.reload(
-        model,
-        transportConfig
-      )) as TransportReloadResponse<TTransport>
-      response = this.parseReloadResponse(
-        response,
-        reloadConfig,
-        transportConfig
-      )
-
-      this.onReloadSuccess({
-        model,
-        response,
-        config: reloadConfig,
-        transportConfig: transportConfig
-      })
-
-      model._onReloadSuccess({
-        response,
-        config: reloadConfig,
-        transportConfig: transportConfig
-      })
-
-      return {
-        response,
-        model,
-        error: undefined
-      }
-    } catch (error) {
-      this.onReloadError({
-        model,
-        error,
-        config: reloadConfig,
-        transportConfig: transportConfig
-      })
-
-      model._onReloadError({
-        error,
-        data: error?.data,
-        config: reloadConfig,
-        transportConfig: transportConfig
-      })
-
-      if (reloadConfig.removeOnError) {
-        this.removeFromCollection([model.cid])
-      }
-
-      return {
-        error,
-        response: undefined,
-        model: undefined
-      }
-    } finally {
-      const tokenData = this._modelsReloading.get(model.cid)
-      if (tokenData?.token === token) {
-        runInAction(() => {
-          this._modelsReloading.delete(model.cid)
-        })
-      }
-    }
-  }
-
-  onReloadStart(data: ReloadStart<TTransport, TModel>): void {}
-
-  onReloadSuccess(data: ReloadSuccess<TTransport, TModel>): void {}
-
-  onReloadError(data: ReloadError<TTransport, TModel>): void {}
-
   getByIdentity(value: string): TModel | undefined
 
   getByIdentity(values: string[]): TModel[] | undefined
@@ -752,14 +621,6 @@ export class Collection<
     return response
   }
 
-  protected parseReloadResponse<T>(
-    response: T,
-    _reloadConfig: ReloadConfig,
-    _transportConfig: any
-  ): T {
-    return response
-  }
-
   protected onSaveStart(_data: SaveStart<TTransport, TModel>): void {}
 
   protected onSaveSuccess(_data: SaveSuccess<TTransport, TModel>): void {}
@@ -771,24 +632,15 @@ export class Collection<
   }
 
   get newModels(): TModel[] {
-    return this.models.filter(model => model.isNew)
+    return this.models.filter((model) => model.isNew)
   }
 
   get deletedModels(): TModel[] {
-    return this.models.filter(model => model.isDeleted)
+    return this.models.filter((model) => model.isDeleted)
   }
 
   get modelsSyncing(): TModel[] {
-    return this.modelsDeleting.concat(this.modelsSaving, this.modelsReloading)
-  }
-
-  get modelsReloading(): TModel[] {
-    const models: TModel[] = []
-    this._modelsReloading.forEach(data => {
-      models.push(data.model)
-    })
-
-    return models
+    return this.modelsDeleting.concat(this.modelsSaving)
   }
 
   get modelsDeleting(): TModel[] {
@@ -797,7 +649,7 @@ export class Collection<
 
   get modelsSaving(): TModel[] {
     const models: TModel[] = []
-    this._modelsSaving.forEach(data => {
+    this._modelsSaving.forEach((data) => {
       models.push(data.model)
     })
 
@@ -824,7 +676,7 @@ export class Collection<
 
   remove(cidOrModel: string | TModel | (string | TModel)[]): TModel[] {
     return this.removeFromCollection(
-      this.resolveModels(cidOrModel).map(model => model.cid)
+      this.resolveModels(cidOrModel).map((model) => model.cid)
     )
   }
 
@@ -1004,14 +856,6 @@ export class Collection<
   protected assertModelIsExists(model?: TModel): asserts model {
     if (!model) {
       throw new Error('Model is not in the collection')
-    }
-  }
-
-  protected modelCanBeReloaded(model?: TModel): asserts model is TModel {
-    this.assertModelIsExists(model)
-
-    if (model.isNew) {
-      throw new Error('New model cannot be reloaded')
     }
   }
 
@@ -1223,7 +1067,7 @@ export class Collection<
   protected async resetCollection<T>(data?: T[]): Promise<TModel[][]> {
     if (!data) {
       const removed = this.removeFromCollection(
-        this._models.map(model => model.cid)
+        this._models.map((model) => model.cid)
       )
 
       this.onReset([], removed)
@@ -1245,7 +1089,7 @@ export class Collection<
     }
 
     const removed = this.removeFromCollection(
-      this._models.map(model => model.cid)
+      this._models.map((model) => model.cid)
     )
     const added = this.addToCollection(modelsToAdd, { insertPosition: 'end' })
 
@@ -1271,15 +1115,15 @@ export class Collection<
     this.onDestroy()
 
     this.stopAutoSave()
-    this.identityReactionByCid.forEach(dispose => {
+    this.identityReactionByCid.forEach((dispose) => {
       dispose()
     })
 
     const models = this.removeFromCollection(
-      this._models.map(model => model.cid)
+      this._models.map((model) => model.cid)
     )
 
-    models.forEach(model => {
+    models.forEach((model) => {
       model.destroy()
     })
   }

@@ -31,9 +31,6 @@ export const defaultConfig: RequiredCollectionConfig = {
     addImmediately: true,
     addOnError: true
   },
-  reload: {
-    removeOnError: false
-  },
   delete: {
     remove: true,
     removeImmediately: true,

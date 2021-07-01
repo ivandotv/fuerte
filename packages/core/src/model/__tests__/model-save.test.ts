@@ -265,7 +265,7 @@ describe('Model - save', () => {
 
       const result = await collection
         .save(model, config, transportConfig)
-        .catch(error => {
+        .catch((error) => {
           expect.assertions(2)
           expect(modelSaveErrorSpy).toBeCalledWith({
             error,

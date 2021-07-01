@@ -3,9 +3,6 @@ import {
   CollectionConfig,
   DeleteConfig,
   LoadConfig,
-  ReloadError,
-  ReloadStart,
-  ReloadSuccess,
   SaveConfig,
   SaveStart
 } from '../utils/types'
@@ -71,18 +68,6 @@ export class TestCollection extends Collection<
     transportConfig: any
   }): void {
     super.onSaveError(data)
-  }
-
-  onReloadStart(data: ReloadStart<TestTransport, TestModel>): void {
-    super.onReloadStart(data)
-  }
-
-  onReloadSuccess(data: ReloadSuccess<TestTransport, TestModel>): void {
-    super.onReloadSuccess(data)
-  }
-
-  onReloadError(data: ReloadError<TestTransport, TestModel>): void {
-    super.onReloadError(data)
   }
 
   onDeleteSuccess(data: {

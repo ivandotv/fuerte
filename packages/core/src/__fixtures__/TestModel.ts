@@ -1,7 +1,6 @@
 import { makeObservable, observable } from 'mobx'
 import { Model } from '../model/Model'
 import {
-  ReloadConfig,
   SaveConfig,
   TransportSaveConfig,
   TransportSaveResponse
@@ -56,12 +55,6 @@ export class TestModel extends Model<TestCollection> {
     }
   }
 
-  updateFromReload(data: TestModelData): void {
-    super.updateFromReload(data)
-    this.foo = data.foo
-    this.bar = data.bar
-  }
-
   onSaveSuccess(data: {
     response: TransportSaveResponse<TestTransport>
     config: SaveConfig
@@ -81,33 +74,6 @@ export class TestModel extends Model<TestCollection> {
 
   onSaveStart(data: { config: SaveConfig; transportConfig: any }): void {
     super.onSaveStart(data)
-  }
-
-  onReloadStart(data: {
-    config: ReloadConfig
-    transportConfig: any
-    isBulk: boolean
-  }): void {
-    super.onReloadStart(data)
-  }
-
-  onReloadSuccess(data: {
-    response: { data: any }
-    config: ReloadConfig
-    transportConfig: any
-    isBulk: boolean
-    data: any
-  }): void {
-    super.onReloadSuccess(data)
-  }
-
-  onReloadError(data: {
-    error: any
-    data: any
-    config: ReloadConfig
-    transportConfig: any
-  }): void {
-    super.onReloadError(data)
   }
 
   onRemoved(): void {
