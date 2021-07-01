@@ -2,7 +2,6 @@ import { configure } from 'mobx'
 import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
 import { TestModel } from '../../__fixtures__/TestModel'
 import { IdentityError } from '../identity-error'
-import { ModelConfig } from '../Model'
 
 configure({ enforceActions: 'always', reactionRequiresObservable: true })
 
@@ -15,10 +14,7 @@ describe('Model identity', () => {
   test('Set model class identity key', () => {
     const identityKey = 'isbn'
     class Test extends TestModel {
-      static config: ModelConfig = {
-        identityKey,
-        setIdentityFromResponse: true
-      }
+      static identityKey = identityKey
     }
 
     const model = new Test()
@@ -53,11 +49,11 @@ describe('Model identity', () => {
   test('If not set in config, do not try to extract identity value from the response ', async () => {
     const newId = '123'
     class Test extends TestModel {
-      static config: ModelConfig = {
-        identityKey: 'id',
-        setIdentityFromResponse: false
-      }
+      static identityKey = 'id'
+
+      static setIdentityFromResponse = false
     }
+
     const model = new Test()
     const transport = fixtures.transport()
     jest.spyOn(transport, 'save').mockResolvedValue({ data: { id: newId } })

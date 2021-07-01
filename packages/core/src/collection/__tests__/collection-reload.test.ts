@@ -285,7 +285,7 @@ describe('Collection - reload models', () => {
 
     jest.spyOn(transport, 'reload').mockImplementationOnce(
       () =>
-        new Promise((resolve) =>
+        new Promise(resolve =>
           setTimeout(() => {
             resolve({ data: { foo: '', bar: '' } })
           }, 10)

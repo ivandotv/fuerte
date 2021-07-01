@@ -1,5 +1,4 @@
 import { configure, makeObservable, observable } from 'mobx'
-import { ModelConfig } from '../../model/Model'
 import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
 import { TestModel } from '../../__fixtures__/TestModel'
 
@@ -216,10 +215,9 @@ describe('Collection add models', () => {
       class Test extends TestModel {
         isbn: string | undefined
 
-        static config: ModelConfig = {
-          identityKey: 'isbn',
-          setIdentityFromResponse: true
-        }
+        static identityKey = 'isbn'
+
+        static setIdentityFromResponse = true
 
         constructor() {
           super()
@@ -251,10 +249,9 @@ describe('Collection add models', () => {
           })
         }
 
-        static config: ModelConfig = {
-          identityKey: 'isbn',
-          setIdentityFromResponse: true
-        }
+        static identityKey = 'isbn'
+
+        static setIdentityFromResponse = true
       }
 
       const model = new Test('1')

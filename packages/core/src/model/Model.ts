@@ -28,21 +28,15 @@ export interface ModelTransportErrors<
   delete: TDelete
 }
 
-export type ModelConfig = {
-  identityKey: string
-  setIdentityFromResponse: boolean
-}
-
 export abstract class Model<
   TCollection extends Collection<any, any, any> = Collection<any, any, any>,
   TDTO = any
 > {
-  collection: TCollection | undefined
+  static identityKey = 'cid'
 
-  static config: ModelConfig = {
-    identityKey: 'cid', //force child classes to set identity key
-    setIdentityFromResponse: true
-  }
+  static setIdentityFromResponse = true
+
+  collection: TCollection | undefined
 
   readonly cid: string
 
@@ -81,7 +75,7 @@ export abstract class Model<
   lastSavedData: TDTO | undefined = undefined
 
   get identityKey(): string {
-    return (this.constructor as typeof Model).config.identityKey
+    return (this.constructor as typeof Model).identityKey
   }
 
   constructor() {
@@ -324,11 +318,12 @@ export abstract class Model<
       this.pendingSaveCall.state = 'resolved'
     }
 
-    const modelConfig = (this.constructor as typeof Model).config
+    const setFromResponse = (this.constructor as typeof Model)
+      .setIdentityFromResponse
 
-    if (this.isNew && modelConfig.setIdentityFromResponse) {
-      const key = this.identityKey
+    const identityKey = this.identityKey
 
+    if (this.isNew && setFromResponse) {
       const identityValue = this.extractIdentityValue(
         response?.data,
         config,
@@ -337,14 +332,14 @@ export abstract class Model<
 
       if (!identityValue) {
         throw new IdentityError(
-          `Could not set identity for key: ${modelConfig.identityKey} `
+          `Could not set identity for key: ${identityKey} `
         )
       }
 
       this.setIdentity(identityValue)
 
       // @ts-expect-error - dynamic key access
-      this.lastSavedData[key] = this.identity
+      this.lastSavedData[identityKey] = this.identity
     }
     this.onSaveSuccess({
       config,
