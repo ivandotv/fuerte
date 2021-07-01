@@ -14,7 +14,10 @@ const argv = require('minimist')(process.argv.slice(2))
 const packageRelativePath = path.relative(__dirname, process.cwd())
 const pkg = require(`${packageRelativePath}/package.json`)
 
-process.env.BUILD_PACKAGE_NAME = pkg.name
+const withNamespace = pkg.name.split('/')[1]
+const name = withNamespace ? withNamespace : pkg.name
+
+process.env.BUILD_PACKAGE_NAME = name
 
 const allBuilds = ['cjs', 'esm', 'umd']
 
@@ -31,7 +34,7 @@ process.env.BUILD_TARGET = buildBundle.join(',')
 })()
 
 let tasks = [
-  function (cb) {
+  function(cb) {
     spawn(
       'yarn',
       [
@@ -48,7 +51,7 @@ let tasks = [
         stdio: 'inherit',
         shell: true
       }
-    ).on('exit', (code) => {
+    ).on('exit', code => {
       cb(code)
     })
   }

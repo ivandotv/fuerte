@@ -1,5 +1,5 @@
 import { IReactionPublic } from 'mobx'
-import { Collection } from '..'
+import { Collection } from '../collection/Collection'
 
 export function wrapInArray<T = any>(item: T | T[]): T[] {
   return Array.isArray(item) ? [...item] : [item]

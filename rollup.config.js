@@ -4,16 +4,19 @@ import resolve from '@rollup/plugin-node-resolve'
 import filesize from 'rollup-plugin-filesize'
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import { terser } from 'rollup-plugin-terser'
-// import visualizer from 'rollup-plugin-visualizer'
+import minimist from 'minimist'
+import visualizer from 'rollup-plugin-visualizer'
+
+const argv = minimist(process.argv.slice(2))
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 
-const packageName = process.env.BUILD_PACKAGE_NAME
+const packageName = process.env.BUILD_PACKAGE_NAME.toLowerCase()
 
 const input = 'src/index.ts'
 
-const unpkgFilePath = libPath('./dist/unpkg', packageName.toLocaleLowerCase())
-const esmFilePath = libPath('./dist/esm', packageName.toLocaleLowerCase())
+const umdFilePath = libPath('./dist/unpkg', packageName)
+const esmFilePath = libPath('./dist/esm', packageName)
 
 // https://github.com/rollup/rollup/issues/703#issuecomment-314848245
 function defaultPlugins(config = {}) {
@@ -22,8 +25,8 @@ function defaultPlugins(config = {}) {
     peerDepsExternal(),
     babel(config.babel || { babelHelpers: 'bundled' }),
     commonjs(),
-    filesize()
-    // visualizer({ template: 'treemap' })
+    argv.watch ? undefined : filesize(),
+    visualizer({ template: 'treemap' })
   ]
 }
 
@@ -66,21 +69,26 @@ const cjsProd = {
   })
 }
 
+const umdGlobals = {
+  mobx: 'mobx'
+}
 // umd build for the browser
 const umd = {
   input,
   output: [
     {
-      file: unpkgFilePath('.js'),
-      format: 'umd',
-      name: packageName,
-      sourcemap: true
-    },
-    {
-      file: unpkgFilePath('.min.js'),
+      file: umdFilePath('.js'),
       format: 'umd',
       name: packageName,
       sourcemap: true,
+      globals: umdGlobals
+    },
+    {
+      file: umdFilePath('.min.js'),
+      format: 'umd',
+      name: packageName,
+      sourcemap: true,
+      globals: umdGlobals,
       plugins: [terser()]
     }
   ],
@@ -97,16 +105,18 @@ const umdWithPolyfill = {
   input,
   output: [
     {
-      file: unpkgFilePath('.polyfill.js'),
-      format: 'umd',
-      name: packageName,
-      sourcemap: true
-    },
-    {
-      file: unpkgFilePath('.polyfill.min.js'),
+      file: umdFilePath('.polyfill.js'),
       format: 'umd',
       name: packageName,
       sourcemap: true,
+      globals: umdGlobals
+    },
+    {
+      file: umdFilePath('.polyfill.min.js'),
+      format: 'umd',
+      name: packageName,
+      sourcemap: true,
+      globals: umdGlobals,
       plugins: [terser()]
     }
   ],
@@ -122,18 +132,25 @@ const umdWithPolyfill = {
 // build for browser as module
 const esm = {
   input,
+  watch: argv.watch
+    ? {
+        chokidar: false
+      }
+    : undefined,
   output: [
     {
       file: esmFilePath('.esm.js'),
       format: 'esm',
       sourcemap: true
     },
-    {
-      file: esmFilePath('.esm.min.js'),
-      format: 'esm',
-      sourcemap: true,
-      plugins: [terser()]
-    }
+    argv.watch
+      ? undefined
+      : {
+          file: esmFilePath('.esm.min.js'),
+          format: 'esm',
+          sourcemap: true,
+          plugins: [terser()]
+        }
   ],
   plugins: defaultPlugins({
     babel: {
@@ -144,38 +161,14 @@ const esm = {
   })
 }
 
-const esmWithPolyfill = {
-  input,
-  output: [
-    {
-      file: esmFilePath('.esm.polyfill.js'),
-      format: 'esm',
-      sourcemap: true
-    },
-    {
-      file: esmFilePath('.esm.polyfill.min.js'),
-      format: 'esm',
-      sourcemap: true,
-      plugins: [terser()]
-    }
-  ],
-  plugins: defaultPlugins({
-    babel: {
-      extensions,
-      envName: 'browserModulePolyfill',
-      babelHelpers: 'bundled'
-    }
-  })
-}
-
 const envToBuild = {
   cjs: [cjsDev, cjsProd],
   umd: [umd, umdWithPolyfill],
-  esm: [esm, esmWithPolyfill]
+  esm: [esm]
 }
 
 function libPath(path, libName) {
-  return function (suffix) {
+  return function(suffix) {
     return path.concat('/', libName, suffix)
   }
 }
@@ -185,7 +178,7 @@ function chooseBuild(buildMap, builds) {
   const result = []
 
   if (envArr.length > 0) {
-    envArr.forEach((element) => {
+    envArr.forEach(element => {
       if (buildMap[element]) {
         result.push(...buildMap[element])
         console.log(`Will build: ${element}`)

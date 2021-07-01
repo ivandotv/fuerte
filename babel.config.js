@@ -115,8 +115,8 @@ module.exports = {
           }
         ]
       ],
-      ignore: ignoreForProduction,
-      plugins: [['transform-define', browserReplacements]]
+      plugins: [['transform-define', browserReplacements]],
+      ignore: ignoreForProduction
     },
     browserPolyfill: {
       presets: [
@@ -151,23 +151,6 @@ module.exports = {
       plugins: [['transform-define', browserReplacements]],
       ignore: ignoreForProduction
     },
-    browserModulePolyfill: {
-      presets: [
-        [
-          '@babel/env',
-          {
-            // debug: true,
-            useBuiltIns: 'usage',
-            corejs: 3,
-            targets: {
-              esmodules: true
-            }
-          }
-        ]
-      ],
-      plugins: [['transform-define', browserReplacements]],
-      ignore: ignoreForProduction
-    },
     cjsWatch: {
       // commonjs for node
       presets: [
@@ -194,7 +177,7 @@ module.exports = {
             // debug: true,
             modules: 'cjs',
             targets: {
-              node: 12 // es2018
+              node: 14 // es2018
             }
           }
         ]
@@ -210,7 +193,7 @@ module.exports = {
           {
             modules: false,
             targets: {
-              node: 12 // es2018
+              node: 14 // es2018
             }
           }
         ]
