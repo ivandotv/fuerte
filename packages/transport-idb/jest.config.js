@@ -12,6 +12,7 @@ module.exports = {
     '!<rootDir>/src/__tests__/**',
     '!<rootDir>/src/scratch/**',
     '!<rootDir>/src/**/__tests__/**',
-    '!<rootDir>/src/**/__fixtures__/**'
+    '!<rootDir>/src/**/__fixtures__/**',
+    '!<rootDir>/src/**/*.d.ts'
   ]
 }
