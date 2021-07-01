@@ -1,15 +1,6 @@
 import { Model, Transport } from '@fuerte/core'
 import { IDBPDatabase, openDB } from 'idb'
 
-// type DBValue = { station: RadioStation; date: Date; _id: string }
-
-// interface LocalSchema<T extends Model, K extends string> extends DBSchema {
-//   [K]: {
-//     key: string
-//     value: T
-//   }
-// }
-
 export class TransportIDB<T extends Model> implements Transport<T> {
   protected db!: IDBPDatabase
 
@@ -17,7 +8,7 @@ export class TransportIDB<T extends Model> implements Transport<T> {
   constructor(
     public dbName: string,
     public store = 'models',
-    public keyPath = 'identityKey',
+    public keyPath = 'cid',
     protected customInitFn?: (
       dbName: string,
       store: string,
@@ -54,6 +45,14 @@ export class TransportIDB<T extends Model> implements Transport<T> {
     const db = await this.getDB()
 
     return db.get(this.store, model.identity)
+  }
+
+  async getById(id: string) {
+    const db = await this.getDB()
+    const data = await db.get(this.store, id)
+    if (data) {
+      return { data }
+    }
   }
 
   async initDB() {
