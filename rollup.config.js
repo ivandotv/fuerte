@@ -21,7 +21,7 @@ const esmFilePath = libPath('./dist/esm', packageName)
 // https://github.com/rollup/rollup/issues/703#issuecomment-314848245
 function defaultPlugins(config = {}) {
   return [
-    resolve({ extensions }),
+    resolve({ extensions, browser: true }),
     peerDepsExternal(),
     babel(config.babel || { babelHelpers: 'bundled' }),
     commonjs(),
@@ -168,7 +168,7 @@ const envToBuild = {
 }
 
 function libPath(path, libName) {
-  return function(suffix) {
+  return function (suffix) {
     return path.concat('/', libName, suffix)
   }
 }
@@ -178,7 +178,7 @@ function chooseBuild(buildMap, builds) {
   const result = []
 
   if (envArr.length > 0) {
-    envArr.forEach(element => {
+    envArr.forEach((element) => {
       if (buildMap[element]) {
         result.push(...buildMap[element])
         console.log(`Will build: ${element}`)
