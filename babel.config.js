@@ -91,11 +91,12 @@ module.exports = {
         [
           '@babel/env',
           {
-            useBuiltIns: 'usage',
-            corejs: 3,
-            targets: {
-              browsers: ['>0.2%', 'not dead', 'not op_mini all']
-            }
+            // useBuiltIns: 'usage',
+            // corejs: 3,
+            // targets: {
+            //   browsers: ['>0.2%', 'not dead', 'not op_mini all']
+            // }
+            // debug: true
           }
         ]
       ],
@@ -191,6 +192,7 @@ module.exports = {
         [
           '@babel/env',
           {
+            // debug: true,
             modules: false,
             targets: {
               node: 14 // es2018
