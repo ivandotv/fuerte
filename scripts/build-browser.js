@@ -34,7 +34,7 @@ process.env.BUILD_TARGET = buildBundle.join(',')
 })()
 
 let tasks = [
-  function(cb) {
+  (cb) => {
     spawn(
       'yarn',
       [
@@ -51,7 +51,7 @@ let tasks = [
         stdio: 'inherit',
         shell: true
       }
-    ).on('exit', code => {
+    ).on('exit', (code) => {
       cb(code)
     })
   }
