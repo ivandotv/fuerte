@@ -97,6 +97,7 @@ export type CollectionConfig = {
   save?: SaveConfig
   delete?: DeleteConfig
   load?: LoadConfig
+  sortFn?: (a: any, b: any) => number
 }
 
 export type RequiredCollectionConfig = {
@@ -105,6 +106,7 @@ export type RequiredCollectionConfig = {
   save: Required<SaveConfig>
   delete: Required<DeleteConfig>
   load: Required<LoadConfig>
+  sortFn?: (a: any, b: any) => number
 }
 
 export type ModelInsertPosition = 'start' | 'end'

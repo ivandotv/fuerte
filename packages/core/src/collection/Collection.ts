@@ -39,7 +39,6 @@ import {
 import { ASYNC_STATUS, debounceReaction, wrapInArray } from '../utils/utils'
 import {
   CompareError,
-  defaultConfig,
   DuplicateModelStrategy,
   ModelCompareResult
 } from './collection-config'
@@ -81,23 +80,31 @@ export class Collection<
   ) {
     this.config = {
       autoSave: {
-        ...defaultConfig.autoSave,
+        enabled: false,
+        debounceMs: 0,
         ...(config?.autoSave ? config.autoSave : undefined)
       },
       save: {
-        ...defaultConfig.save,
+        insertPosition: 'end',
+        addImmediately: true,
+        addOnError: true,
         ...(config?.save ? config.save : undefined)
       },
       add: {
-        ...defaultConfig.add,
+        insertPosition: 'end',
         ...(config?.add ? config.add : undefined)
       },
       delete: {
-        ...defaultConfig.delete,
+        remove: true,
+        removeImmediately: true,
+        removeOnError: false,
         ...(config?.delete ? config.delete : undefined)
       },
       load: {
-        ...defaultConfig.load,
+        duplicateModelStrategy: DuplicateModelStrategy.KEEP_NEW,
+        compareFn: () => ModelCompareResult.KEEP_NEW,
+        insertPosition: 'end',
+        reset: false,
         ...(config?.load ? config.load : undefined)
       }
     }
