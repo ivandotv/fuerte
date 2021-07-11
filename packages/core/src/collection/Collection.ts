@@ -220,7 +220,7 @@ export class Collection<
       const previousCollection = model.getCollection()
       // model is already in some other collection
       if (previousCollection) {
-        previousCollection.removeFromCollection([model.cid])
+        previousCollection.removeFromCollection(model)
       }
       // }
 
@@ -665,9 +665,7 @@ export class Collection<
 
   pop(): TModel | undefined {
     if (this.models.length > 0) {
-      return this.removeFromCollection([
-        this.models[this.models.length - 1].cid
-      ])[0]
+      return this.removeFromCollection(this.models[this.models.length - 1])[0]
     }
 
     return undefined
@@ -675,16 +673,14 @@ export class Collection<
 
   shift(): TModel | undefined {
     if (this.models.length > 0) {
-      return this.removeFromCollection([this.models[0].cid])[0]
+      return this.removeFromCollection(this.models[0])[0]
     }
 
     return undefined
   }
 
   remove(cidOrModel: string | TModel | (string | TModel)[]): TModel[] {
-    return this.removeFromCollection(
-      this.resolveModels(cidOrModel).map((model) => model.cid)
-    )
+    return this.removeFromCollection(this.resolveModels(cidOrModel))
   }
 
   removeAtIndex(index: number): TModel | undefined {
@@ -692,23 +688,23 @@ export class Collection<
       return undefined
     }
     const model = this._models[index]
-    const removed = this.removeFromCollection([model.cid])
+    const removed = this.removeFromCollection(model)
 
     return removed[0]
   }
 
-  protected removeFromCollection(cid: string[]): TModel[] {
-    const cids = new Set(cid)
+  protected removeFromCollection(model: TModel | TModel[]): TModel[] {
+    const modelCids = new Set(wrapInArray(model).map((model) => model.cid))
 
     const removed = []
     const currentCount = this._models.length
 
     // optimize for only one element
-    if (cids.size === 1) {
+    if (modelCids.size === 1) {
       for (let i = 0; i < currentCount; i++) {
         const model = this._models[i]
         this.assertIsModel(model)
-        const inCollection = cids.has(model.cid) //model is in the collection
+        const inCollection = modelCids.has(model.cid) //model is in the collection
         if (inCollection) {
           this._models.splice(i, 1)
           removed.push(model)
@@ -725,7 +721,7 @@ export class Collection<
       for (let i = 0; i < currentCount; i++) {
         const model = this._models[i]
         this.assertIsModel(model)
-        const inCollection = cids.has(model.cid)
+        const inCollection = modelCids.has(model.cid)
         if (inCollection) {
           removed.push(model)
           // this.modelByClientId.delete(model.cid)
@@ -769,7 +765,7 @@ export class Collection<
     this.modelCanBeDeleted(model)
 
     if (deleteConfig.remove && deleteConfig.removeImmediately) {
-      this.removeFromCollection([model.cid])
+      this.removeFromCollection(model)
     }
     try {
       this._modelsDeleting.set(model.cid, model)
@@ -796,7 +792,7 @@ export class Collection<
       )
 
       if (deleteConfig.remove && !deleteConfig.removeImmediately) {
-        this.removeFromCollection([model.cid])
+        this.removeFromCollection(model)
       }
       this.onDeleteSuccess({
         model,
@@ -821,7 +817,7 @@ export class Collection<
         !deleteConfig.removeImmediately &&
         deleteConfig.removeOnError
       ) {
-        this.removeFromCollection([model.cid])
+        this.removeFromCollection(model)
       }
       this.onDeleteError({
         model,
@@ -1073,9 +1069,7 @@ export class Collection<
 
   protected async resetCollection<T>(data?: T[]): Promise<TModel[][]> {
     if (!data) {
-      const removed = this.removeFromCollection(
-        this._models.map((model) => model.cid)
-      )
+      const removed = this.removeFromCollection(this._models)
 
       this.onReset([], removed)
 
@@ -1095,9 +1089,7 @@ export class Collection<
       modelsToAdd.push(model)
     }
 
-    const removed = this.removeFromCollection(
-      this._models.map((model) => model.cid)
-    )
+    const removed = this.removeFromCollection(this._models)
     const added = this.addToCollection(modelsToAdd, { insertPosition: 'end' })
 
     this.onReset(added, removed)
@@ -1126,9 +1118,7 @@ export class Collection<
       dispose()
     })
 
-    const models = this.removeFromCollection(
-      this._models.map((model) => model.cid)
-    )
+    const models = this.removeFromCollection(this._models)
 
     models.forEach((model) => {
       model.destroy()

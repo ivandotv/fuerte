@@ -27,6 +27,7 @@ describe('Model - add to collection', () => {
 
       expect(onAddedSpy).toBeCalled()
     })
+
     test('When model is in another collection, it is removed from the previous collection', () => {
       const transport = fixtures.transport()
       const firstCollection = fixtures.collection(fixtures.factory(), transport)
