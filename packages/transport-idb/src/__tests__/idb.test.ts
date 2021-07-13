@@ -36,6 +36,16 @@ describe('Transport IDB', () => {
     expect(db.objectStoreNames).toEqual([store])
   })
 
+  test('Create DB with default arguments', async () => {
+    const transport = new TransportIDB(dbName)
+    const db = await transport.getDB()
+
+    expect(transport.keyPath).toEqual('cid')
+    expect(transport.store).toEqual('models')
+    expect(db.name).toBe(dbName)
+    expect(db.objectStoreNames).toEqual(['models'])
+  })
+
   test('Create DB via custom function', async () => {
     const dbName = 'custom_name'
     const store = 'custom_store'
@@ -70,7 +80,7 @@ describe('Transport IDB', () => {
 
     const result = await transport.getById(model.identity)
 
-    expect(result).toEqual(model)
+    expect(result?.data).toEqual(model)
   })
 
   test('Save model with custom identity key', async () => {
@@ -83,7 +93,8 @@ describe('Transport IDB', () => {
     await transport.save(model)
 
     const result = await transport.getById(model.identity)
-    expect(result).toEqual(model)
+
+    expect(result?.data).toEqual(model)
   })
 
   test('Load all data', async () => {

@@ -6,6 +6,7 @@ module.exports = {
   rootDir: '.',
   projects: undefined,
   testMatch: ['<rootDir>/src/**/__tests__/?(*.)+(spec|test).[jt]s?(x)'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   collectCoverageFrom: [
     '<rootDir>/src/**',
     '!<rootDir>/src/index.ts',

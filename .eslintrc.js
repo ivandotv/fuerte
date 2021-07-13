@@ -3,7 +3,8 @@ module.exports = {
     // commonjs: true,
     es6: true,
     node: true,
-    jest: true
+    jest: true,
+    browser: true
   },
   globals: {
     __DEV__: true,
@@ -15,14 +16,10 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    // 'plugin:@next/next/recommended',
-    // 'plugin:react/recommended',
-    // 'plugin:react-hooks/recommended',
     'plugin:prettier/recommended'
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    // project: './tsconfig.eslint.json',
     sourceType: 'module'
   },
   settings: {
@@ -42,7 +39,8 @@ module.exports = {
     '@typescript-eslint/ban-ts-comment': [
       'warn',
       {
-        'ts-expect-error': 'allow-with-description'
+        'ts-expect-error': 'allow-with-description',
+        'ts-ignore': 'allow-with-description'
       }
     ],
     'prettier/prettier': ['error'],

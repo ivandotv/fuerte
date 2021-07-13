@@ -59,7 +59,7 @@ let tasks = [
 
 if (buildBundle.indexOf('cjs') !== -1) {
   tasks = tasks.concat(async () => {
-    return await createCjsIndexFile(pkg.name)
+    return await createCjsIndexFile(name)
   })
 }
 series(tasks)

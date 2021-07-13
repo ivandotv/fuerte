@@ -52,20 +52,24 @@ export class TransportIDB<T extends Model> implements Transport<T> {
   async initDB() {
     const db = await openDB(this.dbName, 1, {
       upgrade: (db, oldVersion) => {
+        /* istanbul ignore next */
         if (oldVersion === 0) {
           db.createObjectStore(this.store, { keyPath: this.keyPath })
         }
       },
+      /* istanbul ignore next */
       blocked() {
         if (__DEV__) {
           console.warn('idb: blocked')
         }
       },
+      /* istanbul ignore next */
       blocking() {
         if (__DEV__) {
           console.warn('idb: blocking')
         }
       },
+      /* istanbul ignore next */
       terminated() {
         if (__DEV__) {
           console.warn('idb: terminated')
