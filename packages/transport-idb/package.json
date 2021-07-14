@@ -5,9 +5,14 @@
   "author": "Ivan Vlatkovic",
   "description": "IndexedDB transport mechanism for @fuerte/core",
   "main": "dist/cjs/index.js",
-  "module": "dist/esm/fuerte.esm.js",
-  "unpkg": "dist/unpkg/fuerte.js",
-  "jsdelivr": "dist/unpkg/fuerte.js",
+  "module": "dist/esm/transport-idb.esm.js",
+  "unpkg": "dist/unpkg/transport-idb.min.js",
+  "jsdelivr":"dist/unpkg/transport-idb.min.js",
+  "exports":{
+    "import":"./dist/esm/transport-idb.esm.js",
+    "require":"./dist/cjs/transport-idb.js",
+    "development":"./dist/cjs/transport-idb.development.js"
+  },
   "sideEffects": false,
   "types": "dist/types/",
   "files": [
@@ -24,8 +29,6 @@
     "test:ci": "cross-env BABEL_ENV=test jest --runInBand --ci --coverage --coverageDirectory=coverage",
     "type:check": "tsc -p tsconfig.check-types.json",
     "type:build": "del dist/types && del .buildcache && tsc -p tsconfig.build-types.json",
-    "type:watch": "yarn type:check --watch",
-    "browser:watch": "del dist/cjs && cross-env BABEL_ENV=browserWatch NODE_ENV=development babel src --out-dir dist/cjs --extensions .ts,.tsx,.js,.jsx --source-maps --watch",
     "browser:build": "yarn type:build && node ../../scripts/build-browser.js --bundle=umd,cjs,esm",
     "build": "yarn browser:build",
     "prepublishOnly": "yarn build"

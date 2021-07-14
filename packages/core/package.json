@@ -6,9 +6,14 @@
   "description": "Backbone.js inspired Mobx library",
   "buildTarget": "server",
   "main": "dist/cjs/index.js",
-  "module": "dist/esm/fuerte.esm.js",
-  "unpkg": "dist/unpkg/fuerte.js",
-  "jsdelivr": "dist/unpkg/fuerte.js",
+  "module": "dist/esm/core.esm.js",
+  "unpkg": "dist/unpkg/core.min.js",
+  "jsdelivr": "dist/unpkg/core.min.js",
+  "exports":{
+    "import":"./dist/esm/core.esm.js",
+    "require":"./dist/cjs/index.js",
+    "development":"./dist/cjs/core.development.js"
+  },
   "sideEffects": false,
   "types": "dist/types/",
   "files": [
@@ -25,8 +30,6 @@
     "test:ci": "cross-env BABEL_ENV=test jest --runInBand --ci --coverage --coverageDirectory=coverage",
     "type:check": "del .buildcache/core/check-types.tsbuildinifo && tsc -p tsconfig.check-types.json",
     "type:build": "del dist/types && del .buildcache && tsc -p tsconfig.build-types.json",
-    "type:watch": "yarn type:check --watch",
-    "browser:watch": "del dist/cjs && cross-env BABEL_ENV=browserWatch NODE_ENV=development babel src --out-dir dist/cjs --extensions .ts,.tsx,.js,.jsx --source-maps --watch",
     "browser:build": "yarn type:build && node ../../scripts/build-browser.js --bundle=umd,cjs,esm",
     "build": "yarn browser:build",
     "prepublishOnly": "yarn build"
