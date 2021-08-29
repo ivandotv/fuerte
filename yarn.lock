@@ -7230,11 +7230,6 @@ neo-async@^2.6.0:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-nice-fetch@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/nice-fetch/-/nice-fetch-1.1.0.tgz#c98ca78c6d1628231716bf09bd675feda087ba9a"
-  integrity sha512-0fQin0aO1Hf48nJp26Fzc1UAX8bPk/uGRD77BBGYpPJelZ/AQE9DE93OGUqpSiggQognzkLL/FQzCfgarp8pzg==
-
 node-fetch@^2.6.1:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
