@@ -15,43 +15,44 @@ const commitSha = execSync('git rev-parse --short HEAD')
 
 const ignoreForTests = ['node_modules', 'src/**/*.d.ts']
 const ignoreForProduction = [
+  'node_modules',
   'src/**/__tests__/**/*',
-  'src/**/__fixtures__/**/*',
   'src/**/*.spec.ts',
   'src/**/*.test.ts',
   'src/**/*.d.ts',
   'src/scratch/**'
 ]
 
-//browser only replacements
-const browserReplacements = {
-  'process.env.NODE_ENV': nodeEnv,
+const replacements = {
   __VERSION__: pkgVersion,
   __BUILD_DATE__: buildDate,
   __COMMIT_SHA__: commitSha
 }
 
-const serverPlugins = [['transform-define', browserReplacements]].concat(
-  'production' === nodeEnv ? 'minify-dead-code-elimination' : []
+//browser only replacements
+const browserReplacements = Object.assign(
+  {},
+  {
+    'process.env.NODE_ENV': nodeEnv
+  },
+  replacements
 )
 
+const plugins = [
+  ['@babel/plugin-proposal-nullish-coalescing-operator'], //node v10
+  ['@babel/plugin-proposal-optional-chaining'], // node v10
+  ['@babel/proposal-class-properties', { loose: true }], // stage-3 proposal
+  ['@babel/proposal-private-methods', { loose: true }], // stage-3 proposal
+  ['@babel/plugin-proposal-private-property-in-object', { loose: true }],
+  ['annotate-pure-calls'],
+  'dev-expression',
+  ['transform-define', replacements]
+].concat('production' === nodeEnv ? 'minify-dead-code-elimination' : [])
+
 module.exports = {
-  // rootMode: 'upward',
   presets: ['@babel/typescript', '@babel/preset-env'],
-  plugins: [
-    ['@babel/plugin-proposal-nullish-coalescing-operator'], //node v10
-    ['@babel/plugin-proposal-optional-chaining'], // node v10
-    ['@babel/proposal-class-properties', { loose: true }], // stage-3 proposal
-    ['@babel/plugin-proposal-private-methods', { loose: true }],
-    ['@babel/plugin-proposal-private-property-in-object', { loose: true }],
-    'dev-expression',
-    [
-      'transform-define',
-      {
-        __VERSION__: pkgVersion
-      }
-    ]
-  ],
+  plugins,
+  exclude: ['transform-async-to-generator', 'transform-regenerator'],
   env: {
     test: {
       presets: [
@@ -92,12 +93,16 @@ module.exports = {
         [
           '@babel/env',
           {
-            // useBuiltIns: 'usage',
-            // corejs: 3,
-            // targets: {
-            //   browsers: ['>0.2%', 'not dead', 'not op_mini all']
-            // }
-            // debug: true
+            useBuiltIns: 'usage',
+            corejs: 3,
+            targets: {
+              // browsers: ['>0.2%', 'not dead', 'not op_mini all']
+              browsers: [
+                'last 2 chrome version',
+                'last 2 firefox version',
+                'last 2 safari version'
+              ]
+            }
           }
         ]
       ],
@@ -112,30 +117,19 @@ module.exports = {
             useBuiltIns: 'usage',
             corejs: 3,
             targets: {
-              browsers: ['>0.2%', 'not dead', 'not op_mini all']
+              // browsers: ['>0.2%', 'not dead', 'not op_mini all']
+              // browsers: ['last 2 chrome version']
+              browsers: [
+                'last 1 chrome version',
+                'last 1 firefox version',
+                'last 1 safari version'
+              ]
             }
           }
         ]
       ],
-      plugins: [['transform-define', browserReplacements]],
-      ignore: ignoreForProduction
-    },
-    browserPolyfill: {
-      presets: [
-        [
-          '@babel/env',
-          {
-            // debug: true,
-            useBuiltIns: 'usage',
-            corejs: 3,
-            targets: {
-              browsers: ['>0.2%', 'not dead', 'not op_mini all']
-            }
-          }
-        ]
-      ],
-      plugins: [['transform-define', browserReplacements]],
-      ignore: ignoreForProduction
+      ignore: ignoreForProduction,
+      plugins: [['transform-define', browserReplacements]]
     },
     browserModule: {
       // target node runtime
@@ -144,7 +138,13 @@ module.exports = {
           '@babel/env',
           {
             targets: {
-              esmodules: true
+              // esmodules: true
+              // browsers: ['last 2 chrome version']
+              browsers: [
+                'last 2 chrome version',
+                'last 2 firefox version',
+                'last 2 safari version'
+              ]
             }
           }
         ]
@@ -167,7 +167,7 @@ module.exports = {
           }
         ]
       ],
-      plugins: serverPlugins,
+      // plugins: serverPlugins,
       ignore: ignoreForProduction
     },
     cjs: {
@@ -179,12 +179,12 @@ module.exports = {
             // debug: true,
             modules: 'cjs',
             targets: {
-              node: 14 // es2018
+              node: 14 // es2028
             }
           }
         ]
       ],
-      plugins: serverPlugins,
+      // plugins: serverPlugins,
       ignore: ignoreForProduction
     },
     esm: {
@@ -193,15 +193,14 @@ module.exports = {
         [
           '@babel/env',
           {
-            // debug: true,
             modules: false,
             targets: {
-              node: 14 // es2018
+              node: 14 // es2028
             }
           }
         ]
       ],
-      plugins: serverPlugins,
+      // plugins: serverPlugins,
       ignore: ignoreForProduction
     }
   }

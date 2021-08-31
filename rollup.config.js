@@ -102,56 +102,21 @@ const umd = {
   })
 }
 
-const umdWithPolyfill = {
-  input,
-  output: [
-    {
-      file: umdFilePath('.polyfill.js'),
-      format: 'umd',
-      name: packageName,
-      sourcemap: true,
-      globals: umdGlobals
-    },
-    {
-      file: umdFilePath('.polyfill.min.js'),
-      format: 'umd',
-      name: packageName,
-      sourcemap: true,
-      globals: umdGlobals,
-      plugins: [terser()]
-    }
-  ],
-  plugins: defaultPlugins({
-    babel: {
-      extensions,
-      envName: 'browserPolyfill',
-      babelHelpers: 'bundled'
-    }
-  })
-}
-
 // build for browser as module
 const esm = {
   input,
-  watch: argv.watch
-    ? {
-        chokidar: false
-      }
-    : undefined,
   output: [
     {
       file: esmFilePath('.esm.js'),
       format: 'esm',
       sourcemap: true
     },
-    argv.watch
-      ? undefined
-      : {
-          file: esmFilePath('.esm.min.js'),
-          format: 'esm',
-          sourcemap: true,
-          plugins: [terser()]
-        }
+    {
+      file: esmFilePath('.esm.min.js'),
+      format: 'esm',
+      sourcemap: true,
+      plugins: [terser()]
+    }
   ],
   plugins: defaultPlugins({
     babel: {
@@ -164,12 +129,12 @@ const esm = {
 
 const envToBuild = {
   cjs: [cjsDev, cjsProd],
-  umd: [umd, umdWithPolyfill],
+  umd: [umd],
   esm: [esm]
 }
 
 function libPath(path, libName) {
-  return function(suffix) {
+  return function (suffix) {
     return path.concat('/', libName, suffix)
   }
 }
@@ -179,7 +144,7 @@ function chooseBuild(buildMap, builds) {
   const result = []
 
   if (envArr.length > 0) {
-    envArr.forEach(element => {
+    envArr.forEach((element) => {
       if (buildMap[element]) {
         result.push(...buildMap[element])
         console.log(`Will build: ${element}`)
