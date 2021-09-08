@@ -50,11 +50,11 @@
   "devDependencies": {
     "@types/jest": "^27.0.1",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^3.4.0",
-    "mobx": "^6.3.2",
+    "eslint-plugin-prettier": "^4.0.0",
+    "mobx": "^6.3.3",
     "whatwg-fetch": "^3.6.2"
   },
   "peerDependencies": {
-    "mobx": "^6.3.2"
+    "mobx": "^6.3.3"
   }
 }
