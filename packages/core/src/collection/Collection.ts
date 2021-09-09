@@ -332,8 +332,6 @@ export class Collection<
       this.onStartAutoSave(modelsStarted)
     }
 
-    //models undefined -> return array
-    //models array -> return array
     if (!models || Array.isArray(models)) {
       return modelsStarted
     } else {
@@ -371,8 +369,6 @@ export class Collection<
       this.onStopAutoSave(modelsStopped)
     }
 
-    //models undefined -> return array
-    //models array -> return array
     if (!models || Array.isArray(models)) {
       return modelsStopped
     } else {
@@ -383,7 +379,6 @@ export class Collection<
 
   protected onStopAutoSave(models: TModel[]): void {}
 
-  // protected notifyStopAtu
   protected removeFromInternalTracking(model: TModel): void {
     this.modelByCid.delete(model.cid)
     this.modelByIdentity.delete(model.identity)
@@ -392,8 +387,6 @@ export class Collection<
     identityR ? identityR() : null
 
     this.stopAutoSave(model)
-    // const autoSaveR = this.autoSaveReactionByCid.get(model.cid)
-    // autoSaveR ? autoSaveR() : null
   }
 
   protected resolveModels(
@@ -419,7 +412,6 @@ export class Collection<
     return r
   }
 
-  // create(data: TDTO): TModel | Promise<TModel> {
   create(
     data: Parameters<TFactory['create']>[0]
   ): ReturnType<TFactory['create']> {
@@ -427,7 +419,6 @@ export class Collection<
     return this.factory.create(data)
   }
 
-  //todo - mozda napraviti protected metod
   async save(
     modelOrModelData: TModel | Parameters<TFactory['create']>[0],
     config?: SaveConfig,
@@ -483,12 +474,10 @@ export class Collection<
         token
       })
 
-      let response = (await this.transport.save(
+      const response = (await this.transport.save(
         model,
         loadConfig
       )) as TransportSaveResponse<TTransport>
-
-      response = this.parseSaveResponse(response, saveConfig, loadConfig)
 
       // add it to the collection after save
       if (!saveConfig.addImmediately) {
@@ -518,9 +507,10 @@ export class Collection<
         error: undefined
       }
     } catch (error) {
-      // if promise rejects with undefined
+      // fix closure leaks - read error stack
+      // https://twitter.com/BenLesh/status/1365056053243613185
       error?.stack
-      // identity form the model could not be set
+      // identity from the model could not be set
       const identityError = error instanceof IdentityError
 
       if (
@@ -548,7 +538,6 @@ export class Collection<
         dataToSave
       })
 
-      // throw error
       return {
         error,
         response: undefined,
@@ -582,50 +571,6 @@ export class Collection<
     }
 
     return this.modelByIdentity.get(values)
-  }
-
-  getByCid(value: string): TModel | undefined
-
-  getByCid(values: string[]): TModel[] | undefined
-
-  getByCid(values: string | string[]): TModel | TModel[] | undefined {
-    if (Array.isArray(values)) {
-      const result = []
-      for (const value of values) {
-        const model = this.modelByCid.get(value)
-        if (model) {
-          result.push(model)
-        }
-      }
-
-      return result
-    }
-
-    return this.modelByCid.get(values)
-  }
-
-  protected parseLoadResponse<T>(
-    response: T,
-    _loadConfig: Required<LoadConfig>,
-    _transportConfig: any
-  ): T {
-    return response
-  }
-
-  protected parseSaveResponse(
-    response: UnwrapPromise<ReturnType<TTransport['save']>>,
-    _saveConfig: SaveConfig,
-    _transportConfig?: Parameters<TTransport['save']>[1]
-  ): UnwrapPromise<ReturnType<TTransport['save']>> {
-    return response
-  }
-
-  protected parseDeleteResponse<T>(
-    response: T,
-    _deleteConfig: DeleteConfig,
-    _transportConfig: any
-  ): T {
-    return response
   }
 
   protected onSaveStart(_data: SaveStart<TTransport, TModel>): void {}
@@ -780,16 +725,10 @@ export class Collection<
         transportConfig: transportConfig
       })
 
-      let response = (await this.transport.delete(
+      const response = (await this.transport.delete(
         model,
         transportConfig
       )) as UnwrapPromise<ReturnType<TTransport['delete']>>
-
-      response = this.parseDeleteResponse(
-        response,
-        deleteConfig,
-        transportConfig
-      )
 
       if (deleteConfig.remove && !deleteConfig.removeImmediately) {
         this.removeFromCollection(model)
@@ -932,10 +871,9 @@ export class Collection<
         config: loadConfig,
         transportConfig: transportConfig
       })
-      let response = (await this.transport.load(
+      const response = (await this.transport.load(
         transportConfig
       )) as TransportLoadResponse<TTransport>
-      response = this.parseLoadResponse(response, loadConfig, transportConfig)
 
       runInAction(() => {
         this.loadStatus = ASYNC_STATUS.RESOLVED
