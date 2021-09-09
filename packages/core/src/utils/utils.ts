@@ -10,7 +10,7 @@ export function assertCollectionExists(
   msg?: string
 ): asserts collection is Collection<any, any, any> {
   if (!collection) {
-    throw new Error(msg ?? 'Model is not in the collection')
+    throw new Error(msg ?? 'Collection not present')
   }
 }
 

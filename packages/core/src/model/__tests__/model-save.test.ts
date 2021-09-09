@@ -180,7 +180,7 @@ describe('Model - save', () => {
 
     await expect(model.save()).rejects.toStrictEqual(
       expect.objectContaining({
-        message: expect.stringMatching(/not in the collection/)
+        message: expect.stringMatching(/collection not present/i)
       })
     )
   })

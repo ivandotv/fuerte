@@ -88,6 +88,6 @@ describe('Model identity', () => {
     TestModel.setIdentityFromResponse = original
 
     expect(error).toBeInstanceOf(IdentityError)
-    expect((error as Error).message).toMatch(/could not set identity/i)
+    expect((error as Error).message).toMatch(/Can't set identity/i)
   })
 })

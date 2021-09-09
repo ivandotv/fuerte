@@ -278,9 +278,7 @@ export abstract class Model<
       )
 
       if (!identityValue) {
-        throw new IdentityError(
-          `Could not set identity for key: ${this.identityKey} `
-        )
+        throw new IdentityError(`Can't set identity key: ${this.identityKey}`)
       }
 
       this.setIdentity(identityValue)

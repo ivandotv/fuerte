@@ -37,11 +37,6 @@ import {
   UnwrapPromise
 } from '../utils/types'
 import { ASYNC_STATUS, debounceReaction, wrapInArray } from '../utils/utils'
-import {
-  CompareError,
-  DuplicateModelStrategy,
-  ModelCompareResult
-} from './collection-config'
 
 export class Collection<
   TModel extends Model<Collection<any, any, any>>,
@@ -50,7 +45,7 @@ export class Collection<
 > {
   loadError = undefined
 
-  loadStatus: keyof typeof ASYNC_STATUS = ASYNC_STATUS.IDLE
+  loadStatus: keyof typeof ASYNC_STATUS = 'IDLE'
 
   protected _models: TModel[] = []
 
@@ -101,8 +96,8 @@ export class Collection<
         ...(config?.delete ? config.delete : undefined)
       },
       load: {
-        duplicateModelStrategy: DuplicateModelStrategy.KEEP_NEW,
-        compareFn: () => ModelCompareResult.KEEP_NEW,
+        duplicateModelStrategy: 'KEEP_NEW',
+        compareFn: () => 'KEEP_NEW',
         insertPosition: 'end',
         reset: false,
         ...(config?.load ? config.load : undefined)
@@ -859,14 +854,12 @@ export class Collection<
     try {
       // throw immediately if the compare function is not provided
       if (
-        config?.duplicateModelStrategy === DuplicateModelStrategy.COMPARE &&
+        config?.duplicateModelStrategy === 'COMPARE' &&
         typeof config.compareFn === 'undefined'
       ) {
-        throw new CompareError(
-          'No compare function found for duplicate model strategy'
-        )
+        throw new Error('No compare function found')
       }
-      this.loadStatus = ASYNC_STATUS.PENDING
+      this.loadStatus = 'PENDING'
       this.onLoadStart({
         config: loadConfig,
         transportConfig: transportConfig
@@ -876,7 +869,7 @@ export class Collection<
       )) as TransportLoadResponse<TTransport>
 
       runInAction(() => {
-        this.loadStatus = ASYNC_STATUS.RESOLVED
+        this.loadStatus = 'RESOLVED'
       })
 
       // run reset instead of the rest of the load function
@@ -923,31 +916,28 @@ export class Collection<
           const compareResult = loadConfig.compareFn(model, oldModel)
 
           switch (loadConfig.duplicateModelStrategy) {
-            case DuplicateModelStrategy.KEEP_NEW:
+            case 'KEEP_NEW':
               modelsToRemove.push(oldModel)
               modelsToAdd.push(model)
               break
-            case DuplicateModelStrategy.COMPARE:
+            case 'COMPARE':
               switch (compareResult) {
-                case ModelCompareResult.KEEP_NEW:
+                case 'KEEP_NEW':
                   modelsToAdd.push(model)
                   modelsToRemove.push(oldModel)
                   break
 
-                case ModelCompareResult.KEEP_OLD:
-                  // do nothing for no
+                case 'KEEP_OLD':
                   break
 
-                case ModelCompareResult.KEEP_BOTH:
+                case 'KEEP_BOTH':
                   if (!this.isUniqueByIdentifier(model)) {
-                    throw new CompareError(
-                      'New model has a non unique identity'
-                    )
+                    throw new Error('New model has a non unique identity')
                   }
                   modelsToAdd.push(model)
                   break
                 default:
-                  throw new CompareError('Invalid compare result')
+                  throw new Error('Invalid compare result')
               }
           }
         }
@@ -980,7 +970,7 @@ export class Collection<
       error?.stack
       runInAction(() => {
         this.loadError = error
-        this.loadStatus = ASYNC_STATUS.REJECTED
+        this.loadStatus = 'REJECTED'
       })
 
       this.onLoadError({
