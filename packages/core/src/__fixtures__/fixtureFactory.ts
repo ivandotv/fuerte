@@ -4,7 +4,6 @@ import { TestFactory } from './TestFactory'
 import { TestModel, TestModelData } from './TestModel'
 import { TestTransport } from './TestTransport'
 
-// eslint-disable-next-line
 export function fixtureFactory() {
   return {
     model(data?: TestModelData): TestModel {

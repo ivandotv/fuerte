@@ -27,7 +27,7 @@ export abstract class Model<
 > {
   static identityKey = 'cid'
 
-  static setIdentityFromResponse = true
+  static setIdentityFromResponse = false
 
   collection: TCollection | undefined
 
@@ -267,12 +267,10 @@ export abstract class Model<
       this.pendingSaveCall.state = 'resolved'
     }
 
-    const setFromResponse = (this.constructor as typeof Model)
-      .setIdentityFromResponse
-
-    const identityKey = this.identityKey
-
-    if (this.isNew && setFromResponse) {
+    if (
+      this.isNew &&
+      (this.constructor as typeof Model).setIdentityFromResponse
+    ) {
       const identityValue = this.extractIdentityValue(
         response?.data,
         config,
@@ -281,15 +279,16 @@ export abstract class Model<
 
       if (!identityValue) {
         throw new IdentityError(
-          `Could not set identity for key: ${identityKey} `
+          `Could not set identity for key: ${this.identityKey} `
         )
       }
 
       this.setIdentity(identityValue)
 
       // @ts-expect-error - dynamic key access
-      this.lastSavedData[identityKey] = this.identity
+      this.lastSavedData[this.identityKey] = this.identity
     }
+
     this.onSaveSuccess({
       config,
       transportConfig,

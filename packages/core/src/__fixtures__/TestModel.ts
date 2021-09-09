@@ -9,8 +9,8 @@ import { TestCollection } from './TestCollection'
 import { TestTransport } from './TestTransport'
 
 export type TestModelData = {
-  foo: string
-  bar: string
+  foo?: string
+  bar?: string
   id?: string
 }
 
@@ -42,12 +42,6 @@ export class TestModel extends Model<TestCollection> {
   }
 
   serialize(): TestModelData {
-    // get that sweet code coverage
-    try {
-      super.serialize()
-      // eslint-disable-next-line
-    } catch (e) {}
-
     return {
       foo: this.foo,
       bar: this.bar,

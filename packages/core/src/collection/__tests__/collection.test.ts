@@ -133,47 +133,4 @@ describe('Collection', () => {
       expect(result).toStrictEqual([])
     })
   })
-  describe('Get by cid', () => {
-    test('Get one model by cid', () => {
-      const collection = fixtures.collection()
-      const model = fixtures.model()
-
-      collection.add(model)
-
-      const result = collection.getByCid(model.cid)
-
-      expect(result).toBe(model)
-    })
-
-    test('Get multiple models by cid', () => {
-      const collection = fixtures.collection()
-      const model = fixtures.model()
-      const modelTwo = fixtures.model()
-
-      collection.add([model, modelTwo])
-
-      const result = collection.getByCid([model.cid, modelTwo.cid])
-
-      expect(result).toStrictEqual([model, modelTwo])
-    })
-
-    test('When look for one model, if not present, return undefined', () => {
-      const collection = fixtures.collection()
-
-      const cid = 'c123'
-      const result = collection.getByCid(cid)
-
-      expect(result).toBeUndefined()
-    })
-
-    test('If there are no models , return empty array', () => {
-      const collection = fixtures.collection()
-      const cid = 'new-id'
-      const cidTwo = 'new-id-2'
-
-      const result = collection.getByIdentity([cid, cidTwo])
-
-      expect(result).toStrictEqual([])
-    })
-  })
 })

@@ -34,6 +34,9 @@ describe('Model identity', () => {
   })
 
   test('Extract identity value from a successful response', async () => {
+    const original = TestModel.setIdentityFromResponse
+    TestModel.setIdentityFromResponse = true
+
     const newId = '123'
     const transport = fixtures.transport()
     jest.spyOn(transport, 'save').mockResolvedValue({ data: { id: newId } })
@@ -43,6 +46,8 @@ describe('Model identity', () => {
 
     await model.save()
 
+    // I know, static props are bad for unit testing
+    TestModel.setIdentityFromResponse = original
     expect(model.identity).toBe(newId)
   })
 
@@ -68,6 +73,8 @@ describe('Model identity', () => {
   })
 
   test("If identity value can't be extracted from the response, throw error", async () => {
+    const original = TestModel.setIdentityFromResponse
+    TestModel.setIdentityFromResponse = true
     const newId = '123'
     const model = fixtures.model()
     const transport = fixtures.transport()
@@ -76,6 +83,10 @@ describe('Model identity', () => {
     const collection = fixtures.collection(undefined, transport)
 
     const { error } = await collection.save(model)
+
+    // I know, static props are bad for unit testing
+    TestModel.setIdentityFromResponse = original
+
     expect(error).toBeInstanceOf(IdentityError)
     expect((error as Error).message).toMatch(/could not set identity/i)
   })

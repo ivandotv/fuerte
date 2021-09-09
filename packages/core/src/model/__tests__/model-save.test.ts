@@ -2,6 +2,7 @@ import { configure, runInAction } from 'mobx'
 import { nanoid } from 'nanoid'
 import { SaveConfig } from '../../utils/types'
 import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
+import { TestModel } from '../../__fixtures__/TestModel'
 
 configure({ enforceActions: 'always' })
 
@@ -50,13 +51,20 @@ describe('Model - save', () => {
     expect(model.isSyncing).toBe(false)
   })
   test('When model is saved, "isNew" is false', async () => {
+    const original = TestModel.setIdentityFromResponse
+    TestModel.setIdentityFromResponse = true
+
     const model = fixtures.model()
+
     const collection = fixtures.collection()
     collection.add(model)
 
     expect(model.isNew).toBe(true)
 
     await model.save()
+
+    // I know, static props are bad for unit testing
+    TestModel.setIdentityFromResponse = original
 
     expect(model.isNew).toBe(false)
   })
@@ -104,7 +112,7 @@ describe('Model - save', () => {
 
   test('When model is saved, it is not dirty anymore', async () => {
     const collection = fixtures.collection()
-    const model = fixtures.model()
+    const model = fixtures.model({ id: 'id' })
     collection.add(model)
     runInAction(() => {
       model.foo = 'new_value'
@@ -118,6 +126,9 @@ describe('Model - save', () => {
     expect(model.isSaving).toBe(false)
   })
   test('When model is saved, it is not new anymore', async () => {
+    const original = TestModel.setIdentityFromResponse
+    TestModel.setIdentityFromResponse = true
+
     const collection = fixtures.collection()
     const model = fixtures.model()
     collection.add(model)
@@ -126,17 +137,8 @@ describe('Model - save', () => {
 
     await model.save()
 
-    expect(model.isNew).toBe(false)
-  })
-  test('When save is in progress, "isSyncing" property is true.', async () => {
-    const collection = fixtures.collection()
-    const model = fixtures.model()
-    collection.add(model)
-
-    expect(model.isNew).toBe(true)
-
-    await model.save()
-
+    // I know, static props are bad for unit testing
+    TestModel.setIdentityFromResponse = original
     expect(model.isNew).toBe(false)
   })
 
