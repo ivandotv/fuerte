@@ -115,8 +115,6 @@ export abstract class Model<
       _onDeleteSuccess: action,
       destroy: action
     })
-
-    // this.payloadActionDisposer = this.startPayloadCompute()
   }
 
   // https://alexhisen.gitbook.io/mobx-recipes/use-computedstruct-for-computed-objects
@@ -126,13 +124,10 @@ export abstract class Model<
 
   //computed struct
   protected get computePayload(): TDTO {
-    return this.createPayload()
+    return this.serialize()
   }
 
-  protected createPayload(): TDTO {
-    // - serialize the model
-    throw new Error('Method not implemented')
-  }
+  protected abstract serialize(): TDTO
 
   protected startPayloadCompute(): IReactionDisposer {
     return autorun(() => {

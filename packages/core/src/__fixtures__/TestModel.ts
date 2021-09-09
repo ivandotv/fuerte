@@ -41,10 +41,10 @@ export class TestModel extends Model<TestCollection> {
     return b
   }
 
-  createPayload(): TestModelData {
+  serialize(): TestModelData {
     // get that sweet code coverage
     try {
-      super.createPayload()
+      super.serialize()
       // eslint-disable-next-line
     } catch (e) {}
 
