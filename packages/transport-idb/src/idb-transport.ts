@@ -1,10 +1,9 @@
 import { Model, Transport } from '@fuerte/core'
 import { IDBPDatabase, openDB } from 'idb'
 
-export class TransportIDB<T extends Model> implements Transport<T> {
+export class TransportIDB<T extends Model = Model> implements Transport<T> {
   protected db!: IDBPDatabase
 
-  //TODO - clear database
   constructor(
     public dbName: string,
     public store = 'models',
@@ -41,9 +40,9 @@ export class TransportIDB<T extends Model> implements Transport<T> {
     await db.clear(this.store)
   }
 
-  async getById(id: string) {
+  async getById(id: string): Promise<{ data: T } | void> {
     const db = await this.getDB()
-    const data = await db.get(this.store, id)
+    const data = (await db.get(this.store, id)) as T
     if (data) {
       return { data }
     }
