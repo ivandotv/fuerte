@@ -7,11 +7,11 @@
   "main": "dist/cjs/index.js",
   "module": "dist/esm/transport-idb.esm.js",
   "unpkg": "dist/unpkg/transport-idb.min.js",
-  "jsdelivr":"dist/unpkg/transport-idb.min.js",
-  "exports":{
-    "import":"./dist/esm/transport-idb.esm.js",
-    "require":"./dist/cjs/transport-idb.js",
-    "development":"./dist/cjs/transport-idb.development.js"
+  "jsdelivr": "dist/unpkg/transport-idb.min.js",
+  "exports": {
+    "import": "./dist/esm/transport-idb.esm.js",
+    "require": "./dist/cjs/transport-idb.js",
+    "development": "./dist/cjs/transport-idb.development.js"
   },
   "sideEffects": false,
   "types": "dist/types/",
