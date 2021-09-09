@@ -35,15 +35,15 @@ describe('Collection - save models', () => {
     const p1 = collection.save(model)
     const p2 = collection.save(modelTwo)
 
-    expect(collection.modelsSaving).toEqual([model, modelTwo])
-    expect(collection.modelsSyncing).toEqual([model, modelTwo])
+    expect(collection.saving).toEqual([model, modelTwo])
+    expect(collection.syncing).toEqual([model, modelTwo])
 
     await Promise.all([p1, p2])
 
     expect(collection.models[0]).toBe(model)
 
-    expect(collection.modelsSaving).toHaveLength(0)
-    expect(collection.modelsSyncing).toHaveLength(0)
+    expect(collection.saving).toHaveLength(0)
+    expect(collection.syncing).toHaveLength(0)
   })
 
   test('Create and save models', async () => {
@@ -123,12 +123,12 @@ describe('Collection - save models', () => {
     await firstResult
 
     //it should still be in the saving process
-    expect(collection.modelsSaving).toEqual([model])
+    expect(collection.saving).toEqual([model])
     expect(model.isSaving).toBe(true)
     expect(model.isSyncing).toBe(true)
 
     await secondResult
-    expect(collection.modelsSaving).toEqual([])
+    expect(collection.saving).toEqual([])
     expect(model.isSaving).toBe(false)
     expect(model.isSyncing).toBe(false)
   })
@@ -152,12 +152,12 @@ describe('Collection - save models', () => {
     const model = fixtures.model()
 
     const result = collection.save(model)
-    expect(collection.modelsSaving.length).toBe(1)
-    expect(collection.modelsSaving[0]).toBe(model)
+    expect(collection.saving.length).toBe(1)
+    expect(collection.saving[0]).toBe(model)
 
     await result
 
-    expect(collection.modelsSaving.length).toBe(0)
+    expect(collection.saving.length).toBe(0)
   })
 
   test('When model is added to the collection before save process starts, "onAdded" model hook is called', () => {
@@ -292,12 +292,12 @@ describe('Collection - save models', () => {
       const model = fixtures.model()
 
       const result = collection.save(model, { addImmediately: false })
-      expect(collection.modelsSaving.length).toBe(1)
-      expect(collection.modelsSaving[0]).toBe(model)
+      expect(collection.saving.length).toBe(1)
+      expect(collection.saving[0]).toBe(model)
 
       await result
 
-      expect(collection.modelsSaving.length).toBe(0)
+      expect(collection.saving.length).toBe(0)
     })
     test('When model is successfuly saved, "onAdded" model hook is called', async () => {
       const transport = fixtures.transport()

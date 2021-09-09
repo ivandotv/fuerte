@@ -55,7 +55,7 @@ describe('Collection', () => {
 
     collection.add([model, modelTwo])
 
-    expect(collection.newModels).toEqual([model, modelTwo])
+    expect(collection.new).toEqual([model, modelTwo])
   })
 
   test('Serialize collection', () => {

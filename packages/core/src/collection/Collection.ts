@@ -149,10 +149,10 @@ export class Collection<
       addToCollection: action,
       removeFromCollection: action,
       destroy: action,
-      modelsSyncing: computed,
-      modelsDeleting: computed,
-      modelsSaving: computed,
-      newModels: computed,
+      syncing: computed,
+      deleting: computed,
+      saving: computed,
+      new: computed,
       models: computed,
       loadStatus: observable,
       loadError: observable
@@ -583,23 +583,23 @@ export class Collection<
     return this._models as ReadonlyArray<TModel>
   }
 
-  get newModels(): TModel[] {
+  get new(): TModel[] {
     return this.models.filter((model) => model.isNew)
   }
 
-  get deletedModels(): TModel[] {
+  get deleted(): TModel[] {
     return this.models.filter((model) => model.isDeleted)
   }
 
-  get modelsSyncing(): TModel[] {
-    return this.modelsDeleting.concat(this.modelsSaving)
+  get syncing(): TModel[] {
+    return this.deleting.concat(this.saving)
   }
 
-  get modelsDeleting(): TModel[] {
+  get deleting(): TModel[] {
     return [...this._modelsDeleting.values()]
   }
 
-  get modelsSaving(): TModel[] {
+  get saving(): TModel[] {
     const models: TModel[] = []
     this._modelsSaving.forEach((data) => {
       models.push(data.model)

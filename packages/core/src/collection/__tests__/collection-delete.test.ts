@@ -36,7 +36,7 @@ describe('Collection - delete models', () => {
 
     expect(collection.models).toStrictEqual([model])
     expect(model.isDeleted).toBe(true)
-    expect(collection.deletedModels).toStrictEqual([model])
+    expect(collection.deleted).toStrictEqual([model])
   })
 
   test('When delete is in progress, can retrieve all models that are deleting', async () => {
@@ -50,13 +50,13 @@ describe('Collection - delete models', () => {
     const p1 = collection.delete(model)
     const p2 = collection.delete(modelTwo)
 
-    expect(collection.modelsDeleting).toEqual([model, modelTwo])
-    expect(collection.modelsSyncing).toEqual([model, modelTwo])
+    expect(collection.deleting).toEqual([model, modelTwo])
+    expect(collection.syncing).toEqual([model, modelTwo])
 
     await Promise.all([p1, p2])
 
-    expect(collection.modelsDeleting).toHaveLength(0)
-    expect(collection.modelsSyncing).toHaveLength(0)
+    expect(collection.deleting).toHaveLength(0)
+    expect(collection.syncing).toHaveLength(0)
   })
 
   test('Delete returns object with response and model that was deleted', async () => {
@@ -79,12 +79,12 @@ describe('Collection - delete models', () => {
     collection.add(model)
 
     const result = collection.delete(model)
-    expect(collection.modelsDeleting.length).toBe(1)
-    expect(collection.modelsDeleting[0]).toBe(model)
+    expect(collection.deleting.length).toBe(1)
+    expect(collection.deleting[0]).toBe(model)
 
     await result
 
-    expect(collection.modelsDeleting.length).toBe(0)
+    expect(collection.deleting.length).toBe(0)
   })
 
   test('Throw if model is already deleted ', async () => {
@@ -268,12 +268,12 @@ describe('Collection - delete models', () => {
       collection.add(model)
 
       const result = collection.delete(model)
-      expect(collection.modelsDeleting.length).toBe(1)
-      expect(collection.modelsDeleting[0]).toBe(model)
+      expect(collection.deleting.length).toBe(1)
+      expect(collection.deleting[0]).toBe(model)
 
       await result
 
-      expect(collection.modelsDeleting.length).toBe(0)
+      expect(collection.deleting.length).toBe(0)
     })
     test('After successful deletion, remove model from the collection', async () => {
       const transport = fixtures.transport()
