@@ -16,7 +16,7 @@ export class CollectionWithAutoSave<
 > extends Collection<TModel, TFactory, TTransport> {
   protected identityReactionByCid: Map<string, IReactionDisposer> = new Map()
 
-  protected autoSaveReactionByCid: Map<string, IReactionDisposer> = new Map()
+  protected saveReactionByCid: Map<string, IReactionDisposer> = new Map()
 
   protected declare config: RequiredCollectionConfigWithAutoSave
 
@@ -37,16 +37,16 @@ export class CollectionWithAutoSave<
     return super.getConfig() as RequiredCollectionConfigWithAutoSave
   }
 
-  protected override addToInternalTracking(model: TModel) {
-    super.addToInternalTracking(model)
+  protected override startTracking(model: TModel) {
+    super.startTracking(model)
 
     if (this.config.autoSave.enabled) {
       this.startAutoSave(model)
     }
   }
 
-  protected override removeFromInternalTracking(model: TModel): void {
-    super.removeFromInternalTracking(model)
+  protected override stopTracking(model: TModel): void {
+    super.stopTracking(model)
     const identityR = this.identityReactionByCid.get(model.cid)
     identityR ? identityR() : null
 
@@ -72,7 +72,7 @@ export class CollectionWithAutoSave<
 
     const modelsStarted: TModel[] = []
     modelsArr.forEach((model) => {
-      const enabled = this.autoSaveReactionByCid.get(model.cid)
+      const enabled = this.saveReactionByCid.get(model.cid)
       if (!enabled) {
         modelsStarted.push(model)
         const saveReaction = reaction(
@@ -93,7 +93,7 @@ export class CollectionWithAutoSave<
           }
         )
 
-        this.autoSaveReactionByCid.set(model.cid, saveReaction)
+        this.saveReactionByCid.set(model.cid, saveReaction)
       }
     })
     if (modelsStarted.length) {
@@ -123,10 +123,10 @@ export class CollectionWithAutoSave<
 
     const modelsStopped: TModel[] = []
     modelsArr.forEach((model) => {
-      const disposer = this.autoSaveReactionByCid.get(model.cid)
+      const disposer = this.saveReactionByCid.get(model.cid)
       if (disposer) {
         disposer()
-        this.autoSaveReactionByCid.delete(model.cid)
+        this.saveReactionByCid.delete(model.cid)
         modelsStopped.push(model)
       }
     })
@@ -154,6 +154,6 @@ export class CollectionWithAutoSave<
   }
 
   autoSaveEnabled(cid: string): boolean {
-    return !!this.autoSaveReactionByCid.get(cid)
+    return !!this.saveReactionByCid.get(cid)
   }
 }

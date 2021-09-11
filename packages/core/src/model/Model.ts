@@ -33,8 +33,6 @@ export abstract class Model<
 
   readonly cid: string
 
-  // protected changeDisposer: IReactionDisposer | undefined
-
   protected errors: ModelTransportErrors = {
     save: null,
     delete: null

@@ -213,7 +213,7 @@ export class Collection<
       // }
 
       // this.modelByClientId.set(model.cid, model)
-      this.addToInternalTracking(model)
+      this.startTracking(model)
 
       // model.setTransport(this.transport) // ovo prebaciti u store
       model._onAdded(this)
@@ -252,7 +252,7 @@ export class Collection<
     return byCid && !byIdentifier
   }
 
-  protected addToInternalTracking(model: TModel): void {
+  protected startTracking(model: TModel): void {
     this.modelByCid.set(model.cid, model)
     const identifier = model.identity
     if (identifier) {
@@ -269,7 +269,7 @@ export class Collection<
     this.identityReactionByCid.set(model.cid, idReaction)
   }
 
-  protected removeFromInternalTracking(model: TModel): void {
+  protected stopTracking(model: TModel): void {
     this.modelByCid.delete(model.cid)
     this.modelByIdentity.delete(model.identity)
 
@@ -542,7 +542,7 @@ export class Collection<
           this._models.splice(i, 1)
           removed.push(model)
           // this.modelByClientId.delete(model.cid)
-          this.removeFromInternalTracking(model)
+          this.stopTracking(model)
           model._onRemoved()
           this.onRemoved(model)
           break
@@ -558,7 +558,7 @@ export class Collection<
         if (inCollection) {
           removed.push(model)
           // this.modelByClientId.delete(model.cid)
-          this.removeFromInternalTracking(model)
+          this.stopTracking(model)
           model._onRemoved()
           this.onRemoved(model)
         } else {
