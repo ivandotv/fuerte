@@ -91,7 +91,7 @@ export abstract class Model<
       isDestroyed: computed,
 
       isSyncing: computed,
-      // lastSavedData: observable,
+      lastSavedData: observable,
 
       isNew: computed,
 
@@ -423,7 +423,7 @@ export abstract class Model<
   }
 
   protected modelIsDirty(): boolean {
-    return this.isNew || !equal(this.lastSavedData, this.payload)
+    return !equal(this.lastSavedData, this.payload)
   }
 
   getCollection(): TCollection | undefined {
