@@ -50,10 +50,10 @@ export class Collection<
   protected _models: TModel[] = []
 
   // holds models that are immediately removed while deleting
-  _modelsDeleting: Map<string, TModel> = new Map()
+  _deleting: Map<string, TModel> = new Map()
 
   // holds models that are saving but are not yet added to collection
-  protected _modelsSaving: Map<
+  protected _saving: Map<
     string,
     { token: Record<string, never>; model: TModel }
   > = new Map()
@@ -102,8 +102,8 @@ export class Collection<
       | 'addToCollection'
       | 'removeFromCollection'
       | 'modelByCid'
-      | '_modelsDeleting'
-      | '_modelsSaving'
+      | '_deleting'
+      | '_saving'
       | 'onSaveStart'
       | 'onSaveError'
       | 'onSaveSuccess'
@@ -121,8 +121,8 @@ export class Collection<
       delete: action,
       load: action,
       _models: observable.shallow,
-      _modelsSaving: observable.shallow,
-      _modelsDeleting: observable.shallow,
+      _saving: observable.shallow,
+      _deleting: observable.shallow,
       modelByCid: observable.shallow,
       modelByIdentity: observable.shallow,
       onSaveStart: action,
@@ -344,7 +344,7 @@ export class Collection<
 
     const token = {}
     runInAction(() => {
-      this._modelsSaving.set(model.cid, { token: token, model })
+      this._saving.set(model.cid, { token: token, model })
     })
     const dataToSave = model.payload
     try {
@@ -432,10 +432,10 @@ export class Collection<
         model: undefined
       }
     } finally {
-      const tokenData = this._modelsSaving.get(model.cid)
+      const tokenData = this._saving.get(model.cid)
       if (tokenData?.token === token) {
         runInAction(() => {
-          this._modelsSaving.delete(model.cid)
+          this._saving.delete(model.cid)
         })
       }
     }
@@ -484,12 +484,12 @@ export class Collection<
   }
 
   get deleting(): TModel[] {
-    return [...this._modelsDeleting.values()]
+    return [...this._deleting.values()]
   }
 
   get saving(): TModel[] {
     const models: TModel[] = []
-    this._modelsSaving.forEach((data) => {
+    this._saving.forEach((data) => {
       models.push(data.model)
     })
 
@@ -601,7 +601,7 @@ export class Collection<
       this.removeFromCollection(model)
     }
     try {
-      this._modelsDeleting.set(model.cid, model)
+      this._deleting.set(model.cid, model)
 
       this.onDeleteStart({
         model,
@@ -667,7 +667,7 @@ export class Collection<
       }
     } finally {
       runInAction(() => {
-        this._modelsDeleting.delete(model.cid)
+        this._deleting.delete(model.cid)
       })
     }
   }
