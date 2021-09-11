@@ -12,8 +12,8 @@ import { TestTransport } from './TestTransport'
 
 export class TestCollection extends Collection<
   TestModel,
-  TestTransport,
-  TestFactory
+  TestFactory,
+  TestTransport
 > {
   constructor(
     factory: TestFactory,
@@ -105,18 +105,6 @@ export class TestCollection extends Collection<
   }): void {
     super.onLoadError(data)
   }
-
-  // autoSave(payload: { model: TestModel; data: any }): void {
-  //   return super.autoSave(payload)
-  // }
-
-  // onStartAutoSave(models: TestModel[]): void {
-  //   super.onStartAutoSave(models)
-  // }
-
-  // onStopAutoSave(models: TestModel[]): void {
-  //   super.onStopAutoSave(models)
-  // }
 
   onSerialize() {
     super.onSerialize()

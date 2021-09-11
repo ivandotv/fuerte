@@ -40,8 +40,8 @@ import { ASYNC_STATUS, wrapInArray } from '../utils/utils'
 
 export class Collection<
   TModel extends Model<Collection<any, any, any>>,
-  TTransport extends Transport<TModel>,
-  TFactory extends Factory<TModel>
+  TFactory extends Factory<TModel>,
+  TTransport extends Transport<TModel>
 > {
   loadError = undefined
 
@@ -924,7 +924,6 @@ export class Collection<
 
   protected onReset(_added: TModel[], _removed: TModel[]): void {}
 
-  //todo - better name
   protected onModelCreateData(
     data: Parameters<TFactory['create']>[0]
   ): Parameters<TFactory['create']>[0] | void {

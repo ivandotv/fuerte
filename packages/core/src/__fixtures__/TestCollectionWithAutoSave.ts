@@ -1,4 +1,3 @@
-import { Collection } from '../collection/Collection'
 import { CollectionWithAutoSave } from '../collection/CollectionWithAutoSave'
 import {
   CollectionConfig,
@@ -13,8 +12,8 @@ import { TestTransport } from './TestTransport'
 
 export class TestCollectionWithAutoSave extends CollectionWithAutoSave<
   TestModel,
-  TestTransport,
-  TestFactory
+  TestFactory,
+  TestTransport
 > {
   constructor(
     factory: TestFactory,
@@ -36,12 +35,6 @@ export class TestCollectionWithAutoSave extends CollectionWithAutoSave<
 
   onAdded(model: TestModel): void {
     super.onAdded(model)
-  }
-
-  onModelCreateData(data: any): void {
-    super.onModelCreateData(data)
-
-    return data
   }
 
   onSaveSuccess(data: {

@@ -1,4 +1,3 @@
-import { ConfigFunction } from '@babel/core'
 import { IReactionDisposer, reaction } from 'mobx'
 import { Model } from '../model/Model'
 import { Transport } from '../transport/transport'
@@ -12,9 +11,9 @@ import { Collection } from './Collection'
 
 export class CollectionWithAutoSave<
   TModel extends Model<Collection<any, any, any>>,
-  TTransport extends Transport<TModel>,
-  TFactory extends Factory<TModel>
-> extends Collection<TModel, TTransport, TFactory> {
+  TFactory extends Factory<TModel>,
+  TTransport extends Transport<TModel>
+> extends Collection<TModel, TFactory, TTransport> {
   protected identityReactionByCid: Map<string, IReactionDisposer> = new Map()
 
   protected autoSaveReactionByCid: Map<string, IReactionDisposer> = new Map()
