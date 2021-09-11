@@ -92,21 +92,29 @@ export type LoadError<
 > = LoadStart<T, K> & { error: any }
 
 export type CollectionConfig = {
-  autoSave?: AutoSaveConfig
   add?: AddConfig
   save?: SaveConfig
   delete?: DeleteConfig
   load?: LoadConfig
-  sortFn?: (a: any, b: any) => number
+}
+
+export interface AutoSaveConfig {
+  enabled?: boolean
+  debounce?: number
+}
+export type CollectionConfigWithAutoSave = CollectionConfig & {
+  autoSave?: AutoSaveConfig
 }
 
 export type RequiredCollectionConfig = {
-  autoSave: Required<AutoSaveConfig>
+  // autoSave: Required<AutoSaveConfig>
   add: Required<AddConfig>
   save: Required<SaveConfig>
   delete: Required<DeleteConfig>
   load: Required<LoadConfig>
-  sortFn?: (a: any, b: any) => number
+}
+export type RequiredCollectionConfigWithAutoSave = RequiredCollectionConfig & {
+  autoSave: Required<AutoSaveConfig>
 }
 
 export type ModelInsertPosition = 'start' | 'end'
@@ -125,11 +133,6 @@ export interface DeleteConfig {
   remove?: boolean
   removeImmediately?: boolean
   removeOnError?: boolean
-}
-
-export interface AutoSaveConfig {
-  enabled?: boolean
-  debounceMs?: number
 }
 
 type BivariantCompareFn<T extends Model<Collection<any, any, any>>> = {

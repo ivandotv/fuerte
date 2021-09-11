@@ -1,4 +1,5 @@
 import { Collection } from '../collection/Collection'
+import { CollectionWithAutoSave } from '../collection/CollectionWithAutoSave'
 import {
   CollectionConfig,
   DeleteConfig,
@@ -10,7 +11,7 @@ import { TestFactory } from './TestFactory'
 import { TestModel } from './TestModel'
 import { TestTransport } from './TestTransport'
 
-export class TestCollection extends Collection<
+export class TestCollectionWithAutoSave extends CollectionWithAutoSave<
   TestModel,
   TestTransport,
   TestFactory
@@ -106,17 +107,17 @@ export class TestCollection extends Collection<
     super.onLoadError(data)
   }
 
-  // autoSave(payload: { model: TestModel; data: any }): void {
-  //   return super.autoSave(payload)
-  // }
+  autoSave(payload: { model: TestModel; data: any }): void {
+    return super.autoSave(payload)
+  }
 
-  // onStartAutoSave(models: TestModel[]): void {
-  //   super.onStartAutoSave(models)
-  // }
+  onStartAutoSave(models: TestModel[]): void {
+    super.onStartAutoSave(models)
+  }
 
-  // onStopAutoSave(models: TestModel[]): void {
-  //   super.onStopAutoSave(models)
-  // }
+  onStopAutoSave(models: TestModel[]): void {
+    super.onStopAutoSave(models)
+  }
 
   onSerialize() {
     super.onSerialize()

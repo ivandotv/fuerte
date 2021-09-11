@@ -10,8 +10,8 @@ const fixtures = fixtureFactory()
 beforeEach(() => {
   expect.hasAssertions()
 })
-describe('Model identity', () => {
-  test('Set model class identity key', () => {
+describe('Model identity #identity', () => {
+  test('Set model identity key', () => {
     const identityKey = 'isbn'
     class Test extends TestModel {
       static identityKey = identityKey
@@ -22,7 +22,7 @@ describe('Model identity', () => {
     expect(model.identityKey).toBe(identityKey)
   })
 
-  test('Set identity key per model instance', () => {
+  test('Set identity value for model', () => {
     const model = fixtures.model()
     const modelTwo = fixtures.model()
     const newValue = '123'
@@ -36,7 +36,6 @@ describe('Model identity', () => {
   test('Extract identity value from a successful response', async () => {
     const original = TestModel.setIdentityFromResponse
     TestModel.setIdentityFromResponse = true
-
     const newId = '123'
     const transport = fixtures.transport()
     jest.spyOn(transport, 'save').mockResolvedValue({ data: { id: newId } })
@@ -46,19 +45,19 @@ describe('Model identity', () => {
 
     await model.save()
 
+    expect(model.identity).toBe(newId)
+
     // I know, static props are bad for unit testing
     TestModel.setIdentityFromResponse = original
-    expect(model.identity).toBe(newId)
   })
 
-  test('If not set in config, do not try to extract identity value from the response ', async () => {
+  test('If not set in the config, do not try to extract identity value from the response ', async () => {
     const newId = '123'
     class Test extends TestModel {
       static identityKey = 'id'
 
       static setIdentityFromResponse = false
     }
-
     const model = new Test()
     const transport = fixtures.transport()
     jest.spyOn(transport, 'save').mockResolvedValue({ data: { id: newId } })
@@ -84,10 +83,10 @@ describe('Model identity', () => {
 
     const { error } = await collection.save(model)
 
-    // I know, static props are bad for unit testing
-    TestModel.setIdentityFromResponse = original
-
     expect(error).toBeInstanceOf(IdentityError)
     expect((error as Error).message).toMatch(/Can't set identity/i)
+
+    // I know, static props are bad for unit testing
+    TestModel.setIdentityFromResponse = original
   })
 })

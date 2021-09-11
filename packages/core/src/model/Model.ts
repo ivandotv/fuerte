@@ -91,7 +91,7 @@ export abstract class Model<
       isDestroyed: computed,
 
       isSyncing: computed,
-      lastSavedData: observable,
+      // lastSavedData: observable,
 
       isNew: computed,
 
@@ -353,6 +353,9 @@ export abstract class Model<
   setIdentity(newValue: string): void {
     // @ts-expect-error force setting identifier property on the model
     this[this.identityKey] = newValue
+    if (this.collection) {
+      //update collections
+    }
   }
 
   get isNew(): boolean {

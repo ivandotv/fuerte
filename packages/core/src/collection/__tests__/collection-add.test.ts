@@ -209,7 +209,6 @@ describe('Collection add models', () => {
   describe('React to model identity changes', () => {
     test('Track initial identity value setup', () => {
       const collection = fixtures.collection()
-      const identity = 'original'
       const newIdentity = 'new value'
 
       class Test extends TestModel {

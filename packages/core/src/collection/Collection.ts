@@ -36,7 +36,7 @@ import {
   TransportSaveResponse,
   UnwrapPromise
 } from '../utils/types'
-import { ASYNC_STATUS, debounceReaction, wrapInArray } from '../utils/utils'
+import { ASYNC_STATUS, wrapInArray } from '../utils/utils'
 
 export class Collection<
   TModel extends Model<Collection<any, any, any>>,
@@ -62,11 +62,9 @@ export class Collection<
 
   protected modelByIdentity: Map<string | number, TModel> = new Map()
 
-  protected identityReactionByCid: Map<string, IReactionDisposer> = new Map()
-
-  protected autoSaveReactionByCid: Map<string, IReactionDisposer> = new Map()
-
   protected config: RequiredCollectionConfig
+
+  protected identityReactionByCid: Map<string, IReactionDisposer> = new Map()
 
   constructor(
     protected factory: TFactory,
@@ -74,11 +72,6 @@ export class Collection<
     config?: CollectionConfig
   ) {
     this.config = {
-      autoSave: {
-        enabled: false,
-        debounceMs: 0,
-        ...(config?.autoSave ? config.autoSave : undefined)
-      },
       save: {
         insertPosition: 'end',
         addImmediately: true,
@@ -274,105 +267,7 @@ export class Collection<
       { name: `id-${model.cid}` }
     )
     this.identityReactionByCid.set(model.cid, idReaction)
-
-    if (this.config.autoSave.enabled) {
-      this.startAutoSave(model)
-    }
   }
-
-  protected autoSave(payload: { data: any; model: TModel }): void {
-    this.save(payload.model)
-  }
-
-  startAutoSave(): TModel[]
-
-  startAutoSave(model: TModel): TModel | undefined
-
-  startAutoSave(models: TModel[]): TModel[]
-
-  startAutoSave(models?: TModel | TModel[]): TModel | TModel[] | undefined {
-    const modelsArr = models
-      ? Array.isArray(models)
-        ? models
-        : [models]
-      : this._models
-
-    const modelsStarted: TModel[] = []
-    modelsArr.forEach((model) => {
-      const disposerHit = this.autoSaveReactionByCid.get(model.cid)
-      if (!disposerHit) {
-        modelsStarted.push(model)
-        const saveReaction = reaction(
-          () => {
-            return {
-              model,
-              data: model.payload
-            }
-          },
-          this.config.autoSave.debounceMs
-            ? debounceReaction(
-                this.autoSave.bind(this),
-                this.config.autoSave.debounceMs
-              )
-            : this.autoSave.bind(this),
-          {
-            name: `save-${model.cid}`
-          }
-        )
-
-        this.autoSaveReactionByCid.set(model.cid, saveReaction)
-      }
-    })
-    if (modelsStarted.length) {
-      this.onStartAutoSave(modelsStarted)
-    }
-
-    if (!models || Array.isArray(models)) {
-      return modelsStarted
-    } else {
-      //models is TModel instance
-      return modelsStarted.length ? modelsStarted[0] : undefined
-    }
-  }
-
-  protected onStartAutoSave(models: TModel[]): void {}
-
-  stopAutoSave(): TModel[]
-
-  stopAutoSave(model: TModel): TModel | undefined
-
-  stopAutoSave(models: TModel[]): TModel[]
-
-  stopAutoSave(models?: TModel | TModel[]): TModel | TModel[] | undefined {
-    const modelsArr = models
-      ? Array.isArray(models)
-        ? models
-        : [models]
-      : this._models
-
-    const modelsStopped: TModel[] = []
-    modelsArr.forEach((model) => {
-      const disposer = this.autoSaveReactionByCid.get(model.cid)
-      if (disposer) {
-        disposer()
-        this.autoSaveReactionByCid.delete(model.cid)
-        modelsStopped.push(model)
-      }
-    })
-
-    if (modelsStopped.length) {
-      this.onStopAutoSave(modelsStopped)
-    }
-
-    if (!models || Array.isArray(models)) {
-      return modelsStopped
-    } else {
-      //models is TModel instance
-      return modelsStopped.length ? modelsStopped[0] : undefined
-    }
-  }
-
-  protected onStopAutoSave(models: TModel[]): void {}
 
   protected removeFromInternalTracking(model: TModel): void {
     this.modelByCid.delete(model.cid)
@@ -380,8 +275,6 @@ export class Collection<
 
     const identityR = this.identityReactionByCid.get(model.cid)
     identityR ? identityR() : null
-
-    this.stopAutoSave(model)
   }
 
   protected resolveModels(
@@ -1041,7 +934,6 @@ export class Collection<
   destroy(): void {
     this.onDestroy()
 
-    this.stopAutoSave()
     this.identityReactionByCid.forEach((dispose) => {
       dispose()
     })

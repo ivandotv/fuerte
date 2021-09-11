@@ -10,9 +10,6 @@ const fixtures = fixtureFactory()
 describe('Collection', () => {
   test('Pass in custom collection configuration', () => {
     const customConfig: CollectionConfig = {
-      autoSave: {
-        enabled: true
-      },
       add: {
         insertPosition: 'start'
       },

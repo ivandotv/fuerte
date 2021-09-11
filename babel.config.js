@@ -39,6 +39,12 @@ const browserReplacements = Object.assign(
 )
 
 const plugins = [
+  [
+    '@babel/plugin-transform-typescript',
+    {
+      allowDeclareFields: true
+    }
+  ],
   ['@babel/plugin-proposal-nullish-coalescing-operator'], //node v10
   ['@babel/plugin-proposal-optional-chaining'], // node v10
   ['@babel/proposal-class-properties', { loose: true }], // stage-3 proposal
@@ -50,7 +56,7 @@ const plugins = [
 ].concat('production' === nodeEnv ? 'minify-dead-code-elimination' : [])
 
 module.exports = {
-  presets: ['@babel/typescript', '@babel/preset-env'],
+  presets: ['@babel/preset-env'],
   plugins,
   exclude: ['transform-async-to-generator', 'transform-regenerator'],
   env: {

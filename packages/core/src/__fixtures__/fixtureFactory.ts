@@ -1,5 +1,6 @@
-import { CollectionConfig } from '../utils/types'
+import { CollectionConfig, CollectionConfigWithAutoSave } from '../utils/types'
 import { TestCollection } from './TestCollection'
+import { TestCollectionWithAutoSave } from './TestCollectionWithAutoSave'
 import { TestFactory } from './TestFactory'
 import { TestModel, TestModelData } from './TestModel'
 import { TestTransport } from './TestTransport'
@@ -23,6 +24,18 @@ export function fixtureFactory() {
       transport = transport || this.transport()
 
       return new TestCollection(factory, transport, config)
+    },
+    collectionWithAutoSave(
+      factory?: TestFactory,
+      transport?: TestTransport,
+      config?: CollectionConfigWithAutoSave
+    ) {
+      // modelClass = modelClass || TestModel
+      config = config || {}
+      factory = factory || this.factory()
+      transport = transport || this.transport()
+
+      return new TestCollectionWithAutoSave(factory, transport, config)
     },
     transport(): TestTransport {
       return new TestTransport()

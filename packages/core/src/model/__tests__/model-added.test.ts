@@ -5,9 +5,9 @@ configure({ enforceActions: 'always' })
 
 const fixtures = fixtureFactory()
 
-describe('Model - add to collection', () => {
-  describe('When model is added to the collection ', () => {
-    test('getCollection() points to current collection', () => {
+describe('Model - add  #add', () => {
+  describe('When the model is added to the collection ', () => {
+    test('Can retrieve the collection from the model', () => {
       const transport = fixtures.transport()
       const collection = fixtures.collection(fixtures.factory(), transport)
       const model = fixtures.model()
@@ -16,7 +16,7 @@ describe('Model - add to collection', () => {
 
       expect(model.getCollection()).toBe(collection)
     })
-    test('"onAdded" hook is called', () => {
+    test('"onAdded" callback is executed', () => {
       const transport = fixtures.transport()
       const collection = fixtures.collection(fixtures.factory(), transport)
       const model = fixtures.model()
@@ -28,7 +28,7 @@ describe('Model - add to collection', () => {
       expect(onAddedSpy).toBeCalled()
     })
 
-    test('When model is in another collection, it is removed from the previous collection', () => {
+    test('If the model is in another collection, it is removed from the collection', () => {
       const transport = fixtures.transport()
       const firstCollection = fixtures.collection(fixtures.factory(), transport)
       const secondCollection = fixtures.collection(

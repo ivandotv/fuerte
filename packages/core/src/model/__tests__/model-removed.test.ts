@@ -5,9 +5,9 @@ configure({ enforceActions: 'always' })
 
 const fixtures = fixtureFactory()
 
-describe('Model - remove from collection', () => {
+describe('Model - remove #remove', () => {
   describe('When model is removed from the collection ', () => {
-    test('getCollection() is undefined', () => {
+    test('Model is not associated with the collection', () => {
       const transport = fixtures.transport()
       const collection = fixtures.collection(fixtures.factory(), transport)
       const model = fixtures.model()
