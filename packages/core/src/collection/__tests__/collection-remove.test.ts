@@ -5,6 +5,7 @@ configure({ enforceActions: 'observed' })
 
 const fixtures = fixtureFactory()
 let modelPool: any[]
+
 beforeEach(() => {
   modelPool = []
   for (let index = 0; index < 10; index++) {
@@ -13,66 +14,71 @@ beforeEach(() => {
   }
 })
 
-describe('Collection remove models', () => {
-  test('Remove one model via "cid"', () => {
+describe('Collection - remove #remove', () => {
+  test('Remove one model via id', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
-
     collection.add(model)
+
     const result = collection.remove(model.cid)
 
     expect(result[0]).toBe(model)
     expect(collection.models.length).toBe(0)
   })
-  test('Remove multiple models via "cid"', () => {
+
+  test('Remove multiple models via id', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const modelOne = fixtures.model()
     const modelTwo = fixtures.model()
-
     collection.add([modelOne, modelTwo])
+
     const result = collection.remove([modelOne.cid, modelTwo.cid])
 
     expect(result).toEqual([modelOne, modelTwo])
     expect(collection.models.length).toBe(0)
   })
+
   test('Remove one model via model instance', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
-
     collection.add(model)
+
     const result = collection.remove(model)
 
     expect(result[0]).toBe(model)
     expect(collection.models.length).toBe(0)
   })
+
   test('Remove multiple models via model instances', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const modelOne = fixtures.model()
     const modelTwo = fixtures.model()
-
     collection.add([modelOne, modelTwo])
+
     const result = collection.remove([modelOne, modelTwo])
 
     expect(result).toEqual([modelOne, modelTwo])
     expect(collection.models.length).toBe(0)
   })
-  test('Remove via "pop"', () => {
+
+  test('Remove the last model', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const modelOne = fixtures.model()
     const modelTwo = fixtures.model()
-
     collection.add([modelOne, modelTwo])
+
     const result = collection.pop()
 
     expect(result).toBe(modelTwo)
     expect(collection.models.length).toBe(1)
   })
-  test('If the collection is empty, "pop" returns undefined', () => {
+
+  test('If the collection is empty, removing last model returns undefined', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
 
@@ -80,19 +86,21 @@ describe('Collection remove models', () => {
 
     expect(result).toBeUndefined()
   })
-  test('Remove via "shift"', () => {
+
+  test('Remove the first model in the collection', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const modelOne = fixtures.model()
     const modelTwo = fixtures.model()
-
     collection.add([modelOne, modelTwo])
+
     const result = collection.shift()
 
     expect(result).toBe(modelOne)
     expect(collection.models.length).toBe(1)
   })
-  test('If the collection is empty, "shift" returns undefined', () => {
+
+  test('If the collection is empty, removing the first model returns undefined', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
 
@@ -101,7 +109,7 @@ describe('Collection remove models', () => {
     expect(result).toBeUndefined()
   })
 
-  test('Remove at particular index', () => {
+  test('Remove the model at particular collection index', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const modelOne = fixtures.model()

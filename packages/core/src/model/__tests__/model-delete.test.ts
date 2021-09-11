@@ -170,6 +170,18 @@ describe('Model - delete #delete', () => {
       })
     })
 
+    test('When deleted and removed from the collection, "onRemoved" callback is called', () => {
+      const transport = fixtures.transport()
+      const collection = fixtures.collection(fixtures.factory(), transport)
+      const model = fixtures.model()
+      const modelOnRemovedSpy = jest.spyOn(model, 'onRemoved')
+      collection.add(model)
+
+      collection.delete(model)
+
+      expect(modelOnRemovedSpy).toBeCalled()
+    })
+
     test('When there is a delete error, error callback is called', async () => {
       const transport = fixtures.transport()
       const collection = fixtures.collection(fixtures.factory(), transport)

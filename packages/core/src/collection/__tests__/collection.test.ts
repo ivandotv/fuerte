@@ -8,7 +8,7 @@ configure({ enforceActions: 'always' })
 const fixtures = fixtureFactory()
 
 describe('Collection', () => {
-  test('Pass in custom collection configuration', () => {
+  test('Pass in and retrieve the custom collection configuration object', () => {
     const customConfig: CollectionConfig = {
       add: {
         insertPosition: 'start'
@@ -21,7 +21,6 @@ describe('Collection', () => {
       },
       delete: { removeOnError: true }
     }
-
     const collection = fixtures.collection(undefined, undefined, customConfig)
 
     expect(collection.getConfig()).toMatchObject(customConfig)
@@ -33,7 +32,7 @@ describe('Collection', () => {
     expect(collection.getTransport()).toBe(transport)
   })
 
-  test('Create model via create method', () => {
+  test('Create the model via the create method', () => {
     const collection = fixtures.collection()
     const modelData = { foo: 'new foo', bar: 'new bar', id: 'new id' }
 
@@ -49,7 +48,6 @@ describe('Collection', () => {
     const collection = fixtures.collection()
     const model = fixtures.model()
     const modelTwo = fixtures.model()
-
     collection.add([model, modelTwo])
 
     expect(collection.new).toEqual([model, modelTwo])
@@ -59,10 +57,10 @@ describe('Collection', () => {
     const collection = fixtures.collection()
     const model = fixtures.model({ foo: '1', bar: '1', id: '1' })
     const modelTwo = fixtures.model({ foo: '2', bar: '2', id: '2' })
-
     collection.add([model, modelTwo])
 
     const result = collection.serialize()
+
     expect(result).toStrictEqual({ models: [model.payload, modelTwo.payload] })
   })
 
@@ -73,7 +71,6 @@ describe('Collection', () => {
     const modelDestroySpy = jest.spyOn(model, 'destroy')
     const modelTwoDestroySpy = jest.spyOn(model, 'destroy')
     const collectionOnDestroySpy = jest.spyOn(collection, 'onDestroy')
-
     collection.add([model, modelTwo])
 
     collection.destroy()
@@ -111,7 +108,7 @@ describe('Collection', () => {
       expect(result).toStrictEqual([model, modelTwo])
     })
 
-    test('When look for one model, if not present, return undefined', () => {
+    test('When querying for wrong model by identity, return undefined', () => {
       const collection = fixtures.collection()
       const id = 'new-id'
 
@@ -120,7 +117,7 @@ describe('Collection', () => {
       expect(result).toBeUndefined()
     })
 
-    test('If there are no models , return empty array', () => {
+    test('When querying for multiple models by identity, return empty array', () => {
       const collection = fixtures.collection()
       const id = 'new-id'
       const idTwo = 'new-id-2'

@@ -7,6 +7,7 @@ configure({ enforceActions: 'always' })
 const fixtures = fixtureFactory()
 
 let modelPool: any[]
+
 beforeEach(() => {
   modelPool = []
   for (let index = 0; index < 10; index++) {
@@ -15,8 +16,8 @@ beforeEach(() => {
   }
 })
 
-describe('Collection add models', () => {
-  test('Add one model via "add" method', () => {
+describe('Collection - add #add', () => {
+  test('Add one model', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
@@ -26,6 +27,7 @@ describe('Collection add models', () => {
     expect(collection.models.length).toBe(1)
     expect(collection.models[0]).toBe(model)
   })
+
   test('Add models at the end via "push" method', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
@@ -49,23 +51,26 @@ describe('Collection add models', () => {
 
     expect(collection.models.slice(0, 5)).toEqual(secondBatch)
   })
+
   test('Add models at specific index', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const firstBatch = modelPool.slice(0, 5)
     const secondBatch = modelPool.slice(5)
-
     const insertionIndex = 3
     collection.push(firstBatch)
+
     collection.addAtIndex(secondBatch, insertionIndex)
 
-    const test = collection.models.slice(
-      insertionIndex,
-      insertionIndex + secondBatch.length
-    )
-    expect(test).toEqual(secondBatch)
+    expect(
+      collection.models.slice(
+        insertionIndex,
+        insertionIndex + secondBatch.length
+      )
+    ).toEqual(secondBatch)
   })
-  test('Throw if index is bigger than the current count', () => {
+
+  test('Throw if trying to add at index that is bigger than the current count', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
@@ -78,7 +83,8 @@ describe('Collection add models', () => {
       expect(e.message).toEqual(expect.stringContaining('out of bounds'))
     }
   })
-  test('Throw if index is a negative integer', () => {
+
+  test('Throw if trying to add at negative index.', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
@@ -91,32 +97,33 @@ describe('Collection add models', () => {
       expect(e.message).toEqual(expect.stringContaining('out of bounds'))
     }
   })
+
   test('Do not add models that already exist in the collection ', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const models = modelPool.slice(0, 5)
-
     collection.add(models)
+
     const result = collection.add(models)
 
     expect(result).toEqual([])
     expect(collection.models.length).toEqual(models.length)
   })
 
-  test('If model is not an instance of Model class, throw', () => {
+  test('If the model is not an instance of Model class, throw', () => {
     const collection = fixtures.collection()
     const model = { id: 'test' }
 
     expect.assertions(1)
     try {
       // @ts-expect-error - model is not a real model
-      const result = collection.add(model)
+      collection.add(model)
     } catch (err) {
       expect(err.message).toMatch(/not instance of Model class/)
     }
   })
 
-  test('Do not add the model if "cid" is not unique', () => {
+  test('Do not add the model if client id is not unique', () => {
     const collection = fixtures.collection()
     const model = fixtures.model()
 
@@ -126,11 +133,11 @@ describe('Collection add models', () => {
     expect(result).toEqual([])
     expect(collection.models.length).toBe(1)
   })
-  test('Do not add the model if key identifier is not unique', () => {
+
+  test('Do not add the model if identity key is not unique', () => {
     const collection = fixtures.collection()
     const model = fixtures.model()
     const modelTwo = fixtures.model()
-
     model.setIdentity('1')
     modelTwo.setIdentity('1')
 
@@ -141,7 +148,7 @@ describe('Collection add models', () => {
     expect(collection.models.length).toBe(1)
   })
 
-  test('Return models that where successfully added', () => {
+  test('Return all the models that where successfully added', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const models = modelPool.slice(0, 5)
@@ -151,7 +158,7 @@ describe('Collection add models', () => {
     expect(result).toEqual(models)
   })
 
-  test('When model is added it can be retrieved', async () => {
+  test('When the model is added it can be retrieved', async () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model({ foo: 'foo', bar: 'bar', id: '1' })
@@ -177,7 +184,8 @@ describe('Collection add models', () => {
     }
     expect(onAddedSpy).toBeCalledTimes(models.length)
   })
-  test('If nothing is added, no callbacks are being called', () => {
+
+  test('If nothing is added, no callbacks are called', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const models = modelPool.slice(0, 5)
@@ -188,7 +196,8 @@ describe('Collection add models', () => {
 
     expect(onAddedSpy).toBeCalledTimes(0)
   })
-  test('When model is in another collection it is removed from that collection', () => {
+
+  test('When model is added to another collection it is removed from the previous collection', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const collectionTwo = fixtures.collection(fixtures.factory(), transport)

@@ -7,6 +7,7 @@ configure({ enforceActions: 'always' })
 
 const fixtures = fixtureFactory()
 let modelPool: any[]
+
 beforeEach(() => {
   modelPool = []
   for (let index = 0; index < 10; index++) {
@@ -15,7 +16,7 @@ beforeEach(() => {
   }
 })
 
-describe('Collection reset', () => {
+describe('Collection - reset #reset', () => {
   test('Return added and removed models', async () => {
     const collection = fixtures.collection()
     const models = modelPool.splice(0, 5)
@@ -25,6 +26,7 @@ describe('Collection reset', () => {
 
     expect(result).toEqual([collection.models, models])
   })
+
   test('Call on reset callback with added and removed models', async () => {
     const collection = fixtures.collection()
     const onResetSpy = jest.spyOn(collection, 'onReset')
@@ -76,7 +78,6 @@ describe('Collection reset', () => {
       foo: 'modified',
       bar: 'modified'
     }
-
     class Test extends TestCollection {
       onModelCreateData(_data: TestModelData): TestModelData {
         return modelData
@@ -89,7 +90,7 @@ describe('Collection reset', () => {
     expect(collection.models[0]).toEqual(expect.objectContaining(modelData))
   })
 
-  test('If model creation data callback returns falsy value, skip model creation', async () => {
+  test('If model the creation data callback returns falsy value, skip model creation', async () => {
     class Test extends TestCollection {
       onModelCreateData(_data: TestModelData): void {}
     }

@@ -5,8 +5,8 @@ import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
 configure({ enforceActions: 'never' })
 
 const fixtures = fixtureFactory()
-describe('Model Autosave', () => {
-  test('Pass in custom collection configuration', () => {
+describe('Model - autosave #autosave', () => {
+  test('Cant pass in custom configuration', () => {
     const customConfig: CollectionConfigWithAutoSave = {
       autoSave: {
         enabled: true
@@ -35,11 +35,12 @@ describe('Model Autosave', () => {
     const collection = fixtures.collectionWithAutoSave()
 
     const config = collection.getConfig()
+
     expect(config.autoSave.enabled).toBe(false)
     expect(config.autoSave.debounce).toBe(0)
   })
 
-  test('When model is changed autosave is called immediately', () => {
+  test('When the model is changed autosave is called immediately', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collectionWithAutoSave(
       fixtures.factory(),
@@ -53,22 +54,15 @@ describe('Model Autosave', () => {
     const autoSaveSpy = jest.spyOn(collection, 'autoSave')
     const transportSaveSpy = jest.spyOn(transport, 'save')
     const model = fixtures.model()
-
     collection.add(model)
 
     model.foo = 'new foo'
-    const newDataOne = model.payload
-
     model.bar = 'new bar'
-    const newDataTwo = model.payload
 
     expect(autoSaveSpy).toBeCalledTimes(2)
     expect(transportSaveSpy).toBeCalledTimes(2)
-
-    expect(autoSaveSpy.mock.calls[0][0]).toEqual({ model, data: newDataOne })
-    expect(autoSaveSpy.mock.calls[1][0]).toEqual({ model, data: newDataTwo })
   })
-  test('When model is changed autosave is debounced', () => {
+  test('When debounce is active, model is saved with a delay', () => {
     jest.useFakeTimers()
     const transport = fixtures.transport()
     const collection = fixtures.collectionWithAutoSave(
@@ -84,7 +78,6 @@ describe('Model Autosave', () => {
     const autoSaveSpy = jest.spyOn(collection, 'autoSave')
     const transportSaveSpy = jest.spyOn(transport, 'save')
     const model = fixtures.model()
-
     collection.add(model)
 
     model.foo = 'new foo'
@@ -97,7 +90,6 @@ describe('Model Autosave', () => {
 
     expect(autoSaveSpy).toBeCalledTimes(1)
     expect(transportSaveSpy).toBeCalledTimes(1)
-
     expect(autoSaveSpy).toBeCalledWith(
       { model, data: newData },
       { model, data: oldData },
@@ -105,7 +97,7 @@ describe('Model Autosave', () => {
     )
   })
 
-  test('When model is removed from the collection, autosave is disabled', () => {
+  test('When the model is removed from the collection, autosave is disabled', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collectionWithAutoSave(
       fixtures.factory(),
@@ -119,18 +111,15 @@ describe('Model Autosave', () => {
     const autoSaveSpy = jest.spyOn(collection, 'autoSave')
     const transportSaveSpy = jest.spyOn(transport, 'save')
     const model = fixtures.model()
-
     collection.add(model)
-
-    model.foo = 'new foo'
 
     collection.remove(model)
 
     model.foo = 'foo 2'
     model.foo = 'foo 3'
 
-    expect(autoSaveSpy).toBeCalledTimes(1)
-    expect(transportSaveSpy).toBeCalledTimes(1)
+    expect(autoSaveSpy).toBeCalledTimes(0)
+    expect(transportSaveSpy).toBeCalledTimes(0)
   })
 
   test('Start autosave for one model', () => {
@@ -144,18 +133,12 @@ describe('Model Autosave', () => {
         }
       }
     )
-    const autoSaveSpy = jest.spyOn(collection, 'autoSave')
-    const transportSaveSpy = jest.spyOn(transport, 'save')
     const callbackSpy = jest.spyOn(collection, 'onStartAutoSave')
     const model = fixtures.model()
-
     collection.add(model)
 
     const result = collection.startAutoSave(model)
-    model.foo = 'new foo'
 
-    expect(autoSaveSpy).toBeCalledTimes(1)
-    expect(transportSaveSpy).toBeCalledTimes(1)
     expect(callbackSpy).toBeCalledTimes(1)
     expect(callbackSpy).toBeCalledWith([model])
     expect(result).toBe(model)
@@ -172,22 +155,14 @@ describe('Model Autosave', () => {
         }
       }
     )
-    const autoSaveSpy = jest.spyOn(collection, 'autoSave')
-    const transportSaveSpy = jest.spyOn(transport, 'save')
     const callbackSpy = jest.spyOn(collection, 'onStartAutoSave')
     const model = fixtures.model()
     const modelTwo = fixtures.model()
-
     collection.add(model)
     collection.add(modelTwo)
 
     const result = collection.startAutoSave([model, modelTwo])
 
-    model.foo = 'new foo'
-    modelTwo.foo = 'new foo'
-
-    expect(autoSaveSpy).toBeCalledTimes(2)
-    expect(transportSaveSpy).toBeCalledTimes(2)
     expect(callbackSpy).toBeCalledTimes(1)
     expect(callbackSpy).toBeCalledWith([model, modelTwo])
     expect(result).toStrictEqual([model, modelTwo])
@@ -204,22 +179,14 @@ describe('Model Autosave', () => {
         }
       }
     )
-    const autoSaveSpy = jest.spyOn(collection, 'autoSave')
-    const transportSaveSpy = jest.spyOn(transport, 'save')
     const callbackSpy = jest.spyOn(collection, 'onStartAutoSave')
     const model = fixtures.model()
     const modelTwo = fixtures.model()
-
     collection.add(model)
     collection.add(modelTwo)
 
     const result = collection.startAutoSave([model, modelTwo])
 
-    model.foo = 'new foo'
-    modelTwo.foo = 'new foo'
-
-    expect(autoSaveSpy).toBeCalledTimes(2)
-    expect(transportSaveSpy).toBeCalledTimes(2)
     expect(callbackSpy).toBeCalledTimes(1)
     expect(callbackSpy).toBeCalledWith([model, modelTwo])
     expect(result).toStrictEqual([model, modelTwo])
@@ -236,28 +203,20 @@ describe('Model Autosave', () => {
         }
       }
     )
-    const autoSaveSpy = jest.spyOn(collection, 'autoSave')
-    const transportSaveSpy = jest.spyOn(transport, 'save')
     const callbackSpy = jest.spyOn(collection, 'onStartAutoSave')
     const model = fixtures.model()
     const modelTwo = fixtures.model()
-
     collection.add(model)
     collection.add(modelTwo)
 
     const result = collection.startAutoSave()
 
-    model.foo = 'new foo'
-    modelTwo.foo = 'new foo'
-
-    expect(autoSaveSpy).toBeCalledTimes(2)
-    expect(transportSaveSpy).toBeCalledTimes(2)
     expect(callbackSpy).toBeCalledTimes(1)
     expect(callbackSpy).toBeCalledWith(collection.models)
     expect(result).toStrictEqual(collection.models)
   })
 
-  test('Dont start autosave for already started model', () => {
+  test('Dont start autosave for a particular model, if it is already active', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collectionWithAutoSave(
       fixtures.factory(),
@@ -268,10 +227,8 @@ describe('Model Autosave', () => {
         }
       }
     )
-
     const model = fixtures.model()
     const modelTwo = fixtures.model()
-
     collection.add(model)
     collection.add(modelTwo)
 
@@ -331,7 +288,6 @@ describe('Model Autosave', () => {
     const callbackSpy = jest.spyOn(collection, 'onStopAutoSave')
     const model = fixtures.model()
     const modelTwo = fixtures.model()
-
     collection.add(model)
     collection.add(modelTwo)
 
@@ -339,7 +295,6 @@ describe('Model Autosave', () => {
 
     model.foo = 'new foo'
     model.bar = 'new bar'
-
     modelTwo.foo = 'new foo'
 
     expect(autoSaveSpy).toBeCalledTimes(0)
@@ -365,7 +320,6 @@ describe('Model Autosave', () => {
     const callbackSpy = jest.spyOn(collection, 'onStopAutoSave')
     const model = fixtures.model()
     const modelTwo = fixtures.model()
-
     collection.add(model)
     collection.add(modelTwo)
 
@@ -373,7 +327,6 @@ describe('Model Autosave', () => {
 
     model.foo = 'new foo'
     model.bar = 'new bar'
-
     modelTwo.foo = 'new foo'
 
     expect(autoSaveSpy).toBeCalledTimes(0)

@@ -1,11 +1,13 @@
 import { configure } from 'mobx'
 import { SaveConfig } from '../../utils/types'
 import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
+import { TestModel } from '../../__fixtures__/TestModel'
 
 configure({ enforceActions: 'always' })
 
 const fixtures = fixtureFactory()
 let modelPool: any[]
+
 beforeEach(() => {
   modelPool = []
   for (let index = 0; index < 10; index++) {
@@ -14,8 +16,8 @@ beforeEach(() => {
   }
 })
 
-describe('Collection - save models', () => {
-  test('Save model', async () => {
+describe('Collection - save #save', () => {
+  test('Save one model', async () => {
     const transport = fixtures.transport()
     const model = fixtures.model()
     const collection = fixtures.collection(fixtures.factory(), transport)
@@ -25,28 +27,31 @@ describe('Collection - save models', () => {
     expect(collection.models[0]).toBe(model)
   })
 
-  test('When save is in progress, can retrieve all models that are reloading', async () => {
+  test('When save is in progress, we can retrieve all the models that are in the process saving', async () => {
     const transport = fixtures.transport()
     const model = fixtures.model()
     const modelTwo = fixtures.model()
+    const collection = fixtures.collection(fixtures.factory(), transport)
 
+    collection.save(model)
+    collection.save(modelTwo)
+
+    expect(collection.saving).toEqual([model, modelTwo])
+  })
+
+  test('When save is in progress, models that are saving are also syncing', async () => {
+    const transport = fixtures.transport()
+    const model = fixtures.model()
+    const modelTwo = fixtures.model()
     const collection = fixtures.collection(fixtures.factory(), transport)
 
     const p1 = collection.save(model)
     const p2 = collection.save(modelTwo)
 
-    expect(collection.saving).toEqual([model, modelTwo])
     expect(collection.syncing).toEqual([model, modelTwo])
-
-    await Promise.all([p1, p2])
-
-    expect(collection.models[0]).toBe(model)
-
-    expect(collection.saving).toHaveLength(0)
-    expect(collection.syncing).toHaveLength(0)
   })
 
-  test('Create and save models', async () => {
+  test('When using model data, save and create the new model', async () => {
     const transport = fixtures.transport()
     const data = { foo: 'foo-prop', bar: 'bar-prop' }
     const collection = fixtures.collection(fixtures.factory(), transport)
@@ -57,7 +62,17 @@ describe('Collection - save models', () => {
     expect(collection.models[0].bar).toBe(data.bar)
   })
 
-  test('Return value is object with response and model', async () => {
+  test('Save with raw model creates and returns the new model', async () => {
+    const transport = fixtures.transport()
+    const data = { foo: 'foo-prop', bar: 'bar-prop' }
+    const collection = fixtures.collection(fixtures.factory(), transport)
+
+    const response = await collection.save(data)
+
+    expect(response.model).toBeInstanceOf(TestModel)
+  })
+
+  test('Return value is object with the response and the model that is being saved', async () => {
     const transport = fixtures.transport()
     const model = fixtures.model()
     const collection = fixtures.collection(fixtures.factory(), transport)
@@ -70,7 +85,7 @@ describe('Collection - save models', () => {
     expect(result.model).toEqual(model)
   })
 
-  test(' After failed request, model holds the failed response,', async () => {
+  test('After a failed request, model holds the failed response,', async () => {
     const transport = fixtures.transport()
     const response = 'failed_response'
     jest
@@ -85,7 +100,7 @@ describe('Collection - save models', () => {
     expect(model.saveError).toBe(response)
   })
 
-  test('Model failed response prop is cleared on next call to save', async () => {
+  test('Model failed response property is cleared on the next call to save', async () => {
     const transport = fixtures.transport()
     const response = 'failed_response'
     jest
@@ -94,22 +109,17 @@ describe('Collection - save models', () => {
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
 
-    await collection.save(model).catch(() => {
-      expect(model.saveError).toEqual(response)
-    })
-
+    await collection.save(model).catch(() => {})
     await collection.save(model)
 
     expect(model.saveError).toBe(undefined)
   })
 
-  test('If there are pending save requests, model is still in the process of saving', async () => {
+  test('If there are pending save requests, than the model is still in the process of saving', async () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
-
     const firstResult = collection.save(model)
-
     jest.spyOn(transport, 'save').mockImplementationOnce(
       () =>
         new Promise((resolve) =>
@@ -128,12 +138,13 @@ describe('Collection - save models', () => {
     expect(model.isSyncing).toBe(true)
 
     await secondResult
+
     expect(collection.saving).toEqual([])
     expect(model.isSaving).toBe(false)
     expect(model.isSyncing).toBe(false)
   })
 
-  test('Save model via model DTO  ', async () => {
+  test('Save the model via model DTO  ', async () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
 
@@ -146,21 +157,18 @@ describe('Collection - save models', () => {
     expect(collection.models[0]).toEqual(expect.objectContaining(modelData))
   })
 
-  test('When the model is in the process of saving, "modelsSaving" property reflects that', async () => {
+  test('When saving, we can query all the models that are saving', async () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
 
-    const result = collection.save(model)
+    collection.save(model)
+
     expect(collection.saving.length).toBe(1)
     expect(collection.saving[0]).toBe(model)
-
-    await result
-
-    expect(collection.saving.length).toBe(0)
   })
 
-  test('When model is added to the collection before save process starts, "onAdded" model hook is called', () => {
+  test('When the model is added to the collection before save process starts, "onAdded" model hook is called', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
@@ -168,10 +176,11 @@ describe('Collection - save models', () => {
     const modelOnAddedSpy = jest.spyOn(model, 'onAdded')
 
     collection.save(model)
+
     expect(modelOnAddedSpy).toBeCalled()
   })
 
-  test('If the model is already in the collection, just save it', async () => {
+  test('If the model is already in the collection, do not add it, just save it', async () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
@@ -202,11 +211,11 @@ describe('Collection - save models', () => {
         addImmediately: true
       }
       const collection = fixtures.collection(fixtures.factory(), transport)
-
       const collectionSaveStartSpy = jest.spyOn(collection, 'onSaveStart')
       const modelSaveStartSpy = jest.spyOn(model, 'onSaveStart')
 
       await collection.save(model, config, transportConfig)
+
       expect(collectionSaveStartSpy).toBeCalledWith({
         model,
         transportConfig,
@@ -243,7 +252,6 @@ describe('Collection - save models', () => {
         response,
         transportConfig
       })
-
       expect(modelSaveSuccessSpy).toBeCalledWith({
         response,
         config,
@@ -266,8 +274,6 @@ describe('Collection - save models', () => {
       const modelSaveErrorSpy = jest.spyOn(model, 'onSaveError')
       jest.spyOn(transport, 'save').mockRejectedValue(response)
 
-      expect.assertions(2)
-
       const result = await collection.save(model, config, transportConfig)
 
       expect(collectionSaveErrorSpy).toBeCalledWith({
@@ -286,19 +292,17 @@ describe('Collection - save models', () => {
   })
 
   describe('Delayed insertion in the collection', () => {
-    test('When the model is in the process of saving, "modelsSaving" property reflects that', async () => {
+    test('When saving, we can query all the models that are in the process of saving', async () => {
       const transport = fixtures.transport()
       const collection = fixtures.collection(fixtures.factory(), transport)
       const model = fixtures.model()
 
       const result = collection.save(model, { addImmediately: false })
+
       expect(collection.saving.length).toBe(1)
       expect(collection.saving[0]).toBe(model)
-
-      await result
-
-      expect(collection.saving.length).toBe(0)
     })
+
     test('When model is successfuly saved, "onAdded" model hook is called', async () => {
       const transport = fixtures.transport()
       const collection = fixtures.collection(fixtures.factory(), transport)
@@ -311,7 +315,8 @@ describe('Collection - save models', () => {
       await result
       expect(modelOnAddedSpy).toBeCalled()
     })
-    test('Add model only after successful save', async () => {
+
+    test('Add the model after the successful save', async () => {
       const transport = fixtures.transport()
       const collection = fixtures.collection(fixtures.factory(), transport)
       const model = fixtures.model()
@@ -319,12 +324,14 @@ describe('Collection - save models', () => {
       const promise = collection.save(model, { addImmediately: false })
 
       expect(collection.models.length).toBe(0)
+
       await promise
+
       expect(collection.models.length).toBe(1)
       expect(collection.models[0]).toBe(model)
     })
 
-    test('Add model after failed save by default', async () => {
+    test('Add the model after the failed save by default', async () => {
       const transport = fixtures.transport()
       jest
         .spyOn(transport, 'save')
@@ -336,10 +343,12 @@ describe('Collection - save models', () => {
         addImmediately: false,
         addOnError: true
       })
+
       expect(collection.models).toHaveLength(1)
       expect(collection.models[0]).toBe(model)
     })
-    test('Do not add model after failed save', async () => {
+
+    test('Do not add the model after the failed save', async () => {
       const transport = fixtures.transport()
       jest
         .spyOn(transport, 'save')
@@ -351,6 +360,7 @@ describe('Collection - save models', () => {
         addImmediately: false,
         addOnError: false
       })
+
       expect(collection.models).toHaveLength(0)
       expect(model.getCollection()).toBe(undefined)
     })
