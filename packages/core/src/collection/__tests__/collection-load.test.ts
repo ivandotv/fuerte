@@ -22,8 +22,8 @@ beforeEach(() => {
   }
 })
 
-describe('Collection - load #load', () => {
-  test('Load method returns original response with newly added models ', async () => {
+describe('Collection - load #load #collection', () => {
+  test('Load method returns original response with the newly added models', async () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const response = {
@@ -50,14 +50,13 @@ describe('Collection - load #load', () => {
     const response = 'custom_response'
     jest.spyOn(transport, 'load').mockRejectedValueOnce(response)
 
-    expect.assertions(2)
     const result = await collection.load()
 
     expect(result.error).toEqual(response)
     expect(collection.models).toHaveLength(0)
   })
 
-  test('When collection is loading, load status reflects the load state ', async () => {
+  test('When collection is loading, load status reflects the load state', async () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     jest
@@ -73,7 +72,7 @@ describe('Collection - load #load', () => {
     expect(collection.loadStatus).toBe(ASYNC_STATUS.RESOLVED)
   })
 
-  test('When load fails, loadError property holds the error', async () => {
+  test('When load fails, error can be retrived via instance property', async () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const response = 'custom_response'
@@ -133,7 +132,6 @@ describe('Collection - load #load', () => {
         expect.objectContaining({ foo: 'oldModelTwo' })
       ])
     )
-
     expect(collection.models.length).toEqual(fixtures.rawModelData.length)
   })
 
@@ -160,10 +158,10 @@ describe('Collection - load #load', () => {
       jest.spyOn(transport, 'load').mockResolvedValueOnce({
         data: fixtures.rawModelData.slice(0, 1)
       })
-      const fooProp = 'original'
+      const newValue = 'original'
       const original = fixtures.model()
       original.setIdentity(fixtures.rawModelData[0].id)
-      original.foo = fooProp
+      original.foo = newValue
       collection.add(original)
 
       const result = await collection.load()
@@ -172,7 +170,7 @@ describe('Collection - load #load', () => {
       expect(result.removed).toEqual([original])
       expect(collection.models.length).toBe(1)
       expect(collection.models[0].id).toBe(fixtures.rawModelData[0].id)
-      expect(collection.models[0].foo).not.toBe(fooProp)
+      expect(collection.models[0].foo).not.toBe(newValue)
     })
 
     test('Default insert position is at the end of the collection', async () => {
@@ -219,7 +217,7 @@ describe('Collection - load #load', () => {
       expect(firstModel.id).toBe(fixtures.rawModelData[0].id)
     })
 
-    test('Model creation data can be modified before creation', async () => {
+    test('Model creation data can be modified before model creation', async () => {
       const modifiedData: TestModelData = {
         id: '123',
         foo: 'modified',
@@ -244,9 +242,8 @@ describe('Collection - load #load', () => {
       expect(collection.models[0].id).toBe(modifiedData.id)
     })
 
-    test('If the model creation data callback returns falsy value, skip model creation', async () => {
+    test('If the model creation data callback returns a falsy value, skip model creation', async () => {
       const transport = fixtures.transport()
-      const response = 'custom_response'
       jest.spyOn(transport, 'load').mockResolvedValueOnce({
         data: fixtures.rawModelData.slice(0, 1)
       })
@@ -273,10 +270,10 @@ describe('Collection - load #load', () => {
       jest.spyOn(transport, 'load').mockResolvedValueOnce({
         data: fixtures.rawModelData.slice(0, 1)
       })
-      const fooProp = 'original'
+      const newValue = 'original'
       const original = fixtures.model()
       original.setIdentity(fixtures.rawModelData[0].id)
-      original.foo = fooProp
+      original.foo = newValue
       collection.add(original)
 
       const result = await collection.load({
@@ -287,7 +284,7 @@ describe('Collection - load #load', () => {
       expect(result.removed).toEqual([original])
       expect(collection.models.length).toBe(1)
       expect(collection.models[0].id).toBe(fixtures.rawModelData[0].id)
-      expect(collection.models[0].foo).not.toBe(fooProp)
+      expect(collection.models[0].foo).not.toBe(newValue)
     })
 
     test('Keep the old model', async () => {
@@ -296,10 +293,10 @@ describe('Collection - load #load', () => {
       jest.spyOn(transport, 'load').mockResolvedValueOnce({
         data: fixtures.rawModelData.slice(0, 1)
       })
-      const fooProp = 'original'
+      const newValue = 'original'
       const original = fixtures.model()
       original.setIdentity(fixtures.rawModelData[0].id)
-      original.foo = fooProp
+      original.foo = newValue
       collection.add(original)
       const result = await collection.load({
         duplicateModelStrategy: DuplicateModelStrategy.KEEP_OLD
@@ -308,7 +305,7 @@ describe('Collection - load #load', () => {
       expect(result.added).toEqual([])
       expect(result.removed).toEqual([])
       expect(collection.models.length).toBe(1)
-      expect(collection.models[0].foo).toBe(fooProp)
+      expect(collection.models[0].foo).toBe(newValue)
     })
 
     describe('Custom compare function', () => {
@@ -352,10 +349,10 @@ describe('Collection - load #load', () => {
         jest.spyOn(transport, 'load').mockResolvedValueOnce({
           data: fixtures.rawModelData.slice(0, 1)
         })
-        const fooProp = 'original'
+        const newValue = 'original'
         const original = fixtures.model()
         original.setIdentity(fixtures.rawModelData[0].id)
-        original.foo = fooProp
+        original.foo = newValue
         collection.add(original)
 
         const result = await collection.load({
@@ -377,10 +374,10 @@ describe('Collection - load #load', () => {
         jest.spyOn(transport, 'load').mockResolvedValueOnce({
           data: fixtures.rawModelData.slice(0, 1)
         })
-        const fooProp = 'original'
+        const newValue = 'original'
         const original = fixtures.model()
         original.setIdentity(fixtures.rawModelData[0].id)
-        original.foo = fooProp
+        original.foo = newValue
 
         collection.add(original)
 
@@ -451,7 +448,6 @@ describe('Collection - load #load', () => {
         const compareFn = jest.fn(() => {
           return ModelCompareResult.KEEP_BOTH
         })
-        const response = 'custom_response'
         jest.spyOn(transport, 'load').mockResolvedValueOnce({
           data: fixtures.rawModelData.slice(0, 1)
         })
@@ -467,7 +463,7 @@ describe('Collection - load #load', () => {
         expect((result.error as Error).message).toMatch(/non unique identity/)
       })
 
-      test('If compare function returns non recognized result, throw error', async () => {
+      test('If the compare function returns a non recognized result, throw error', async () => {
         const transport = fixtures.transport()
         const collection = fixtures.collection(fixtures.factory(), transport)
         jest.spyOn(transport, 'load').mockResolvedValueOnce({
@@ -537,7 +533,7 @@ describe('Collection - load #load', () => {
       })
     })
 
-    test('On reload error, error callbacks are called', async () => {
+    test('On reload error, reload error callbacks are called', async () => {
       const transport = fixtures.transport()
       const model = fixtures.model()
       const response = 'response'

@@ -8,8 +8,8 @@ configure({ enforceActions: 'never' })
 
 const fixtures = fixtureFactory()
 
-describe('Model - save #save', () => {
-  test('When model properties change, model is dirty', () => {
+describe('Model - save #save #model', () => {
+  test('When the model properties change, model is dirty', () => {
     const model = fixtures.model()
     runInAction(() => {
       model.foo = 'new_value'
@@ -18,7 +18,7 @@ describe('Model - save #save', () => {
     expect(model.isDirty).toBe(true)
   })
 
-  test('When model properties change, model payload property is updated', () => {
+  test('When the model properties change, model payload property is updated', () => {
     const newFooValue = 'new foo'
     const newBarValue = 'new bar'
     const model = fixtures.model()
@@ -34,7 +34,7 @@ describe('Model - save #save', () => {
   })
 })
 
-test('returns transport save response', async () => {
+test('Saving the model, returns transport save response', async () => {
   const transport = fixtures.transport()
   const collection = fixtures.collection(fixtures.factory(), transport)
   const model = fixtures.model()
@@ -52,7 +52,8 @@ test('returns transport save response', async () => {
 
   expect(result).toStrictEqual({ response, error: undefined })
 })
-test('When saving is in progress, "isSaving" property is true', async () => {
+
+test('When saving is in progress, model is in the saving state', async () => {
   const model = fixtures.model()
   const collection = fixtures.collection()
   collection.add(model)
@@ -64,7 +65,7 @@ test('When saving is in progress, "isSaving" property is true', async () => {
   expect(model.isSaving).toBe(false)
 })
 
-test('When saving is in progress, "isSyncing" is true', async () => {
+test('When saving is in progress, models is in syncing state', async () => {
   const model = fixtures.model()
   const collection = fixtures.collection()
   collection.add(model)
@@ -75,7 +76,8 @@ test('When saving is in progress, "isSyncing" is true', async () => {
   await response
   expect(model.isSyncing).toBe(false)
 })
-test('When model is saved, "isNew" is false', async () => {
+
+test('When model is saved, it is not new anymore', async () => {
   const original = TestModel.setIdentityFromResponse
   TestModel.setIdentityFromResponse = true
 
@@ -93,7 +95,8 @@ test('When model is saved, "isNew" is false', async () => {
 
   expect(model.isNew).toBe(false)
 })
-test('When model save fails on a new model, "isNew" property stays true', async () => {
+
+test('When saving the model fails on a new model, model is still new', async () => {
   const transport = fixtures.transport()
   const collection = fixtures.collection(fixtures.factory(), transport)
   const model = fixtures.model()
@@ -107,7 +110,7 @@ test('When model save fails on a new model, "isNew" property stays true', async 
   expect(model.isNew).toBe(true)
 })
 
-test('When saved successfully, "lastSaved" property holds latest saved data', async () => {
+test('When saved successfully, model property holds the last saved data', async () => {
   const modelData = { foo: 'fooInit', bar: 'barInit' }
   const model = fixtures.model(modelData)
   const collection = fixtures.collection()
@@ -123,7 +126,7 @@ test('When saved successfully, "lastSaved" property holds latest saved data', as
   expect(model.lastSavedData).toEqual(expect.objectContaining(modelData))
 })
 
-test('When created from DTO and saved, "lastSaved" property holds latest saved data', async () => {
+test('When created and saved from a data object, model property holds the last saved data', async () => {
   const modelData = { foo: 'fooInit', bar: 'barInit' }
   const collection = fixtures.collection()
 
@@ -150,24 +153,8 @@ test('When model is saved, it is not dirty anymore', async () => {
   expect(model.isDirty).toBe(false)
   expect(model.isSaving).toBe(false)
 })
-test('When model is saved, it is not new anymore', async () => {
-  const original = TestModel.setIdentityFromResponse
-  TestModel.setIdentityFromResponse = true
 
-  const collection = fixtures.collection()
-  const model = fixtures.model()
-  collection.add(model)
-
-  expect(model.isNew).toBe(true)
-
-  await model.save()
-
-  // I know, static props are bad for unit testing
-  TestModel.setIdentityFromResponse = original
-  expect(model.isNew).toBe(false)
-})
-
-test('When save fails, "transportErrors" holds the failed response', async () => {
+test('When saving the model fails, model property holds the transport error', async () => {
   const transport = fixtures.transport()
   const collection = fixtures.collection(fixtures.factory(), transport)
   const response = 'response'
@@ -181,7 +168,6 @@ test('When save fails, "transportErrors" holds the failed response', async () =>
   expect(model.hasErrors).toEqual(true)
 })
 
-//todo - da li clear error treba da ide u model save start?
 test('When save process starts, previous save error is cleared.', async () => {
   const transport = fixtures.transport()
   const collection = fixtures.collection(fixtures.factory(), transport)
@@ -200,7 +186,7 @@ test('When save process starts, previous save error is cleared.', async () => {
   expect(model.saveError).toBeUndefined()
 })
 
-test('Throw if model is not part of the collection', async () => {
+test('When trying to save, throw if model is not part of the collection', async () => {
   const model = fixtures.model()
 
   await expect(model.save()).rejects.toStrictEqual(
@@ -209,6 +195,7 @@ test('Throw if model is not part of the collection', async () => {
     })
   )
 })
+
 describe('Callbacks', () => {
   test('On save start, start callbacks are called', async () => {
     const transport = fixtures.transport()
@@ -221,7 +208,6 @@ describe('Callbacks', () => {
     }
     const collection = fixtures.collection(fixtures.factory(), transport)
     collection.add(model)
-
     const collectionSaveStartSpy = jest.spyOn(collection, 'onSaveStart')
     const modelSaveStartSpy = jest.spyOn(model, 'onSaveStart')
 
@@ -290,21 +276,19 @@ describe('Callbacks', () => {
     collection.add(model)
     const dataToSave = model.payload
 
-    await collection.save(model, config, transportConfig).catch((error) => {
-      expect.assertions(2)
-      expect(modelSaveErrorSpy).toBeCalledWith({
-        error,
-        transportConfig,
-        config,
-        dataToSave
-      })
+    const { error } = await collection.save(model, config, transportConfig)
+    expect(modelSaveErrorSpy).toBeCalledWith({
+      error,
+      transportConfig,
+      config,
+      dataToSave
+    })
 
-      expect(collectionSaveErrorSpy).toBeCalledWith({
-        model,
-        error,
-        config,
-        transportConfig
-      })
+    expect(collectionSaveErrorSpy).toBeCalledWith({
+      model,
+      error,
+      config,
+      transportConfig
     })
   })
 })

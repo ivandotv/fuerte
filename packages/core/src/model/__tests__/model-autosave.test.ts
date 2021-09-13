@@ -5,7 +5,7 @@ configure({ enforceActions: 'never' })
 
 const fixtures = fixtureFactory()
 
-describe('Model - autosave #autosave', () => {
+describe('Model - autosave #autosave #model', () => {
   test('By default autosave option is disabled', async () => {
     const collection = fixtures.collectionWithAutoSave()
 
@@ -36,7 +36,7 @@ describe('Model - autosave #autosave', () => {
     expect(transportSaveSpy).toBeCalledTimes(2)
   })
 
-  test('When the model is changed payload reflects new data', () => {
+  test('When the model is changed payload property reflects new model data', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collectionWithAutoSave(
       fixtures.factory(),

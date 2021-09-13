@@ -1,4 +1,4 @@
-import { configure, makeObservable, observable, runInAction } from 'mobx'
+import { configure } from 'mobx'
 import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
 import { TestModel } from '../../__fixtures__/TestModel'
 
@@ -11,7 +11,7 @@ beforeAll(() => {
   TestModel.setIdentityFromResponse = true
 })
 
-describe('Model', () => {
+describe('Model #model', () => {
   describe('When the model is created', () => {
     test('It is new', () => {
       const model = fixtures.model()
@@ -22,10 +22,12 @@ describe('Model', () => {
       const model = fixtures.model()
       expect(model.isSyncing).toBe(false)
     })
+
     test('It has no transport errors', () => {
       const model = fixtures.model()
       expect(model.hasErrors).toBe(false)
     })
+
     test('It is not deleted', () => {
       const model = fixtures.model()
       expect(model.isDeleted).toBe(false)
@@ -37,7 +39,7 @@ describe('Model', () => {
     })
   })
 
-  describe('When the model destory method is called', () => {
+  describe('When the model destroy method is called', () => {
     test('All destroy hooks are called', () => {
       const model = fixtures.model({ foo: 'f', bar: 'b', id: '1' })
       const collection = fixtures.collection()

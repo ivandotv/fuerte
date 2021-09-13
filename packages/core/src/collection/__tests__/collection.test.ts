@@ -7,8 +7,8 @@ configure({ enforceActions: 'always' })
 
 const fixtures = fixtureFactory()
 
-describe('Collection', () => {
-  test('Pass in and retrieve the custom collection configuration object', () => {
+describe('Collection #collection', () => {
+  test('Pass in and retrieve the custom configuration object', () => {
     const customConfig: CollectionConfig = {
       add: {
         insertPosition: 'start'
@@ -26,7 +26,7 @@ describe('Collection', () => {
     expect(collection.getConfig()).toMatchObject(customConfig)
   })
 
-  test('Can retrieve passed in transport', () => {
+  test('Can retrieve passed in transport object', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(undefined, transport)
     expect(collection.getTransport()).toBe(transport)
@@ -117,7 +117,7 @@ describe('Collection', () => {
       expect(result).toBeUndefined()
     })
 
-    test('When querying for multiple models by identity, return empty array', () => {
+    test('When querying for multiple models by identity, if none found, return empty array', () => {
       const collection = fixtures.collection()
       const id = 'new-id'
       const idTwo = 'new-id-2'

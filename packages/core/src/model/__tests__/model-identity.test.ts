@@ -10,7 +10,7 @@ const fixtures = fixtureFactory()
 beforeEach(() => {
   expect.hasAssertions()
 })
-describe('Model identity #identity', () => {
+describe('Model - identity #identity #model', () => {
   test('Set model identity key', () => {
     const identityKey = 'isbn'
     class Test extends TestModel {
@@ -22,7 +22,7 @@ describe('Model identity #identity', () => {
     expect(model.identityKey).toBe(identityKey)
   })
 
-  test('Set identity value for model', () => {
+  test('Set identity value for the model', () => {
     const model = fixtures.model()
     const modelTwo = fixtures.model()
     const newValue = '123'
@@ -51,7 +51,7 @@ describe('Model identity #identity', () => {
     TestModel.setIdentityFromResponse = original
   })
 
-  test('If not set in the config, do not try to extract identity value from the response ', async () => {
+  test('If not set in the configuration, do not try to extract identity value from the response', async () => {
     const newId = '123'
     class Test extends TestModel {
       static identityKey = 'id'

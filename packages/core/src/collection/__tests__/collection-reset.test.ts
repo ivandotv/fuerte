@@ -16,7 +16,7 @@ beforeEach(() => {
   }
 })
 
-describe('Collection - reset #reset', () => {
+describe('Collection - reset #reset #collection', () => {
   test('Return added and removed models', async () => {
     const collection = fixtures.collection()
     const models = modelPool.splice(0, 5)
@@ -27,7 +27,7 @@ describe('Collection - reset #reset', () => {
     expect(result).toEqual([collection.models, models])
   })
 
-  test('Call on reset callback with added and removed models', async () => {
+  test('Reset callback is called with all added and removed models', async () => {
     const collection = fixtures.collection()
     const onResetSpy = jest.spyOn(collection, 'onReset')
     const models = modelPool.splice(0, 2)
@@ -39,7 +39,7 @@ describe('Collection - reset #reset', () => {
     expect(onResetSpy).toBeCalledWith(collection.models.slice(), models)
   })
 
-  test('Populate collection with new models', async () => {
+  test('Populate the collection with new models', async () => {
     const collection = fixtures.collection()
 
     await collection.reset(fixtures.rawModelData)
@@ -47,7 +47,7 @@ describe('Collection - reset #reset', () => {
     expect(collection.models.length).toBe(fixtures.rawModelData.length)
   })
 
-  test('If collection is not empty, clear it', async () => {
+  test('If the collection is not empty, clear it', async () => {
     const collection = fixtures.collection()
     const models = modelPool.splice(0, 5)
     collection.add(models)
@@ -59,7 +59,7 @@ describe('Collection - reset #reset', () => {
     expect(collection.getByIdentity(models[1].cid)).toBeUndefined()
   })
 
-  test('Reset collection without adding new models', async () => {
+  test('Reset the collection without adding new models', async () => {
     const collection = fixtures.collection()
     const onResetSpy = jest.spyOn(collection, 'onReset')
     const models = modelPool.splice(0, 5)
@@ -90,7 +90,7 @@ describe('Collection - reset #reset', () => {
     expect(collection.models[0]).toEqual(expect.objectContaining(modelData))
   })
 
-  test('If model the creation data callback returns falsy value, skip model creation', async () => {
+  test('If the model the creation data callback returns a falsy value, skip model creation', async () => {
     class Test extends TestCollection {
       onModelCreateData(_data: TestModelData): void {}
     }

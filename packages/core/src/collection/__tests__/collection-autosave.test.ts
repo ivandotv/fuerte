@@ -5,8 +5,8 @@ import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
 configure({ enforceActions: 'never' })
 
 const fixtures = fixtureFactory()
-describe('Model - autosave #autosave', () => {
-  test('Cant pass in custom configuration', () => {
+describe('Collection - autosave #autosave #collection', () => {
+  test('Can pass in custom configuration', () => {
     const customConfig: CollectionConfigWithAutoSave = {
       autoSave: {
         enabled: true
@@ -31,6 +31,7 @@ describe('Model - autosave #autosave', () => {
 
     expect(collection.getConfig()).toMatchObject(customConfig)
   })
+
   test('By default autosave option is disabled', async () => {
     const collection = fixtures.collectionWithAutoSave()
 
@@ -62,6 +63,7 @@ describe('Model - autosave #autosave', () => {
     expect(autoSaveSpy).toBeCalledTimes(2)
     expect(transportSaveSpy).toBeCalledTimes(2)
   })
+
   test('When debounce is active, model is saved with a delay', () => {
     jest.useFakeTimers()
     const transport = fixtures.transport()
@@ -168,30 +170,6 @@ describe('Model - autosave #autosave', () => {
     expect(result).toStrictEqual([model, modelTwo])
   })
 
-  test('Start autosave for multiple models', () => {
-    const transport = fixtures.transport()
-    const collection = fixtures.collectionWithAutoSave(
-      fixtures.factory(),
-      transport,
-      {
-        autoSave: {
-          enabled: false
-        }
-      }
-    )
-    const callbackSpy = jest.spyOn(collection, 'onStartAutoSave')
-    const model = fixtures.model()
-    const modelTwo = fixtures.model()
-    collection.add(model)
-    collection.add(modelTwo)
-
-    const result = collection.startAutoSave([model, modelTwo])
-
-    expect(callbackSpy).toBeCalledTimes(1)
-    expect(callbackSpy).toBeCalledWith([model, modelTwo])
-    expect(result).toStrictEqual([model, modelTwo])
-  })
-
   test('Start autosave for all models', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collectionWithAutoSave(
@@ -216,7 +194,7 @@ describe('Model - autosave #autosave', () => {
     expect(result).toStrictEqual(collection.models)
   })
 
-  test('Dont start autosave for a particular model, if it is already active', () => {
+  test('Dont start autosave if autosave is already active for the model', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collectionWithAutoSave(
       fixtures.factory(),
@@ -336,7 +314,7 @@ describe('Model - autosave #autosave', () => {
     expect(result).toEqual(collection.models)
   })
 
-  test('Dont stop autosave for already stoped model', () => {
+  test('Do not stop autosave for already stoped model', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collectionWithAutoSave(
       fixtures.factory(),

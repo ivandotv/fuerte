@@ -6,7 +6,7 @@ configure({ enforceActions: 'always' })
 
 const fixtures = fixtureFactory()
 
-describe('Model - delete #delete', () => {
+describe('Model - delete #delete #model', () => {
   test('On successful deletion, delete response is returned', async () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
@@ -28,7 +28,7 @@ describe('Model - delete #delete', () => {
     expect(result).toEqual({ response, error: undefined })
   })
 
-  test('When deletion is in progress, "isDeleting" property is true', async () => {
+  test('When deletion is in progress, model is in deleting state', async () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
@@ -39,7 +39,7 @@ describe('Model - delete #delete', () => {
     expect(model.isDeleting).toBe(true)
   })
 
-  test('When deletion is complete, "isDeleting" property is false', async () => {
+  test('When deletion is complete, model is not in the deleting state', async () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
@@ -50,7 +50,7 @@ describe('Model - delete #delete', () => {
     expect(model.isDeleting).toBe(false)
   })
 
-  test('When successfully deleted, "isDeleted" property is true', async () => {
+  test('When successfully deleted, model is in the deleted state', async () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
@@ -61,7 +61,7 @@ describe('Model - delete #delete', () => {
     expect(model.isDeleted).toBe(true)
   })
 
-  test('When deletion is in progress, "isSyncing" property is true', async () => {
+  test('When deletion is in progress, model is in syncing state', async () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
@@ -75,7 +75,7 @@ describe('Model - delete #delete', () => {
     expect(model.isSyncing).toBe(false)
   })
 
-  test('When deletion fails on, "isDeleted" property is false', async () => {
+  test('When deletion fails, model is not in the deleted state', async () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
@@ -88,7 +88,7 @@ describe('Model - delete #delete', () => {
     expect(model.isDeleted).toBe(false)
   })
 
-  test('When deletion fails, "transportErrors" property holds the failed response', async () => {
+  test('When deletion fails, model holds the failed response', async () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
@@ -97,8 +97,6 @@ describe('Model - delete #delete', () => {
 
     jest.spyOn(transport, 'delete').mockRejectedValue(response)
 
-    expect.assertions(2)
-
     const { error } = await model.delete()
 
     expect(model.deleteError).toEqual(error)
@@ -106,7 +104,7 @@ describe('Model - delete #delete', () => {
   })
 
   describe('Callbacks', () => {
-    test('When delete process starts, delete callback is called', async () => {
+    test('When the delete process starts, delete callback is called', async () => {
       const collection = fixtures.collection()
       const model = fixtures.model()
       const config: DeleteConfig = {
@@ -134,7 +132,7 @@ describe('Model - delete #delete', () => {
       })
     })
 
-    test('When deleted successfully, success callback is called', async () => {
+    test('When teh model is deleted successfully, success callback is called', async () => {
       const transport = fixtures.transport()
       const collection = fixtures.collection(fixtures.factory(), transport)
       const model = fixtures.model()
@@ -170,7 +168,7 @@ describe('Model - delete #delete', () => {
       })
     })
 
-    test('When deleted and removed from the collection, "onRemoved" callback is called', () => {
+    test('When the model is deleted and removed from the collection, removed callback is called', () => {
       const transport = fixtures.transport()
       const collection = fixtures.collection(fixtures.factory(), transport)
       const model = fixtures.model()
@@ -202,19 +200,19 @@ describe('Model - delete #delete', () => {
 
       collection.add(model)
 
-      model.delete(config, transportConfig).catch((error) => {
-        expect(deleteErrorSpy).toBeCalledWith({
-          error,
-          config,
-          transportConfig
-        })
+      const { error } = await model.delete(config, transportConfig)
 
-        expect(collectionErrorSpy).toBeCalledWith({
-          model,
-          error,
-          config,
-          transportConfig
-        })
+      expect(deleteErrorSpy).toBeCalledWith({
+        error,
+        config,
+        transportConfig
+      })
+
+      expect(collectionErrorSpy).toBeCalledWith({
+        model,
+        error,
+        config,
+        transportConfig
       })
     })
   })

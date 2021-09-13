@@ -5,8 +5,8 @@ configure({ enforceActions: 'always' })
 
 const fixtures = fixtureFactory()
 
-describe('Model - remove #remove', () => {
-  describe('When model is removed from the collection ', () => {
+describe('Model - remove #remove #model', () => {
+  describe('When the model is removed from the collection', () => {
     test('Model is not associated with the collection', () => {
       const transport = fixtures.transport()
       const collection = fixtures.collection(fixtures.factory(), transport)
@@ -18,7 +18,7 @@ describe('Model - remove #remove', () => {
       expect(model.getCollection()).toBeUndefined()
     })
 
-    test('"onRemoved" hook is called', () => {
+    test('removed hook is called', () => {
       const transport = fixtures.transport()
       const collection = fixtures.collection(fixtures.factory(), transport)
       const model = fixtures.model()

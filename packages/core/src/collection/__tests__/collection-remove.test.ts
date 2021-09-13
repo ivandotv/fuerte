@@ -14,7 +14,7 @@ beforeEach(() => {
   }
 })
 
-describe('Collection - remove #remove', () => {
+describe('Collection - remove #remove #collection', () => {
   test('Remove one model via id', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
@@ -138,8 +138,8 @@ describe('Collection - remove #remove', () => {
     expect(collection.models.length).toBe(3)
   })
 
-  describe('Callbacks ', () => {
-    test('When models are removed, "onRemoved"  hook is called', () => {
+  describe('Callbacks', () => {
+    test('When models are removed, removed callback is called', () => {
       const transport = fixtures.transport()
       const collection = fixtures.collection(fixtures.factory(), transport)
       const models = modelPool.slice(0, 5)

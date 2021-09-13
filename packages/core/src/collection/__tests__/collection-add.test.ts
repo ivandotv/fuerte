@@ -16,7 +16,7 @@ beforeEach(() => {
   }
 })
 
-describe('Collection - add #add', () => {
+describe('Collection - add #add #collection', () => {
   test('Add one model', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
@@ -28,7 +28,7 @@ describe('Collection - add #add', () => {
     expect(collection.models[0]).toBe(model)
   })
 
-  test('Add models at the end via "push" method', () => {
+  test('Add models at the end', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const firstBatch = modelPool.slice(0, 5)
@@ -76,12 +76,9 @@ describe('Collection - add #add', () => {
     const model = fixtures.model()
     const index = 1
 
-    expect.assertions(1)
-    try {
-      collection.addAtIndex(model, index)
-    } catch (e) {
-      expect(e.message).toEqual(expect.stringContaining('out of bounds'))
-    }
+    expect(() => collection.addAtIndex(model, index)).toThrowError(
+      'out of bounds'
+    )
   })
 
   test('Throw if trying to add at negative index.', () => {
@@ -90,15 +87,12 @@ describe('Collection - add #add', () => {
     const model = fixtures.model()
     const index = -1
 
-    expect.assertions(1)
-    try {
-      collection.addAtIndex(model, index)
-    } catch (e) {
-      expect(e.message).toEqual(expect.stringContaining('out of bounds'))
-    }
+    expect(() => collection.addAtIndex(model, index)).toThrowError(
+      'out of bounds'
+    )
   })
 
-  test('Do not add models that already exist in the collection ', () => {
+  test('Do not add models that already exist in the collection', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const models = modelPool.slice(0, 5)
@@ -110,20 +104,17 @@ describe('Collection - add #add', () => {
     expect(collection.models.length).toEqual(models.length)
   })
 
-  test('If the model is not an instance of Model class, throw', () => {
+  test('If the model is not an instance of the Model class, throw', () => {
     const collection = fixtures.collection()
     const model = { id: 'test' }
 
-    expect.assertions(1)
-    try {
-      // @ts-expect-error - model is not a real model
-      collection.add(model)
-    } catch (err) {
-      expect(err.message).toMatch(/not instance of Model class/)
-    }
+    // @ts-expect-error - model is not a real model
+    expect(() => collection.add(model)).toThrowError(
+      /not instance of Model class/
+    )
   })
 
-  test('Do not add the model if client id is not unique', () => {
+  test('Do not add the model if the client id is not unique', () => {
     const collection = fixtures.collection()
     const model = fixtures.model()
 
@@ -158,7 +149,7 @@ describe('Collection - add #add', () => {
     expect(result).toEqual(models)
   })
 
-  test('When the model is added it can be retrieved', async () => {
+  test('Retrieve the added model', async () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model({ foo: 'foo', bar: 'bar', id: '1' })
@@ -169,7 +160,7 @@ describe('Collection - add #add', () => {
     expect(found).toBe(model)
   })
 
-  test('When models are added, "onAdded"  hook is called', () => {
+  test('When models are added, added hook is called', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const models = modelPool.slice(0, 5)
@@ -216,10 +207,9 @@ describe('Collection - add #add', () => {
   })
 
   describe('React to model identity changes', () => {
-    test('Track initial identity value setup', () => {
+    test('Get model by custom identity key', () => {
       const collection = fixtures.collection()
       const newIdentity = 'new value'
-
       class Test extends TestModel {
         isbn: string | undefined
 
@@ -245,7 +235,7 @@ describe('Collection - add #add', () => {
       expect(collection.getByIdentity(newIdentity)).toBe(model)
     })
 
-    test('Track identity value change', () => {
+    test('When model identity changes, get the model by new identity value', () => {
       const collection = fixtures.collection()
       const newIdentityValue = '123'
 
