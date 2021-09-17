@@ -23,7 +23,7 @@ describe('Collection - remove #remove #collection', () => {
 
     const result = collection.remove(model.cid)
 
-    expect(result[0]).toBe(model)
+    expect(result).toBe(model)
     expect(collection.models).toHaveLength(0)
   })
 
@@ -40,6 +40,15 @@ describe('Collection - remove #remove #collection', () => {
     expect(collection.models).toHaveLength(0)
   })
 
+  test('When removing the model that is not present, return undefined', () => {
+    const transport = fixtures.transport()
+    const collection = fixtures.collection(fixtures.factory(), transport)
+
+    const result = collection.remove('fake_id')
+
+    expect(result).toBeUndefined()
+  })
+
   test('Remove one model via model instance', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
@@ -48,7 +57,7 @@ describe('Collection - remove #remove #collection', () => {
 
     const result = collection.remove(model)
 
-    expect(result[0]).toBe(model)
+    expect(result).toBe(model)
     expect(collection.models).toHaveLength(0)
   })
 

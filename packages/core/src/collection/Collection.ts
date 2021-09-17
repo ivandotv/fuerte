@@ -7,6 +7,7 @@ import {
   reaction,
   runInAction
 } from 'mobx'
+import { removeObserver } from 'mobx/dist/internal'
 import { IdentityError } from '../model/identity-error'
 import { Model } from '../model/Model'
 import { Transport } from '../transport/transport'
@@ -181,6 +182,7 @@ export class Collection<
   add(model: TModel): TModel | undefined
 
   add(model: TModel | TModel[]): TModel | TModel[] | undefined {
+    // @ts-expect-error - overload using overload
     return this.addToCollection(model, { insertPosition: 'end' })
   }
 
@@ -189,6 +191,7 @@ export class Collection<
   unshift(model: TModel): TModel | undefined
 
   unshift(model: TModel | TModel[]): TModel | TModel[] | undefined {
+    // @ts-expect-error - overload using overload
     return this.addToCollection(model, { insertPosition: 'start' })
   }
 
@@ -200,8 +203,23 @@ export class Collection<
     model: TModel | TModel[],
     index: number
   ): TModel | TModel[] | undefined {
+    // @ts-expect-error - overload using overload
     return this.addToCollection(model, { insertPosition: index })
   }
+
+  protected addToCollection(
+    model: TModel,
+    config: Omit<AddConfig, 'insertPosition'> & {
+      insertPosition?: number | ModelInsertPosition
+    }
+  ): TModel | undefined
+
+  protected addToCollection(
+    model: TModel[],
+    config: Omit<AddConfig, 'insertPosition'> & {
+      insertPosition?: number | ModelInsertPosition
+    }
+  ): TModel[]
 
   protected addToCollection(
     model: TModel | TModel[],
@@ -226,18 +244,14 @@ export class Collection<
 
       newModels.push(model)
 
-      // if (config.removeFromPreviousCollection) {
       const previousCollection = model.getCollection()
       // model is already in some other collection
       if (previousCollection) {
         previousCollection.removeFromCollection(model)
       }
-      // }
 
-      // this.modelByClientId.set(model.cid, model)
       this.startTracking(model)
 
-      // model.setTransport(this.transport) // ovo prebaciti u store
       model._onAdded(this)
 
       this.onAdded(model)
@@ -258,11 +272,8 @@ export class Collection<
       }
       this._models.splice(addConfig.insertPosition, 0, ...newModels)
     }
-    if (Array.isArray(model)) {
-      return newModels
-    } else {
-      return newModels[0]
-    }
+
+    return Array.isArray(model) ? newModels : newModels[0]
   }
 
   protected isUniqueByIdentifier(model: TModel): boolean {
@@ -527,7 +538,9 @@ export class Collection<
 
   pop(): TModel | undefined {
     if (this.models.length > 0) {
-      return this.removeFromCollection(this.models[this.models.length - 1])[0]
+      return this.removeFromCollection(
+        this.models[this.models.length - 1]
+      ) as TModel
     }
 
     return undefined
@@ -535,14 +548,10 @@ export class Collection<
 
   shift(): TModel | undefined {
     if (this.models.length > 0) {
-      return this.removeFromCollection(this.models[0])[0]
+      return this.removeFromCollection(this.models[0]) as TModel
     }
 
     return undefined
-  }
-
-  remove(cidOrModel: string | TModel | (string | TModel)[]): TModel[] {
-    return this.removeFromCollection(this.resolveModels(cidOrModel))
   }
 
   removeAtIndex(index: number): TModel | undefined {
@@ -550,19 +559,45 @@ export class Collection<
       return undefined
     }
     const model = this._models[index]
-    const removed = this.removeFromCollection(model)
 
-    return removed[0]
+    return this.removeFromCollection(model) as TModel
   }
 
-  protected removeFromCollection(model: TModel | TModel[]): TModel[] {
+  remove(cidOrModel: string | TModel): TModel | undefined
+
+  remove(cidOrModel: string[] | TModel[]): TModel[]
+
+  remove(
+    cidOrModel: string | TModel | (string | TModel)[]
+  ): TModel | TModel[] | undefined {
+    const resolved = this.resolveModels(cidOrModel)
+    let finale: TModel | TModel[] = resolved
+    if (!Array.isArray(cidOrModel)) {
+      if (!resolved.length) {
+        return undefined
+      } else {
+        finale = finale[0]
+      }
+    }
+
+    // @ts-expect-error -generic type missmatch for some reason?
+    return this.removeFromCollection(finale)
+  }
+
+  protected removeFromCollection(model: TModel): TModel | undefined
+
+  protected removeFromCollection(model: TModel[]): TModel[]
+
+  protected removeFromCollection(
+    model: TModel | TModel[]
+  ): TModel | TModel[] | undefined {
     const modelCids = new Set(
       wrapInArray(model).map(model => {
         return model.cid
       })
     )
 
-    const removed = []
+    const removed: TModel[] = []
     const currentCount = this._models.length
 
     // optimize for only one element
@@ -602,7 +637,7 @@ export class Collection<
       this._models = modelsToKeep
     }
 
-    return removed
+    return Array.isArray(model) ? removed : removed[0]
   }
 
   async delete(
@@ -944,7 +979,9 @@ export class Collection<
     }
 
     const removed = this.removeFromCollection(this._models)
-    const added = this.addToCollection(modelsToAdd, { insertPosition: 'end' })
+    const added = this.addToCollection(modelsToAdd, {
+      insertPosition: 'end'
+    })
 
     this.onReset(added, removed)
 

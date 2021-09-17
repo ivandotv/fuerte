@@ -36,11 +36,13 @@ export function debounceReaction<T>(
 const isObject = (value: unknown) =>
   value !== null && (typeof value === 'object' || typeof value === 'function')
 
-export function isPromise(value: any) {
+export function isPromise<T>(value: Promise<T> | T): value is Promise<T> {
   return (
     value instanceof Promise ||
     (isObject(value) &&
+      // @ts-expect-error - value might not be a promise
       typeof value.then === 'function' &&
+      // @ts-expect-error - value might not be a promise
       typeof value.catch === 'function')
   )
 }

@@ -1,7 +1,7 @@
-import { isPromise } from 'util/types'
+import { isPromise } from '../utils/utils'
 import { Collection } from '../collection/Collection'
 import { Model } from '../model/Model'
-import { FactoryFn } from '../utils/types'
+import type { FactoryFn } from '../utils/types'
 
 export function createModelFactory<
   TModel extends Model<Collection<any, any, any>>,
