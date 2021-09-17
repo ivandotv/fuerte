@@ -60,8 +60,8 @@ describe('Collection - autosave #autosave #collection', () => {
     model.foo = 'new foo'
     model.bar = 'new bar'
 
-    expect(autoSaveSpy).toBeCalledTimes(2)
-    expect(transportSaveSpy).toBeCalledTimes(2)
+    expect(autoSaveSpy).toHaveBeenCalledTimes(2)
+    expect(transportSaveSpy).toHaveBeenCalledTimes(2)
   })
 
   test('When debounce is active, model is saved with a delay', () => {
@@ -90,9 +90,9 @@ describe('Collection - autosave #autosave #collection', () => {
 
     jest.runAllTimers()
 
-    expect(autoSaveSpy).toBeCalledTimes(1)
-    expect(transportSaveSpy).toBeCalledTimes(1)
-    expect(autoSaveSpy).toBeCalledWith(
+    expect(autoSaveSpy).toHaveBeenCalledTimes(1)
+    expect(transportSaveSpy).toHaveBeenCalledTimes(1)
+    expect(autoSaveSpy).toHaveBeenCalledWith(
       { model, data: newData },
       { model, data: oldData },
       expect.anything() // mobx reaction disposer()
@@ -120,8 +120,8 @@ describe('Collection - autosave #autosave #collection', () => {
     model.foo = 'foo 2'
     model.foo = 'foo 3'
 
-    expect(autoSaveSpy).toBeCalledTimes(0)
-    expect(transportSaveSpy).toBeCalledTimes(0)
+    expect(autoSaveSpy).toHaveBeenCalledTimes(0)
+    expect(transportSaveSpy).toHaveBeenCalledTimes(0)
   })
 
   test('Start autosave for one model', () => {
@@ -141,8 +141,8 @@ describe('Collection - autosave #autosave #collection', () => {
 
     const result = collection.startAutoSave(model)
 
-    expect(callbackSpy).toBeCalledTimes(1)
-    expect(callbackSpy).toBeCalledWith([model])
+    expect(callbackSpy).toHaveBeenCalledTimes(1)
+    expect(callbackSpy).toHaveBeenCalledWith([model])
     expect(result).toBe(model)
   })
 
@@ -165,8 +165,8 @@ describe('Collection - autosave #autosave #collection', () => {
 
     const result = collection.startAutoSave([model, modelTwo])
 
-    expect(callbackSpy).toBeCalledTimes(1)
-    expect(callbackSpy).toBeCalledWith([model, modelTwo])
+    expect(callbackSpy).toHaveBeenCalledTimes(1)
+    expect(callbackSpy).toHaveBeenCalledWith([model, modelTwo])
     expect(result).toStrictEqual([model, modelTwo])
   })
 
@@ -189,8 +189,8 @@ describe('Collection - autosave #autosave #collection', () => {
 
     const result = collection.startAutoSave()
 
-    expect(callbackSpy).toBeCalledTimes(1)
-    expect(callbackSpy).toBeCalledWith(collection.models)
+    expect(callbackSpy).toHaveBeenCalledTimes(1)
+    expect(callbackSpy).toHaveBeenCalledWith(collection.models)
     expect(result).toStrictEqual(collection.models)
   })
 
@@ -215,8 +215,8 @@ describe('Collection - autosave #autosave #collection', () => {
     const callbackSpy = jest.spyOn(collection, 'onStartAutoSave')
     const result = collection.startAutoSave([model, modelTwo])
 
-    expect(callbackSpy).toBeCalledTimes(1)
-    expect(callbackSpy).toBeCalledWith([modelTwo])
+    expect(callbackSpy).toHaveBeenCalledTimes(1)
+    expect(callbackSpy).toHaveBeenCalledWith([modelTwo])
     expect(result).toStrictEqual([modelTwo])
   })
 
@@ -243,10 +243,10 @@ describe('Collection - autosave #autosave #collection', () => {
     model.foo = 'new foo'
     model.bar = 'new bar'
 
-    expect(autoSaveSpy).toBeCalledTimes(0)
-    expect(transportSaveSpy).toBeCalledTimes(0)
-    expect(callbackSpy).toBeCalledTimes(1)
-    expect(callbackSpy).toBeCalledWith([model])
+    expect(autoSaveSpy).toHaveBeenCalledTimes(0)
+    expect(transportSaveSpy).toHaveBeenCalledTimes(0)
+    expect(callbackSpy).toHaveBeenCalledTimes(1)
+    expect(callbackSpy).toHaveBeenCalledWith([model])
     expect(result).toStrictEqual(model)
   })
 
@@ -275,10 +275,10 @@ describe('Collection - autosave #autosave #collection', () => {
     model.bar = 'new bar'
     modelTwo.foo = 'new foo'
 
-    expect(autoSaveSpy).toBeCalledTimes(0)
-    expect(transportSaveSpy).toBeCalledTimes(0)
-    expect(callbackSpy).toBeCalledTimes(1)
-    expect(callbackSpy).toBeCalledWith([model, modelTwo])
+    expect(autoSaveSpy).toHaveBeenCalledTimes(0)
+    expect(transportSaveSpy).toHaveBeenCalledTimes(0)
+    expect(callbackSpy).toHaveBeenCalledTimes(1)
+    expect(callbackSpy).toHaveBeenCalledWith([model, modelTwo])
     expect(result).toEqual([model, modelTwo])
   })
 
@@ -307,10 +307,10 @@ describe('Collection - autosave #autosave #collection', () => {
     model.bar = 'new bar'
     modelTwo.foo = 'new foo'
 
-    expect(autoSaveSpy).toBeCalledTimes(0)
-    expect(transportSaveSpy).toBeCalledTimes(0)
-    expect(callbackSpy).toBeCalledTimes(1)
-    expect(callbackSpy).toBeCalledWith(collection.models)
+    expect(autoSaveSpy).toHaveBeenCalledTimes(0)
+    expect(transportSaveSpy).toHaveBeenCalledTimes(0)
+    expect(callbackSpy).toHaveBeenCalledTimes(1)
+    expect(callbackSpy).toHaveBeenCalledWith(collection.models)
     expect(result).toEqual(collection.models)
   })
 
@@ -344,10 +344,10 @@ describe('Collection - autosave #autosave #collection', () => {
 
     const result = collection.stopAutoSave([model, modelTwo])
 
-    expect(autoSaveSpy).toBeCalledTimes(2)
-    expect(transportSaveSpy).toBeCalledTimes(2)
-    expect(callbackSpy).toBeCalledTimes(1)
-    expect(callbackSpy).toBeCalledWith([model])
+    expect(autoSaveSpy).toHaveBeenCalledTimes(2)
+    expect(transportSaveSpy).toHaveBeenCalledTimes(2)
+    expect(callbackSpy).toHaveBeenCalledTimes(1)
+    expect(callbackSpy).toHaveBeenCalledWith([model])
     expect(result).toStrictEqual([model])
   })
 })

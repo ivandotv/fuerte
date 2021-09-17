@@ -121,11 +121,11 @@ describe('Model - delete #delete #model', () => {
 
       await model.delete(config, transportConfig)
 
-      expect(deleteStartSpy).toBeCalledWith({
+      expect(deleteStartSpy).toHaveBeenCalledWith({
         config,
         transportConfig
       })
-      expect(collectionStartSpy).toBeCalledWith({
+      expect(collectionStartSpy).toHaveBeenCalledWith({
         model,
         config,
         transportConfig
@@ -154,13 +154,13 @@ describe('Model - delete #delete #model', () => {
 
       await model.delete(config, transportConfig)
 
-      expect(onDeleteSuccessSpy).toBeCalledWith({
+      expect(onDeleteSuccessSpy).toHaveBeenCalledWith({
         response,
         config,
         transportConfig
       })
 
-      expect(collectionSuccessSpy).toBeCalledWith({
+      expect(collectionSuccessSpy).toHaveBeenCalledWith({
         model,
         response,
         config,
@@ -177,7 +177,7 @@ describe('Model - delete #delete #model', () => {
 
       collection.delete(model)
 
-      expect(modelOnRemovedSpy).toBeCalled()
+      expect(modelOnRemovedSpy).toHaveBeenCalled()
     })
 
     test('When there is a delete error, error callback is called', async () => {
@@ -202,13 +202,13 @@ describe('Model - delete #delete #model', () => {
 
       const { error } = await model.delete(config, transportConfig)
 
-      expect(deleteErrorSpy).toBeCalledWith({
+      expect(deleteErrorSpy).toHaveBeenCalledWith({
         error,
         config,
         transportConfig
       })
 
-      expect(collectionErrorSpy).toBeCalledWith({
+      expect(collectionErrorSpy).toHaveBeenCalledWith({
         model,
         error,
         config,

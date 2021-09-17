@@ -1,5 +1,9 @@
 module.exports = {
-  extends: ['../../.eslintrc.js', 'plugin:jest/recommended'],
+  extends: [
+    '../../.eslintrc.js',
+    'plugin:jest/recommended',
+    'plugin:jest/style'
+  ],
   plugins: ['jest'],
   rules: {
     '@typescript-eslint/no-unused-vars': [

@@ -112,7 +112,7 @@ describe('Collection - save #save #collection', () => {
     await collection.save(model).catch(() => {})
     await collection.save(model)
 
-    expect(model.saveError).toBe(undefined)
+    expect(model.saveError).toBeUndefined()
   })
 
   test('If there are pending save requests, than the model is still in the process of saving', async () => {
@@ -151,7 +151,7 @@ describe('Collection - save #save #collection', () => {
 
     collection.save(model)
 
-    expect(collection.saving.length).toBe(1)
+    expect(collection.saving).toHaveLength(1)
     expect(collection.saving[0]).toBe(model)
   })
 
@@ -164,7 +164,7 @@ describe('Collection - save #save #collection', () => {
 
     collection.save(model)
 
-    expect(modelOnAddedSpy).toBeCalled()
+    expect(modelOnAddedSpy).toHaveBeenCalled()
   })
 
   test('If the model is already in the collection, do not add it just save it', async () => {
@@ -180,11 +180,11 @@ describe('Collection - save #save #collection', () => {
 
     await collection.save(model)
 
-    expect(onModelAddedSpy).not.toBeCalled()
-    expect(onModelSaveStartSpy).toBeCalledTimes(1)
-    expect(onModelSaveSuccessSpy).toBeCalledTimes(1)
-    expect(collection.models.length).toBe(1)
-    expect(onSaveSuccessSpy).toBeCalledTimes(1)
+    expect(onModelAddedSpy).not.toHaveBeenCalled()
+    expect(onModelSaveStartSpy).toHaveBeenCalledTimes(1)
+    expect(onModelSaveSuccessSpy).toHaveBeenCalledTimes(1)
+    expect(collection.models).toHaveLength(1)
+    expect(onSaveSuccessSpy).toHaveBeenCalledTimes(1)
   })
 
   describe('Callbacks', () => {
@@ -203,12 +203,12 @@ describe('Collection - save #save #collection', () => {
 
       await collection.save(model, config, transportConfig)
 
-      expect(collectionSaveStartSpy).toBeCalledWith({
+      expect(collectionSaveStartSpy).toHaveBeenCalledWith({
         model,
         transportConfig,
         config
       })
-      expect(modelSaveStartSpy).toBeCalledWith({
+      expect(modelSaveStartSpy).toHaveBeenCalledWith({
         transportConfig,
         config
       })
@@ -233,13 +233,13 @@ describe('Collection - save #save #collection', () => {
 
       await collection.save(model, config, transportConfig)
 
-      expect(onSaveSuccessSpy).toBeCalledWith({
+      expect(onSaveSuccessSpy).toHaveBeenCalledWith({
         model,
         config,
         response,
         transportConfig
       })
-      expect(modelSaveSuccessSpy).toBeCalledWith({
+      expect(modelSaveSuccessSpy).toHaveBeenCalledWith({
         response,
         config,
         transportConfig
@@ -263,13 +263,13 @@ describe('Collection - save #save #collection', () => {
 
       const result = await collection.save(model, config, transportConfig)
 
-      expect(collectionSaveErrorSpy).toBeCalledWith({
+      expect(collectionSaveErrorSpy).toHaveBeenCalledWith({
         model,
         error: result.error,
         config,
         transportConfig
       })
-      expect(modelSaveErrorSpy).toBeCalledWith({
+      expect(modelSaveErrorSpy).toHaveBeenCalledWith({
         error: result.error,
         transportConfig,
         config,
@@ -286,7 +286,7 @@ describe('Collection - save #save #collection', () => {
 
       collection.save(model, { addImmediately: false })
 
-      expect(collection.saving.length).toBe(1)
+      expect(collection.saving).toHaveLength(1)
       expect(collection.saving[0]).toBe(model)
     })
 
@@ -298,9 +298,9 @@ describe('Collection - save #save #collection', () => {
       const modelOnAddedSpy = jest.spyOn(model, 'onAdded')
 
       const result = collection.save(model, { addImmediately: false })
-      expect(modelOnAddedSpy).not.toBeCalled()
+      expect(modelOnAddedSpy).not.toHaveBeenCalled()
       await result
-      expect(modelOnAddedSpy).toBeCalled()
+      expect(modelOnAddedSpy).toHaveBeenCalled()
     })
 
     test('Add the model after the successful save', async () => {
@@ -310,11 +310,11 @@ describe('Collection - save #save #collection', () => {
 
       const promise = collection.save(model, { addImmediately: false })
 
-      expect(collection.models.length).toBe(0)
+      expect(collection.models).toHaveLength(0)
 
       await promise
 
-      expect(collection.models.length).toBe(1)
+      expect(collection.models).toHaveLength(1)
       expect(collection.models[0]).toBe(model)
     })
 
@@ -349,7 +349,7 @@ describe('Collection - save #save #collection', () => {
       })
 
       expect(collection.models).toHaveLength(0)
-      expect(model.getCollection()).toBe(undefined)
+      expect(model.getCollection()).toBeUndefined()
     })
   })
 })

@@ -26,7 +26,7 @@ describe('Model - add #add #model', () => {
 
       collection.add(model)
 
-      expect(onAddedSpy).toBeCalled()
+      expect(onAddedSpy).toHaveBeenCalled()
     })
 
     test('If the model is in another collection, it is removed from that collection', () => {
@@ -44,8 +44,8 @@ describe('Model - add #add #model', () => {
 
       secondCollection.add(model)
 
-      expect(onRemovedSpy).toBeCalledTimes(1)
-      expect(onAddedSpy).toBeCalled()
+      expect(onRemovedSpy).toHaveBeenCalledTimes(1)
+      expect(onAddedSpy).toHaveBeenCalled()
       expect(model.getCollection()).toBe(secondCollection)
     })
   })

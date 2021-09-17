@@ -17,18 +17,33 @@ beforeEach(() => {
 })
 
 describe('Collection - add #add #collection', () => {
-  test('Add one model', () => {
+  test('Add single model', () => {
+    const transport = fixtures.transport()
+    const collection = fixtures.collection(fixtures.factory(), transport)
+    const model = fixtures.model()
+
+    const addedModel = collection.add(model)
+
+    expect(collection.models).toHaveLength(1)
+    expect(collection.models[0]).toBe(model)
+    expect(addedModel).toBe(model)
+  })
+
+  test('When adding a single model, return undefined if the model is already in the collection', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
 
     collection.add(model)
 
-    expect(collection.models.length).toBe(1)
+    const addedModel = collection.add(model)
+
+    expect(collection.models).toHaveLength(1)
     expect(collection.models[0]).toBe(model)
+    expect(addedModel).toBeUndefined()
   })
 
-  test('Add models at the end', () => {
+  test('Add models at the end of the collection', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const firstBatch = modelPool.slice(0, 5)
@@ -76,9 +91,7 @@ describe('Collection - add #add #collection', () => {
     const model = fixtures.model()
     const index = 1
 
-    expect(() => collection.addAtIndex(model, index)).toThrowError(
-      'out of bounds'
-    )
+    expect(() => collection.addAtIndex(model, index)).toThrow('out of bounds')
   })
 
   test('Throw if trying to add at negative index.', () => {
@@ -87,9 +100,7 @@ describe('Collection - add #add #collection', () => {
     const model = fixtures.model()
     const index = -1
 
-    expect(() => collection.addAtIndex(model, index)).toThrowError(
-      'out of bounds'
-    )
+    expect(() => collection.addAtIndex(model, index)).toThrow('out of bounds')
   })
 
   test('Do not add models that already exist in the collection', () => {
@@ -101,7 +112,7 @@ describe('Collection - add #add #collection', () => {
     const result = collection.add(models)
 
     expect(result).toEqual([])
-    expect(collection.models.length).toEqual(models.length)
+    expect(collection.models).toHaveLength(models.length)
   })
 
   test('If the model is not an instance of the Model class, throw', () => {
@@ -109,9 +120,7 @@ describe('Collection - add #add #collection', () => {
     const model = { id: 'test' }
 
     // @ts-expect-error - model is not a real model
-    expect(() => collection.add(model)).toThrowError(
-      /not instance of Model class/
-    )
+    expect(() => collection.add(model)).toThrow(/not instance of Model class/)
   })
 
   test('Do not add the model if the client id is not unique', () => {
@@ -121,8 +130,8 @@ describe('Collection - add #add #collection', () => {
     collection.add(model)
     const result = collection.add(model)
 
-    expect(result).toEqual([])
-    expect(collection.models.length).toBe(1)
+    expect(result).toBeUndefined()
+    expect(collection.models).toHaveLength(1)
   })
 
   test('Do not add the model if identity key is not unique', () => {
@@ -135,8 +144,8 @@ describe('Collection - add #add #collection', () => {
     collection.add(model)
     const result = collection.add(modelTwo)
 
-    expect(result.length).toEqual(0)
-    expect(collection.models.length).toBe(1)
+    expect(result).toBeUndefined()
+    expect(collection.models).toHaveLength(1)
   })
 
   test('Return all the models that where successfully added', () => {
@@ -173,7 +182,7 @@ describe('Collection - add #add #collection', () => {
         expect.arrayContaining([models[i]])
       )
     }
-    expect(onAddedSpy).toBeCalledTimes(models.length)
+    expect(onAddedSpy).toHaveBeenCalledTimes(models.length)
   })
 
   test('If nothing is added, no callbacks are called', () => {
@@ -185,7 +194,7 @@ describe('Collection - add #add #collection', () => {
 
     collection.add(models)
 
-    expect(onAddedSpy).toBeCalledTimes(0)
+    expect(onAddedSpy).toHaveBeenCalledTimes(0)
   })
 
   test('When model is added to another collection it is removed from the previous collection', () => {
@@ -203,7 +212,7 @@ describe('Collection - add #add #collection', () => {
         expect.arrayContaining([models[i]])
       )
     }
-    expect(onRemovedSpy).toBeCalledTimes(models.length)
+    expect(onRemovedSpy).toHaveBeenCalledTimes(models.length)
   })
 
   describe('React to model identity changes', () => {

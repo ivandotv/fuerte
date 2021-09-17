@@ -35,8 +35,8 @@ describe('Collection - reset #reset #collection', () => {
 
     await collection.reset(fixtures.rawModelData)
 
-    expect(onResetSpy).toBeCalledTimes(1)
-    expect(onResetSpy).toBeCalledWith(collection.models.slice(), models)
+    expect(onResetSpy).toHaveBeenCalledTimes(1)
+    expect(onResetSpy).toHaveBeenCalledWith(collection.models.slice(), models)
   })
 
   test('Populate the collection with new models', async () => {
@@ -44,7 +44,7 @@ describe('Collection - reset #reset #collection', () => {
 
     await collection.reset(fixtures.rawModelData)
 
-    expect(collection.models.length).toBe(fixtures.rawModelData.length)
+    expect(collection.models).toHaveLength(fixtures.rawModelData.length)
   })
 
   test('If the collection is not empty, clear it', async () => {
@@ -54,7 +54,7 @@ describe('Collection - reset #reset #collection', () => {
 
     await collection.reset(fixtures.rawModelData)
 
-    expect(collection.models.length).toBe(fixtures.rawModelData.length)
+    expect(collection.models).toHaveLength(fixtures.rawModelData.length)
     expect(collection.getByIdentity(models[0].cid)).toBeUndefined()
     expect(collection.getByIdentity(models[1].cid)).toBeUndefined()
   })
@@ -67,8 +67,8 @@ describe('Collection - reset #reset #collection', () => {
 
     const result = await collection.reset()
 
-    expect(collection.models.length).toBe(0)
-    expect(onResetSpy).toBeCalledWith([], models)
+    expect(collection.models).toHaveLength(0)
+    expect(onResetSpy).toHaveBeenCalledWith([], models)
     expect(result).toEqual([[], models])
   })
 
@@ -98,6 +98,6 @@ describe('Collection - reset #reset #collection', () => {
 
     await collection.reset(fixtures.rawModelData)
 
-    expect(collection.models.length).toBe(0)
+    expect(collection.models).toHaveLength(0)
   })
 })

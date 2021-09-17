@@ -24,7 +24,7 @@ describe('Collection - remove #remove #collection', () => {
     const result = collection.remove(model.cid)
 
     expect(result[0]).toBe(model)
-    expect(collection.models.length).toBe(0)
+    expect(collection.models).toHaveLength(0)
   })
 
   test('Remove multiple models via id', () => {
@@ -37,7 +37,7 @@ describe('Collection - remove #remove #collection', () => {
     const result = collection.remove([modelOne.cid, modelTwo.cid])
 
     expect(result).toEqual([modelOne, modelTwo])
-    expect(collection.models.length).toBe(0)
+    expect(collection.models).toHaveLength(0)
   })
 
   test('Remove one model via model instance', () => {
@@ -49,7 +49,7 @@ describe('Collection - remove #remove #collection', () => {
     const result = collection.remove(model)
 
     expect(result[0]).toBe(model)
-    expect(collection.models.length).toBe(0)
+    expect(collection.models).toHaveLength(0)
   })
 
   test('Remove multiple models via model instances', () => {
@@ -62,7 +62,7 @@ describe('Collection - remove #remove #collection', () => {
     const result = collection.remove([modelOne, modelTwo])
 
     expect(result).toEqual([modelOne, modelTwo])
-    expect(collection.models.length).toBe(0)
+    expect(collection.models).toHaveLength(0)
   })
 
   test('Remove the last model', () => {
@@ -75,7 +75,7 @@ describe('Collection - remove #remove #collection', () => {
     const result = collection.pop()
 
     expect(result).toBe(modelTwo)
-    expect(collection.models.length).toBe(1)
+    expect(collection.models).toHaveLength(1)
   })
 
   test('If the collection is empty, removing last model returns undefined', () => {
@@ -97,7 +97,7 @@ describe('Collection - remove #remove #collection', () => {
     const result = collection.shift()
 
     expect(result).toBe(modelOne)
-    expect(collection.models.length).toBe(1)
+    expect(collection.models).toHaveLength(1)
   })
 
   test('If the collection is empty, removing the first model returns undefined', () => {
@@ -120,7 +120,7 @@ describe('Collection - remove #remove #collection', () => {
     const result = collection.removeAtIndex(1)
 
     expect(result).toBe(modelTwo)
-    expect(collection.models.length).toBe(2)
+    expect(collection.models).toHaveLength(2)
     expect(collection.models).toEqual([modelOne, modelThree])
   })
 
@@ -134,8 +134,8 @@ describe('Collection - remove #remove #collection', () => {
 
     const result = collection.removeAtIndex(999)
 
-    expect(result).toBe(undefined)
-    expect(collection.models.length).toBe(3)
+    expect(result).toBeUndefined()
+    expect(collection.models).toHaveLength(3)
   })
 
   describe('Callbacks', () => {
@@ -153,7 +153,7 @@ describe('Collection - remove #remove #collection', () => {
           expect.arrayContaining([models[i]])
         )
       }
-      expect(onRemovedSpy).toBeCalledTimes(models.length)
+      expect(onRemovedSpy).toHaveBeenCalledTimes(models.length)
     })
     test('If nothing is removed, no callbacks are being called', () => {
       const transport = fixtures.transport()
@@ -164,7 +164,7 @@ describe('Collection - remove #remove #collection', () => {
       collection.add(models)
       collection.remove('fake_cid')
 
-      expect(onRemovedSpy).not.toBeCalled()
+      expect(onRemovedSpy).not.toHaveBeenCalled()
     })
   })
 })

@@ -100,7 +100,7 @@ describe('Collection - load #load #collection', () => {
 
     await collection.load()
 
-    expect(collection.models.length).toBe(fixtures.rawModelData.length)
+    expect(collection.models).toHaveLength(fixtures.rawModelData.length)
   })
 
   test('Return original response with all added and removed models', async () => {
@@ -132,7 +132,7 @@ describe('Collection - load #load #collection', () => {
         expect.objectContaining({ foo: 'oldModelTwo' })
       ])
     )
-    expect(collection.models.length).toEqual(fixtures.rawModelData.length)
+    expect(collection.models).toHaveLength(fixtures.rawModelData.length)
   })
 
   test('Reset collection with new models', async () => {
@@ -148,7 +148,7 @@ describe('Collection - load #load #collection', () => {
     const result = await collection.load({ reset: true })
 
     expect(result.removed).toEqual(expect.arrayContaining([modelOne, modelTwo]))
-    expect(collection.models.length).toBe(fixtures.rawModelData.length)
+    expect(collection.models).toHaveLength(fixtures.rawModelData.length)
   })
 
   describe('Default configuration #config', () => {
@@ -168,7 +168,7 @@ describe('Collection - load #load #collection', () => {
 
       expect(result.added).toEqual(collection.models)
       expect(result.removed).toEqual([original])
-      expect(collection.models.length).toBe(1)
+      expect(collection.models).toHaveLength(1)
       expect(collection.models[0].id).toBe(fixtures.rawModelData[0].id)
       expect(collection.models[0].foo).not.toBe(newValue)
     })
@@ -254,7 +254,7 @@ describe('Collection - load #load #collection', () => {
 
       await collection.load()
 
-      expect(collection.models.length).toBe(0)
+      expect(collection.models).toHaveLength(0)
       for (let i = 0; i < collection.models.length; i++) {
         expect(collection.models[i]).toEqual(
           expect.objectContaining(fixtures.rawModelData[i])
@@ -282,7 +282,7 @@ describe('Collection - load #load #collection', () => {
 
       expect(result.added).toEqual(collection.models)
       expect(result.removed).toEqual([original])
-      expect(collection.models.length).toBe(1)
+      expect(collection.models).toHaveLength(1)
       expect(collection.models[0].id).toBe(fixtures.rawModelData[0].id)
       expect(collection.models[0].foo).not.toBe(newValue)
     })
@@ -304,7 +304,7 @@ describe('Collection - load #load #collection', () => {
 
       expect(result.added).toEqual([])
       expect(result.removed).toEqual([])
-      expect(collection.models.length).toBe(1)
+      expect(collection.models).toHaveLength(1)
       expect(collection.models[0].foo).toBe(newValue)
     })
 
@@ -333,8 +333,8 @@ describe('Collection - load #load #collection', () => {
 
         await collection.load(loadConfig, transportConfig)
 
-        expect(compareFn).toBeCalledTimes(1)
-        expect(compareFn).toBeCalledWith(
+        expect(compareFn).toHaveBeenCalledTimes(1)
+        expect(compareFn).toHaveBeenCalledWith(
           expect.objectContaining({ id: '1', foo: '1' }),
           original
         )
@@ -362,7 +362,7 @@ describe('Collection - load #load #collection', () => {
 
         expect(result.added).toEqual(collection.models)
         expect(result.removed).toEqual([original])
-        expect(collection.models.length).toBe(1)
+        expect(collection.models).toHaveLength(1)
       })
 
       test('Keep the old model', async () => {
@@ -389,7 +389,7 @@ describe('Collection - load #load #collection', () => {
 
         expect(result.added).toEqual([])
         expect(result.removed).toEqual([])
-        expect(collection.models.length).toBe(1)
+        expect(collection.models).toHaveLength(1)
       })
 
       test('If the resolve function is not provided, throw error', async () => {
@@ -439,7 +439,7 @@ describe('Collection - load #load #collection', () => {
         })
 
         expect(result.removed).toEqual([])
-        expect(collection.models.length).toBe(2)
+        expect(collection.models).toHaveLength(2)
       })
 
       test('When keeping both models, if the new model has a non unique identity, throw error', async () => {
@@ -505,7 +505,7 @@ describe('Collection - load #load #collection', () => {
 
       await collection.load(config, transportConfig)
 
-      expect(loadStartSpy).toBeCalledWith({
+      expect(loadStartSpy).toHaveBeenCalledWith({
         transportConfig,
         config
       })
@@ -524,7 +524,7 @@ describe('Collection - load #load #collection', () => {
 
       await collection.load(config, transportConfig)
 
-      expect(onLoadSuccessSpy).toBeCalledWith({
+      expect(onLoadSuccessSpy).toHaveBeenCalledWith({
         config,
         response,
         transportConfig,
@@ -546,7 +546,7 @@ describe('Collection - load #load #collection', () => {
 
       const result = await collection.load(config, transportConfig)
 
-      expect(loadErrorSpy).toBeCalledWith({
+      expect(loadErrorSpy).toHaveBeenCalledWith({
         error: result.error,
         config,
         transportConfig

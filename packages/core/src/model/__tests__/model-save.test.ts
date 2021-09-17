@@ -213,13 +213,13 @@ describe('Callbacks', () => {
 
     await model.save(config, transportConfig)
 
-    expect(collectionSaveStartSpy).toBeCalledWith({
+    expect(collectionSaveStartSpy).toHaveBeenCalledWith({
       model,
       transportConfig,
       config
     })
 
-    expect(modelSaveStartSpy).toBeCalledWith({
+    expect(modelSaveStartSpy).toHaveBeenCalledWith({
       transportConfig,
       config
     })
@@ -246,13 +246,13 @@ describe('Callbacks', () => {
 
     await model.save(config, transportConfig)
 
-    expect(onSaveSuccessSpy).toBeCalledWith({
+    expect(onSaveSuccessSpy).toHaveBeenCalledWith({
       model,
       config,
       response,
       transportConfig
     })
-    expect(modelSaveSuccessSpy).toBeCalledWith({
+    expect(modelSaveSuccessSpy).toHaveBeenCalledWith({
       response,
       config,
       transportConfig
@@ -277,14 +277,14 @@ describe('Callbacks', () => {
     const dataToSave = model.payload
 
     const { error } = await collection.save(model, config, transportConfig)
-    expect(modelSaveErrorSpy).toBeCalledWith({
+    expect(modelSaveErrorSpy).toHaveBeenCalledWith({
       error,
       transportConfig,
       config,
       dataToSave
     })
 
-    expect(collectionSaveErrorSpy).toBeCalledWith({
+    expect(collectionSaveErrorSpy).toHaveBeenCalledWith({
       model,
       error,
       config,

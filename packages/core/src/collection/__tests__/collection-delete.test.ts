@@ -144,12 +144,12 @@ describe('Collection - delete #delete #collection', () => {
       const modelDeleteStartSpy = jest.spyOn(model, 'onDeleteStart')
 
       await collection.delete(model, config, transportConfig)
-      expect(onDeleteStartSpy).toBeCalledWith({
+      expect(onDeleteStartSpy).toHaveBeenCalledWith({
         model,
         config,
         transportConfig
       })
-      expect(modelDeleteStartSpy).toBeCalledWith({
+      expect(modelDeleteStartSpy).toHaveBeenCalledWith({
         config,
         transportConfig
       })
@@ -174,13 +174,13 @@ describe('Collection - delete #delete #collection', () => {
         .mockImplementation(() => Promise.resolve(response))
 
       await collection.delete(model, config, transportConfig)
-      expect(onDeleteSuccessSpy).toBeCalledWith({
+      expect(onDeleteSuccessSpy).toHaveBeenCalledWith({
         model,
         response,
         config,
         transportConfig
       })
-      expect(modelOnDeleteSuccessSpy).toBeCalledWith({
+      expect(modelOnDeleteSuccessSpy).toHaveBeenCalledWith({
         response,
         config,
         transportConfig
@@ -207,13 +207,13 @@ describe('Collection - delete #delete #collection', () => {
 
       const { error } = await collection.delete(model, config, transportConfig)
 
-      expect(onDeleteErrorSpy).toBeCalledWith({
+      expect(onDeleteErrorSpy).toHaveBeenCalledWith({
         model,
         error,
         transportConfig,
         config
       })
-      expect(modelOnDeleteErrorSpy).toBeCalledWith({
+      expect(modelOnDeleteErrorSpy).toHaveBeenCalledWith({
         error,
         config,
         data: response.data,
@@ -231,9 +231,9 @@ describe('Collection - delete #delete #collection', () => {
       collection.add(model)
 
       const result = collection.delete(model, { removeImmediately: false })
-      expect(modelOnRemovedSpy).not.toBeCalled()
+      expect(modelOnRemovedSpy).not.toHaveBeenCalled()
       await result
-      expect(modelOnRemovedSpy).toBeCalled()
+      expect(modelOnRemovedSpy).toHaveBeenCalled()
     })
 
     test('When deleting, we can query the models that are in the process of deleting', async () => {
@@ -243,12 +243,12 @@ describe('Collection - delete #delete #collection', () => {
       collection.add(model)
 
       const result = collection.delete(model)
-      expect(collection.deleting.length).toBe(1)
+      expect(collection.deleting).toHaveLength(1)
       expect(collection.deleting[0]).toBe(model)
 
       await result
 
-      expect(collection.deleting.length).toBe(0)
+      expect(collection.deleting).toHaveLength(0)
     })
 
     test('After successful deletion, model is removed from the collection', async () => {
@@ -259,9 +259,9 @@ describe('Collection - delete #delete #collection', () => {
 
       const result = collection.delete(model, { removeImmediately: false })
 
-      expect(collection.models.length).toBe(1)
+      expect(collection.models).toHaveLength(1)
       await result
-      expect(collection.models.length).toBe(0)
+      expect(collection.models).toHaveLength(0)
     })
 
     test('After failed deletion, model is removed from the collection', async () => {
@@ -276,7 +276,7 @@ describe('Collection - delete #delete #collection', () => {
         removeOnError: true
       })
 
-      expect(collection.models.length).toBe(0)
+      expect(collection.models).toHaveLength(0)
     })
 
     test('After successfull deletion, model is removed', async () => {
@@ -292,7 +292,7 @@ describe('Collection - delete #delete #collection', () => {
         remove: false
       })
 
-      expect(collection.models.length).toBe(1)
+      expect(collection.models).toHaveLength(1)
       expect(collection.models[0]).toBe(model)
       expect(model.getCollection()).toBe(collection)
     })

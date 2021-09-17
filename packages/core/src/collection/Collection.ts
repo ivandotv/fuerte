@@ -167,19 +167,39 @@ export class Collection<
     return model instanceof Model
   }
 
-  push(model: TModel | TModel[]): TModel[] {
-    return this.add(model)
+  push(model: TModel[]): TModel[]
+
+  push(model: TModel): TModel | undefined
+
+  push(model: TModel | TModel[]): TModel | TModel[] | undefined {
+    // https://stackoverflow.com/questions/65110771/how-to-have-functions-pass-arguments-with-the-same-overloads
+    return this.add(model as any)
   }
 
-  add(model: TModel | TModel[]): TModel[] {
+  add(model: TModel[]): TModel[]
+
+  add(model: TModel): TModel | undefined
+
+  add(model: TModel | TModel[]): TModel | TModel[] | undefined {
     return this.addToCollection(model, { insertPosition: 'end' })
   }
 
-  unshift(model: TModel | TModel[]): TModel[] {
+  unshift(model: TModel[]): TModel[]
+
+  unshift(model: TModel): TModel | undefined
+
+  unshift(model: TModel | TModel[]): TModel | TModel[] | undefined {
     return this.addToCollection(model, { insertPosition: 'start' })
   }
 
-  addAtIndex(model: TModel | TModel[], index: number): TModel[] {
+  addAtIndex(model: TModel[], index: number): TModel[]
+
+  addAtIndex(model: TModel, index: number): TModel | undefined
+
+  addAtIndex(
+    model: TModel | TModel[],
+    index: number
+  ): TModel | TModel[] | undefined {
     return this.addToCollection(model, { insertPosition: index })
   }
 
@@ -188,7 +208,7 @@ export class Collection<
     config: Omit<AddConfig, 'insertPosition'> & {
       insertPosition?: number | ModelInsertPosition
     }
-  ): TModel[] {
+  ): TModel | TModel[] | undefined {
     const models = wrapInArray(model)
 
     const addConfig = {
@@ -238,8 +258,11 @@ export class Collection<
       }
       this._models.splice(addConfig.insertPosition, 0, ...newModels)
     }
-
-    return newModels
+    if (Array.isArray(model)) {
+      return newModels
+    } else {
+      return newModels[0]
+    }
   }
 
   protected isUniqueByIdentifier(model: TModel): boolean {
