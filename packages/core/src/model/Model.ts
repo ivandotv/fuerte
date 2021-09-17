@@ -48,7 +48,7 @@ export abstract class Model<
 
   protected _isDestroyed = false
 
-  protected payloadActionDisposer: IReactionDisposer | undefined
+  protected payloadActionDisposer!: IReactionDisposer
 
   protected pendingSaveCall:
     | {
@@ -57,7 +57,7 @@ export abstract class Model<
       }
     | undefined
 
-  lastSavedData: TDTO | undefined = undefined
+  protected lastSavedData: TDTO | undefined = undefined
 
   get identityKey(): string {
     return (this.constructor as typeof Model).identityKey
@@ -74,7 +74,9 @@ export abstract class Model<
       | 'errors'
       | '_isDeleting'
       | 'computePayload'
+      | 'lastSavedData'
     >(this, {
+      init: action,
       _isDeleted: observable,
       isDeleted: computed,
 
@@ -115,6 +117,12 @@ export abstract class Model<
     })
   }
 
+  // @internal
+  init(): void {
+    this.payloadActionDisposer = this.startPayloadCompute()
+    this.lastSavedData = this.payload
+  }
+
   // https://alexhisen.gitbook.io/mobx-recipes/use-computedstruct-for-computed-objects
   get payload(): TDTO {
     return this.computePayload
@@ -148,7 +156,7 @@ export abstract class Model<
   // @internal
   _onAdded(collection: TCollection): void {
     this.collection = collection
-    this.payloadActionDisposer = this.startPayloadCompute()
+    // this.payloadActionDisposer = this.startPayloadCompute()
     this.onAdded()
   }
 
@@ -158,7 +166,7 @@ export abstract class Model<
   _onRemoved(): void {
     this.onRemoved()
     this.collection = undefined
-    this.payloadActionDisposer && this.payloadActionDisposer()
+    // this.payloadActionDisposer && this.payloadActionDisposer()
   }
 
   protected onRemoved(): void {}
@@ -435,6 +443,7 @@ export abstract class Model<
       this.collection.remove(this)
     }
     this.payloadActionDisposer && this.payloadActionDisposer()
+    this.payloadActionDisposer()
   }
 
   onDestroy(): void {}

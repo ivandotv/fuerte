@@ -90,7 +90,9 @@ export class Collection<
       },
       load: {
         duplicateModelStrategy: 'KEEP_NEW',
-        compareFn: () => 'KEEP_NEW',
+        compareFn: () => {
+          return 'KEEP_NEW'
+        },
         insertPosition: 'end',
         reset: false,
         ...(config?.load ? config.load : undefined)
@@ -156,7 +158,7 @@ export class Collection<
   }
 
   protected assertIsModel(model: unknown): asserts model is TModel {
-    if (model instanceof Model !== true) {
+    if (!this.isModel(model)) {
       throw new Error(`model is not instance of Model class`)
     }
   }
@@ -193,7 +195,7 @@ export class Collection<
       ...this.config.add,
       ...config
     }
-    const newModels = []
+    const newModels: TModel[] = []
 
     for (const model of models) {
       this.assertIsModel(model)
@@ -261,7 +263,7 @@ export class Collection<
 
     const idReaction = reaction(
       () => model.identity,
-      (value) => {
+      value => {
         this.modelByIdentity.set(value, model)
       },
       { name: `id-${model.cid}` }
@@ -472,11 +474,15 @@ export class Collection<
   }
 
   get new(): TModel[] {
-    return this.models.filter((model) => model.isNew)
+    return this.models.filter(model => {
+      return model.isNew
+    })
   }
 
   get deleted(): TModel[] {
-    return this.models.filter((model) => model.isDeleted)
+    return this.models.filter(model => {
+      return model.isDeleted
+    })
   }
 
   get syncing(): TModel[] {
@@ -489,7 +495,7 @@ export class Collection<
 
   get saving(): TModel[] {
     const models: TModel[] = []
-    this._saving.forEach((data) => {
+    this._saving.forEach(data => {
       models.push(data.model)
     })
 
@@ -527,7 +533,11 @@ export class Collection<
   }
 
   protected removeFromCollection(model: TModel | TModel[]): TModel[] {
-    const modelCids = new Set(wrapInArray(model).map((model) => model.cid))
+    const modelCids = new Set(
+      wrapInArray(model).map(model => {
+        return model.cid
+      })
+    )
 
     const removed = []
     const currentCount = this._models.length
@@ -933,13 +943,13 @@ export class Collection<
   destroy(): void {
     this.onDestroy()
 
-    this.identityReactionByCid.forEach((dispose) => {
+    this.identityReactionByCid.forEach(dispose => {
       dispose()
     })
 
     const models = this.removeFromCollection(this._models)
 
-    models.forEach((model) => {
+    models.forEach(model => {
       model.destroy()
     })
   }

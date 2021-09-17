@@ -33,9 +33,9 @@ describe('Model #model', () => {
       expect(model.isDeleted).toBe(false)
     })
 
-    test('It is dirty', () => {
+    test('It is not dirty', () => {
       const model = fixtures.model()
-      expect(model.isDirty).toBe(true)
+      expect(model.isDirty).toBe(false)
     })
   })
 

@@ -71,7 +71,7 @@ export class CollectionWithAutoSave<
       : this._models
 
     const modelsStarted: TModel[] = []
-    modelsArr.forEach((model) => {
+    modelsArr.forEach(model => {
       const enabled = this.saveReactionByCid.get(model.cid)
       if (!enabled) {
         modelsStarted.push(model)
@@ -122,7 +122,7 @@ export class CollectionWithAutoSave<
       : this._models
 
     const modelsStopped: TModel[] = []
-    modelsArr.forEach((model) => {
+    modelsArr.forEach(model => {
       const disposer = this.saveReactionByCid.get(model.cid)
       if (disposer) {
         disposer()

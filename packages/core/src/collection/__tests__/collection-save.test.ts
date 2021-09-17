@@ -122,7 +122,7 @@ describe('Collection - save #save #collection', () => {
     const firstResult = collection.save(model)
     jest.spyOn(transport, 'save').mockImplementationOnce(
       () =>
-        new Promise((resolve) =>
+        new Promise(resolve =>
           setTimeout(() => {
             resolve({ data: { id: '123' } })
           }, 10)

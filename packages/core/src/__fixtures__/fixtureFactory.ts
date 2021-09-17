@@ -1,20 +1,28 @@
-import { CollectionConfig, CollectionConfigWithAutoSave } from '../utils/types'
+import { createModelFactory } from '../factory/factory'
+import {
+  CollectionConfig,
+  CollectionConfigWithAutoSave,
+  Factory
+} from '../utils/types'
 import { TestCollection } from './TestCollection'
 import { TestCollectionWithAutoSave } from './TestCollectionWithAutoSave'
-import { TestFactory } from './TestFactory'
+import { testModelFactory, testModelFactoryAsync } from './TestFactory'
 import { TestModel, TestModelData } from './TestModel'
 import { TestTransport } from './TestTransport'
 
 export function fixtureFactory() {
   return {
     model(data?: TestModelData): TestModel {
-      return new TestModel(data?.foo, data?.bar, data?.id)
+      return this.factory().create(data ? data : { foo: 'foo', bar: 'bar' })
     },
-    factory(): TestFactory {
-      return new TestFactory()
+    factory() {
+      return createModelFactory(testModelFactory)
+    },
+    factoryAsync() {
+      return createModelFactory(testModelFactoryAsync)
     },
     collection(
-      factory?: TestFactory,
+      factory?: Factory<TestModel>,
       transport?: TestTransport,
       config?: CollectionConfig
     ) {
@@ -26,11 +34,10 @@ export function fixtureFactory() {
       return new TestCollection(factory, transport, config)
     },
     collectionWithAutoSave(
-      factory?: TestFactory,
+      factory?: Factory<TestModel>,
       transport?: TestTransport,
       config?: CollectionConfigWithAutoSave
     ) {
-      // modelClass = modelClass || TestModel
       config = config || {}
       factory = factory || this.factory()
       transport = transport || this.transport()

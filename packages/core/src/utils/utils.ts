@@ -32,3 +32,15 @@ export function debounceReaction<T>(
     timer = setTimeout(() => effect(arg, oldArg, r), debounceMs)
   }
 }
+
+const isObject = (value: unknown) =>
+  value !== null && (typeof value === 'object' || typeof value === 'function')
+
+export function isPromise(value: any) {
+  return (
+    value instanceof Promise ||
+    (isObject(value) &&
+      typeof value.then === 'function' &&
+      typeof value.catch === 'function')
+  )
+}
