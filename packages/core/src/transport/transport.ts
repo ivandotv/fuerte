@@ -8,10 +8,10 @@ export interface Transport<TModel extends Model<any> = Model<any>, TDTO = any> {
   delete(model: TModel, config?: any): Promise<{ data?: any } | void>
 }
 
-export class StubTransport<TModel extends Model<any> = Model<any>>
-  implements Transport<TModel>
+export class StubTransport<TModel extends Model<any> = Model<any>, TDTO = any>
+  implements Transport<TModel, TDTO>
 {
-  load(): Promise<{ data: any[] }> {
+  load(): Promise<{ data: TDTO[] }> {
     return Promise.resolve({ data: [] })
   }
 
