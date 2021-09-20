@@ -533,7 +533,7 @@ describe('Collection - load #load #collection', () => {
       })
     })
 
-    test('On reload error, reload error callbacks are called', async () => {
+    test('On load error, load error callbacks are called', async () => {
       const transport = fixtures.transport()
       const model = fixtures.model()
       const response = 'response'

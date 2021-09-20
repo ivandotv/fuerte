@@ -818,7 +818,7 @@ export class Collection<
         config?.duplicateModelStrategy === 'COMPARE' &&
         typeof config.compareFn === 'undefined'
       ) {
-        throw new Error('No compare function found')
+        throw new Error('No compare function')
       }
       this.loadStatus = 'PENDING'
       this.onLoadStart({
@@ -836,7 +836,7 @@ export class Collection<
       // run reset instead of the rest of the load function
       if (loadConfig.reset) {
         const [added, removed] = await this.resetCollection(response.data)
-        // this.loaded = true
+
         this.onLoadSuccess({
           config: loadConfig,
           transportConfig: transportConfig,
