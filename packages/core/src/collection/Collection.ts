@@ -7,7 +7,6 @@ import {
   reaction,
   runInAction
 } from 'mobx'
-import { removeObserver } from 'mobx/dist/internal'
 import { IdentityError } from '../model/identity-error'
 import { Model } from '../model/Model'
 import { Transport } from '../transport/transport'

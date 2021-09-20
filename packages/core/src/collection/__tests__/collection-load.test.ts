@@ -399,9 +399,7 @@ describe('Collection - load #load #collection', () => {
           duplicateModelStrategy: DuplicateModelStrategy.COMPARE
         })
 
-        expect((result.error as Error).message).toMatch(
-          /No compare function found/
-        )
+        expect((result.error as Error).message).toMatch(/No compare function/)
       })
 
       test('Keep both models', async () => {
