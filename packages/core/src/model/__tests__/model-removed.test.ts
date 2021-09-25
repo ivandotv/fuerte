@@ -13,7 +13,7 @@ describe('Model - remove #remove #model', () => {
       const model = fixtures.model()
       collection.add(model)
 
-      collection.remove(model)
+      collection.remove(model.cid)
 
       expect(model.getCollection()).toBeUndefined()
     })
@@ -25,7 +25,7 @@ describe('Model - remove #remove #model', () => {
       const onRemovedSpy = jest.spyOn(model, 'onRemoved')
       collection.add(model)
 
-      collection.remove(model)
+      collection.remove(model.cid)
 
       expect(onRemovedSpy).toHaveBeenCalledTimes(1)
     })

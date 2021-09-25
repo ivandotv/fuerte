@@ -110,7 +110,7 @@ describe('Model - autosave #autosave #model', () => {
     const autoSaveSpy = jest.spyOn(collection, 'autoSave')
     const model = fixtures.model()
     collection.add(model)
-    collection.remove(model)
+    collection.remove(model.identity)
 
     expect(autoSaveSpy).toHaveBeenCalledTimes(0)
   })

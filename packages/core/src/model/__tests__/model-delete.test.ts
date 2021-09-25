@@ -175,7 +175,7 @@ describe('Model - delete #delete #model', () => {
       const modelOnRemovedSpy = jest.spyOn(model, 'onRemoved')
       collection.add(model)
 
-      collection.delete(model)
+      collection.delete(model.cid)
 
       expect(modelOnRemovedSpy).toHaveBeenCalled()
     })

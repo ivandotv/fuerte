@@ -47,7 +47,7 @@ describe('Collection #collection', () => {
   test('Retrieve new models', () => {
     const collection = fixtures.collection()
     const model = fixtures.model()
-    const modelTwo = fixtures.model()
+    const modelTwo = fixtures.model({ foo: 'foo', bar: 'bar' })
     collection.add([model, modelTwo])
 
     expect(collection.new).toEqual([model, modelTwo])

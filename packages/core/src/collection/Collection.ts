@@ -312,9 +312,13 @@ export class Collection<
     identityR ? identityR() : null
   }
 
-  protected resolveModels(
-    needle: string | TModel | (string | TModel)[]
-  ): TModel[] {
+  protected resolveModel(id: string): TModel | undefined {
+    const model = this.modelByIdentity.get(id)
+
+    return model || this.modelByCid.get(id)
+  }
+
+  protected resolveModels(needle: string | string[]): TModel[] {
     const needles = wrapInArray(needle)
     const models = []
     for (const needle of needles) {
@@ -325,14 +329,6 @@ export class Collection<
     }
 
     return models
-  }
-
-  protected resolveModel(needle: TModel | string): TModel | undefined {
-    const r = this.modelByCid.get(
-      typeof needle === 'string' ? needle : needle.cid
-    )
-
-    return r
   }
 
   create(
@@ -562,25 +558,23 @@ export class Collection<
     return this.removeFromCollection(model) as TModel
   }
 
-  remove(cidOrModel: string | TModel): TModel | undefined
+  remove(id: string): TModel | undefined
 
-  remove(cidOrModel: string[] | TModel[]): TModel[]
+  remove(id: string[]): TModel[]
 
-  remove(
-    cidOrModel: string | TModel | (string | TModel)[]
-  ): TModel | TModel[] | undefined {
-    const resolved = this.resolveModels(cidOrModel)
-    let finale: TModel | TModel[] = resolved
-    if (!Array.isArray(cidOrModel)) {
+  remove(id: string | string[]): TModel | TModel[] | undefined {
+    const resolved = this.resolveModels(id)
+    let final: TModel | TModel[] = resolved
+    if (!Array.isArray(id)) {
       if (!resolved.length) {
         return undefined
       } else {
-        finale = finale[0]
+        final = final[0]
       }
     }
 
     // @ts-expect-error -generic type missmatch for some reason?
-    return this.removeFromCollection(finale)
+    return this.removeFromCollection(final)
   }
 
   protected removeFromCollection(model: TModel): TModel | undefined
@@ -640,7 +634,7 @@ export class Collection<
   }
 
   async delete(
-    cidOrModel: string | TModel,
+    id: string,
     config?: DeleteConfig,
     transportConfig?: TransportDeleteConfig<TTransport>
   ): Promise<
@@ -660,9 +654,17 @@ export class Collection<
       ...config
     }
 
-    const model = this.resolveModel(cidOrModel)
+    const model = this.resolveModel(id)
 
-    this.modelCanBeDeleted(model)
+    try {
+      this.modelCanBeDeleted(model)
+    } catch (e) {
+      return {
+        error: e.message,
+        response: undefined,
+        model: undefined
+      }
+    }
 
     if (deleteConfig.remove && deleteConfig.removeImmediately) {
       this.removeFromCollection(model)
@@ -853,7 +855,7 @@ export class Collection<
       }
 
       const modelsToAdd: TModel[] = []
-      const modelsToRemove: TModel[] = []
+      const modelsToRemove: string[] = []
 
       for (const modelData of response.data) {
         // check if model with the id of the new model is already in collection
@@ -877,14 +879,14 @@ export class Collection<
 
           switch (loadConfig.duplicateModelStrategy) {
             case 'KEEP_NEW':
-              modelsToRemove.push(oldModel)
+              modelsToRemove.push(oldModel.cid)
               modelsToAdd.push(model)
               break
             case 'COMPARE':
               switch (compareResult) {
                 case 'KEEP_NEW':
                   modelsToAdd.push(model)
-                  modelsToRemove.push(oldModel)
+                  modelsToRemove.push(oldModel.cid)
                   break
 
                 case 'KEEP_OLD':

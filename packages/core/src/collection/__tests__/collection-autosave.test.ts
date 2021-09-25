@@ -115,7 +115,7 @@ describe('Collection - autosave #autosave #collection', () => {
     const model = fixtures.model()
     collection.add(model)
 
-    collection.remove(model)
+    collection.remove(model.cid)
 
     model.foo = 'foo 2'
     model.foo = 'foo 3'

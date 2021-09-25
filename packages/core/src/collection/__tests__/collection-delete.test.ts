@@ -22,7 +22,7 @@ describe('Collection - delete #delete #collection', () => {
     const collection = fixtures.collection(fixtures.factory(), transport)
     collection.add(model)
 
-    await collection.delete(model)
+    await collection.delete(model.cid)
 
     expect(collection.models).toHaveLength(0)
   })
@@ -33,7 +33,7 @@ describe('Collection - delete #delete #collection', () => {
     const collection = fixtures.collection(fixtures.factory(), transport)
     collection.add(model)
 
-    await collection.delete(model, { remove: false })
+    await collection.delete(model.cid, { remove: false })
 
     expect(collection.models).toStrictEqual([model])
     expect(model.isDeleted).toBe(true)
@@ -48,8 +48,8 @@ describe('Collection - delete #delete #collection', () => {
     collection.add(model)
     collection.add(modelTwo)
 
-    collection.delete(model)
-    collection.delete(modelTwo)
+    collection.delete(model.cid)
+    collection.delete(modelTwo.cid)
 
     expect(collection.deleting).toEqual([model, modelTwo])
   })
@@ -62,8 +62,8 @@ describe('Collection - delete #delete #collection', () => {
     collection.add(model)
     collection.add(modelTwo)
 
-    collection.delete(model)
-    collection.delete(modelTwo)
+    collection.delete(model.cid)
+    collection.delete(modelTwo.cid)
 
     expect(collection.syncing).toEqual([model, modelTwo])
   })
@@ -76,7 +76,7 @@ describe('Collection - delete #delete #collection', () => {
     const model = fixtures.model()
     collection.add(model)
 
-    const result = await collection.delete(model)
+    const result = await collection.delete(model.cid)
 
     expect(result).toEqual({ response, model })
   })
@@ -89,12 +89,12 @@ describe('Collection - delete #delete #collection', () => {
     const model = fixtures.model()
     collection.add(model)
 
-    await collection.delete(model)
+    await collection.delete(model.cid)
     collection.add(model)
 
-    await expect(() => collection.delete(model)).rejects.toThrow(
-      /model is deleted/i
-    )
+    const result = await collection.delete(model.cid)
+
+    expect(result.error).toEqual(expect.stringMatching(/model is deleted/i))
   })
 
   test('Throw if model is in the process of deleting', async () => {
@@ -104,11 +104,12 @@ describe('Collection - delete #delete #collection', () => {
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
     collection.add(model)
+    collection.delete(model.cid, { removeImmediately: false })
 
-    collection.delete(model, { removeImmediately: false })
+    const result = await collection.delete(model.cid)
 
-    await expect(collection.delete(model)).rejects.toThrow(
-      /model is in the process of deleting/i
+    expect(result.error).toEqual(
+      expect.stringMatching(/model is in the process of deleting/i)
     )
   })
 
@@ -117,8 +118,10 @@ describe('Collection - delete #delete #collection', () => {
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
 
-    await expect(collection.delete(model)).rejects.toThrow(
-      /not in the collection/i
+    const result = await collection.delete(model.cid)
+
+    expect(result.error).toEqual(
+      expect.stringMatching(/not in the collection/i)
     )
   })
 
@@ -143,7 +146,7 @@ describe('Collection - delete #delete #collection', () => {
       const onDeleteStartSpy = jest.spyOn(collection, 'onDeleteStart')
       const modelDeleteStartSpy = jest.spyOn(model, 'onDeleteStart')
 
-      await collection.delete(model, config, transportConfig)
+      await collection.delete(model.cid, config, transportConfig)
       expect(onDeleteStartSpy).toHaveBeenCalledWith({
         model,
         config,
@@ -173,7 +176,7 @@ describe('Collection - delete #delete #collection', () => {
         .spyOn(transport, 'delete')
         .mockImplementation(() => Promise.resolve(response))
 
-      await collection.delete(model, config, transportConfig)
+      await collection.delete(model.cid, config, transportConfig)
       expect(onDeleteSuccessSpy).toHaveBeenCalledWith({
         model,
         response,
@@ -205,7 +208,11 @@ describe('Collection - delete #delete #collection', () => {
         .spyOn(transport, 'delete')
         .mockImplementation(() => Promise.reject(response))
 
-      const { error } = await collection.delete(model, config, transportConfig)
+      const { error } = await collection.delete(
+        model.cid,
+        config,
+        transportConfig
+      )
 
       expect(onDeleteErrorSpy).toHaveBeenCalledWith({
         model,
@@ -230,7 +237,7 @@ describe('Collection - delete #delete #collection', () => {
       const modelOnRemovedSpy = jest.spyOn(model, 'onRemoved')
       collection.add(model)
 
-      const result = collection.delete(model, { removeImmediately: false })
+      const result = collection.delete(model.cid, { removeImmediately: false })
       expect(modelOnRemovedSpy).not.toHaveBeenCalled()
       await result
       expect(modelOnRemovedSpy).toHaveBeenCalled()
@@ -242,7 +249,7 @@ describe('Collection - delete #delete #collection', () => {
       const model = fixtures.model()
       collection.add(model)
 
-      const result = collection.delete(model)
+      const result = collection.delete(model.cid)
       expect(collection.deleting).toHaveLength(1)
       expect(collection.deleting[0]).toBe(model)
 
@@ -257,7 +264,7 @@ describe('Collection - delete #delete #collection', () => {
       const model = fixtures.model()
       collection.add(model)
 
-      const result = collection.delete(model, { removeImmediately: false })
+      const result = collection.delete(model.cid, { removeImmediately: false })
 
       expect(collection.models).toHaveLength(1)
       await result
@@ -271,7 +278,7 @@ describe('Collection - delete #delete #collection', () => {
       const model = fixtures.model()
       collection.add(model)
 
-      await collection.delete(model, {
+      await collection.delete(model.cid, {
         removeImmediately: false,
         removeOnError: true
       })
@@ -288,7 +295,7 @@ describe('Collection - delete #delete #collection', () => {
       const model = fixtures.model()
       collection.add(model)
 
-      await collection.delete(model, {
+      await collection.delete(model.cid, {
         remove: false
       })
 
@@ -304,7 +311,7 @@ describe('Collection - delete #delete #collection', () => {
       const model = fixtures.model()
       collection.add(model)
 
-      await collection.delete(model, {
+      await collection.delete(model.cid, {
         removeImmediately: false,
         removeOnError: false
       })

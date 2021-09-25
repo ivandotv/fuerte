@@ -1,10 +1,11 @@
 import { configure } from 'mobx'
 import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
+import { TestModel } from '../../__fixtures__/TestModel'
 
 configure({ enforceActions: 'observed' })
 
 const fixtures = fixtureFactory()
-let modelPool: any[]
+let modelPool: TestModel[]
 
 beforeEach(() => {
   modelPool = []
@@ -55,7 +56,7 @@ describe('Collection - remove #remove #collection', () => {
     const model = fixtures.model()
     collection.add(model)
 
-    const result = collection.remove(model)
+    const result = collection.remove(model.cid)
 
     expect(result).toBe(model)
     expect(collection.models).toHaveLength(0)
@@ -68,7 +69,7 @@ describe('Collection - remove #remove #collection', () => {
     const modelTwo = fixtures.model()
     collection.add([modelOne, modelTwo])
 
-    const result = collection.remove([modelOne, modelTwo])
+    const result = collection.remove([modelOne.cid, modelTwo.cid])
 
     expect(result).toEqual([modelOne, modelTwo])
     expect(collection.models).toHaveLength(0)
@@ -155,7 +156,7 @@ describe('Collection - remove #remove #collection', () => {
       const onRemovedSpy = jest.spyOn(collection, 'onRemoved')
 
       collection.add(models)
-      collection.remove(models)
+      collection.remove(models.map(model => model.cid))
 
       for (let i = 0; i < models.length; i++) {
         expect(onRemovedSpy.mock.calls[i]).toEqual(

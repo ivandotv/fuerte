@@ -200,7 +200,7 @@ export abstract class Model<
     assertCollectionExists(this.collection)
 
     const { response, error } = await this.collection.delete(
-      this,
+      this.cid,
       config,
       transportConfig
     )
@@ -440,7 +440,7 @@ export abstract class Model<
     this.onDestroy()
     this._isDestroyed = true
     if (this.collection) {
-      this.collection.remove(this)
+      this.collection.remove(this.cid)
     }
     this.payloadActionDisposer && this.payloadActionDisposer()
     this.payloadActionDisposer()
