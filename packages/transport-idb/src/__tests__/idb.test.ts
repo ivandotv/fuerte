@@ -7,24 +7,31 @@ import { TransportIDB } from '../idb-transport'
 
 const dbName = 'test_db'
 const store = 'test_store'
-const keyPath = 'cid'
+const keyPath = 'id'
 
 class TestModel extends Model {
-  constructor(public foo: string = 'foo', public bar: string = 'bar') {
+  static identityKey = 'id'
+
+  constructor(
+    public foo: string = 'foo',
+    public bar: string = 'bar',
+    public id: string = String(Math.random())
+  ) {
     super()
   }
-}
 
-class BookModel extends Model {
-  static identityKey = 'isbn'
-
-  constructor(public isbn: string) {
-    super()
+  serialize() {
+    return {
+      id: this.id,
+      foo: this.foo,
+      bar: this.bar
+    }
   }
 }
 
 describe('Transport IDB', () => {
   beforeEach(() => {
+    // @ts-expect-error - global
     global.indexedDB = new FDBFactory()
   })
 
@@ -80,21 +87,7 @@ describe('Transport IDB', () => {
 
     const result = await transport.getById(model.identity)
 
-    expect(result?.data).toEqual(model)
-  })
-
-  test('Save model with custom identity key', async () => {
-    const keyPath = 'isbn'
-    const isbn = '123'
-
-    const transport = new TransportIDB(dbName, store, keyPath)
-    const model = new BookModel(isbn)
-
-    await transport.save(model)
-
-    const result = await transport.getById(model.identity)
-
-    expect(result?.data).toEqual(model)
+    expect(result?.data).toEqual(model.payload)
   })
 
   test('Load all data', async () => {
@@ -110,7 +103,11 @@ describe('Transport IDB', () => {
     const result = await transport.load()
 
     expect(result).toEqual({
-      data: expect.arrayContaining([model, modelTwo, modelThree])
+      data: expect.arrayContaining([
+        model.payload,
+        modelTwo.payload,
+        modelThree.payload
+      ])
     })
   })
 
@@ -132,20 +129,6 @@ describe('Transport IDB', () => {
   test('Delete model', async () => {
     const transport = new TransportIDB(dbName, store, keyPath)
     const model = new TestModel()
-    await transport.save(model)
-
-    await transport.delete(model)
-
-    const result = await transport.getById(model.identity)
-    expect(result).toBeUndefined()
-  })
-
-  test('Delete model with custom identity key', async () => {
-    const keyPath = 'isbn'
-    const isbn = '123'
-
-    const transport = new TransportIDB(dbName, store, keyPath)
-    const model = new BookModel(isbn)
     await transport.save(model)
 
     await transport.delete(model)

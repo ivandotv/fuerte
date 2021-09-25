@@ -27,7 +27,7 @@ export class TransportIDB<T extends Model = Model, K = any>
   async save(model: T) {
     const db = await this.getDB()
 
-    await db.put(this.store, model)
+    await db.put(this.store, model.payload)
   }
 
   async delete(model: T) {
