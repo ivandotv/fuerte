@@ -57,7 +57,7 @@ export abstract class Model<
       }
     | undefined
 
-  protected lastSavedData: TDTO | undefined = undefined
+  lastSavedData: TDTO | undefined = undefined
 
   get identityKey(): string {
     return (this.constructor as typeof Model).identityKey
