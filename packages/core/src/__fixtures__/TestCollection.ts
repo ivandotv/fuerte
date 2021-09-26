@@ -1,30 +1,16 @@
 import { Collection } from '../collection/Collection'
-import {
-  CollectionConfig,
-  DeleteConfig,
-  LoadConfig,
-  SaveConfig,
-  SaveStart
-} from '../utils/types'
-import { TestFactory } from './TestFactory'
+import { createModelFactory } from '../factory/factory'
+import { DeleteConfig, LoadConfig, SaveConfig, SaveStart } from '../utils/types'
+import { fixtureFactory } from './fixtureFactory'
+import { testModelFactory } from './TestFactory'
 import { TestModel } from './TestModel'
 import { TestTransport } from './TestTransport'
 
 export class TestCollection extends Collection<
   TestModel,
-  TestFactory,
+  ReturnType<ReturnType<typeof fixtureFactory>['factory']>,
   TestTransport
 > {
-  constructor(
-    factory: TestFactory,
-    transport: TestTransport,
-    config?: CollectionConfig,
-    public foo = 'foo',
-    public bar = 'bar'
-  ) {
-    super(factory, transport, config)
-  }
-
   onReset(added: TestModel[], removed: TestModel[], fromLoad = false): void {
     super.onReset(added, removed)
   }
