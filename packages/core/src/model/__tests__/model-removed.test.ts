@@ -10,10 +10,10 @@ describe('Model - remove #remove #model', () => {
     test('Model is not associated with the collection', () => {
       const transport = fixtures.transport()
       const collection = fixtures.collection(fixtures.factory(), transport)
-      const model = fixtures.model()
+      const model = fixtures.model({ id: '1' })
       collection.add(model)
 
-      collection.remove(model.cid)
+      collection.remove(model.identity)
 
       expect(model.getCollection()).toBeUndefined()
     })
@@ -21,13 +21,38 @@ describe('Model - remove #remove #model', () => {
     test('removed hook is called', () => {
       const transport = fixtures.transport()
       const collection = fixtures.collection(fixtures.factory(), transport)
-      const model = fixtures.model()
+      const model = fixtures.model({ id: '1' })
       const onRemovedSpy = jest.spyOn(model, 'onRemoved')
       collection.add(model)
 
-      collection.remove(model.cid)
+      collection.remove(model.identity)
 
       expect(onRemovedSpy).toHaveBeenCalledTimes(1)
+    })
+
+    describe('Using model "removeFrom" method', () => {
+      test('Model is not associated with the collection', () => {
+        const transport = fixtures.transport()
+        const collection = fixtures.collection(fixtures.factory(), transport)
+        const model = fixtures.model({ id: '1' })
+        collection.add(model)
+
+        model.remove()
+
+        expect(model.getCollection()).toBeUndefined()
+      })
+
+      test('removed hook is called', () => {
+        const transport = fixtures.transport()
+        const collection = fixtures.collection(fixtures.factory(), transport)
+        const model = fixtures.model({ id: '1' })
+        const onRemovedSpy = jest.spyOn(model, 'onRemoved')
+        collection.add(model)
+
+        model.remove()
+
+        expect(onRemovedSpy).toHaveBeenCalledTimes(1)
+      })
     })
   })
 })

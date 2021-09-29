@@ -233,7 +233,7 @@ export abstract class Model<
     return this.collection.remove(this.identity)
   }
 
-  add<T extends Collection<any, any, any> = Collection<any, any, any>>(
+  addTo<T extends Collection<any, any, any> = Collection<any, any, any>>(
     collection: T
   ): this | undefined {
     return collection.add(this)

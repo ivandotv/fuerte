@@ -48,5 +48,52 @@ describe('Model - add #add #model', () => {
       expect(onAddedSpy).toHaveBeenCalled()
       expect(model.getCollection()).toBe(secondCollection)
     })
+
+    describe('Using model "addTo" method', () => {
+      test('Retrieve the collection from the model', () => {
+        const transport = fixtures.transport()
+        const collection = fixtures.collection(fixtures.factory(), transport)
+        const model = fixtures.model()
+
+        model.addTo(collection)
+
+        expect(model.getCollection()).toBe(collection)
+      })
+
+      test('"onAdded" callback is executed', () => {
+        const transport = fixtures.transport()
+        const collection = fixtures.collection(fixtures.factory(), transport)
+        const model = fixtures.model()
+        // @ts-expect-error - testing protected method
+        const onAddedSpy = jest.spyOn(model, 'onAdded')
+
+        model.addTo(collection)
+
+        expect(onAddedSpy).toHaveBeenCalled()
+      })
+
+      test('If the model is in another collection, it is removed from that collection', () => {
+        const transport = fixtures.transport()
+        const firstCollection = fixtures.collection(
+          fixtures.factory(),
+          transport
+        )
+        const secondCollection = fixtures.collection(
+          fixtures.factory(),
+          transport
+        )
+        const model = fixtures.model()
+        firstCollection.add(model)
+        // @ts-expect-error - testing protected method
+        const onAddedSpy = jest.spyOn(model, 'onAdded')
+        const onRemovedSpy = jest.spyOn(model, 'onRemoved')
+
+        model.addTo(secondCollection)
+
+        expect(onRemovedSpy).toHaveBeenCalledTimes(1)
+        expect(onAddedSpy).toHaveBeenCalled()
+        expect(model.getCollection()).toBe(secondCollection)
+      })
+    })
   })
 })
