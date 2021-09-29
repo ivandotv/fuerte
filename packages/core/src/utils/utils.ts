@@ -47,3 +47,19 @@ export function isPromise<T>(value: Promise<T> | T): value is Promise<T> {
       typeof value.catch === 'function')
   )
 }
+
+// https://stackoverflow.com/questions/69378795/narrow-down-the-return-result-based-on-a-property-value
+export function unwrapResult<T extends { error: any }>(result: T) {
+  const data = result
+
+  if (data.error) {
+    throw data.error
+  }
+
+  const { error, ...ret } = result as Extract<
+    T,
+    { error: 0 | '' | false | undefined | null }
+  >
+
+  return ret
+}
