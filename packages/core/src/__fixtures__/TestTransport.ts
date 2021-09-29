@@ -1,9 +1,7 @@
 import { nanoid } from 'nanoid'
-import { Collection, createModelFactory, Model } from '../../dist/types'
 import { Transport } from '../transport/transport'
-import { fixtureFactory } from './fixtureFactory'
 import { TestModel } from './TestModel'
-/* eslint-disable @typescript-eslint/explicit-function-return-type  */
+
 export class TestTransport implements Transport<TestModel> {
   data = [
     { foo: '1', bar: '1', id: '1' },

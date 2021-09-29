@@ -5,7 +5,6 @@ import {
   TransportSaveConfig,
   TransportSaveResponse
 } from '../utils/types'
-import { TestCollection } from './TestCollection'
 import { TestTransport } from './TestTransport'
 
 export type TestModelData = {
