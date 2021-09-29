@@ -342,8 +342,7 @@ export class Collection<
       result.init()
     }
 
-    // @ts-expect-error - generic return type
-    return result
+    return result as ReturnType<TFactory>
   }
 
   async save(
