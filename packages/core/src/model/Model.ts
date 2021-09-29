@@ -7,7 +7,7 @@ import {
   makeObservable,
   observable
 } from 'mobx'
-import { nanoid } from 'nanoid'
+import { nanoid } from 'nanoid/non-secure'
 import { Collection } from '../collection/Collection'
 import { DeleteConfig, SaveConfig, UnwrapPromise } from '../utils/types'
 import { assertCollectionExists } from '../utils/utils'
@@ -49,6 +49,8 @@ export abstract class Model<
   protected _isDestroyed = false
 
   protected payloadActionDisposer!: IReactionDisposer
+
+  protected initialized = false
 
   protected pendingSaveCall:
     | {
@@ -119,8 +121,10 @@ export abstract class Model<
 
   // @internal
   init(): void {
+    if (this.initialized) return
     this.payloadActionDisposer = this.startPayloadCompute()
     this.lastSavedData = this.payload
+    this.initialized = true
   }
 
   // https://alexhisen.gitbook.io/mobx-recipes/use-computedstruct-for-computed-objects
@@ -210,7 +214,7 @@ export abstract class Model<
 
   async save<T extends TCollection = TCollection>(
     config?: SaveConfig,
-    transportConfig?: any
+    transportConfig?: any //TODO - transport save config? - via collection.transport -> test
   ): Promise<Pick<UnwrapPromise<ReturnType<T['save']>>, 'response' | 'error'>> {
     assertCollectionExists(this.collection)
 
@@ -221,6 +225,18 @@ export abstract class Model<
     )
 
     return { response, error }
+  }
+
+  remove(): this {
+    assertCollectionExists(this.collection)
+
+    return this.collection.remove(this.identity)
+  }
+
+  add<T extends Collection<any, any, any> = Collection<any, any, any>>(
+    collection: T
+  ): this | undefined {
+    return collection.add(this)
   }
 
   // @internal
@@ -442,8 +458,9 @@ export abstract class Model<
     if (this.collection) {
       this.collection.remove(this.cid)
     }
-    this.payloadActionDisposer && this.payloadActionDisposer()
-    this.payloadActionDisposer()
+    if (this.payloadActionDisposer) {
+      this.payloadActionDisposer()
+    }
   }
 
   onDestroy(): void {}

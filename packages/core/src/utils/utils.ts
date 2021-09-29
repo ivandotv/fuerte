@@ -1,4 +1,5 @@
-import { IReactionPublic } from 'mobx'
+/* istanbul ignore file */
+import type { IReactionPublic } from 'mobx'
 import { Collection } from '../collection/Collection'
 
 export function wrapInArray<T = any>(item: T | T[]): T[] {

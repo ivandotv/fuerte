@@ -1,6 +1,5 @@
 export * from './model/Model'
 export * from './collection/Collection'
-export * from './factory/factory'
 export * from './collection/CollectionWithAutoSave'
 export * from './transport/transport'
 export * from './utils/utils'

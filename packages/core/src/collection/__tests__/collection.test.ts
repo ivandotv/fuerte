@@ -1,7 +1,9 @@
 import { configure } from 'mobx'
 import { CollectionConfig } from '../../utils/types'
 import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
+import { testModelFactoryAsync } from '../../__fixtures__/TestFactory'
 import { TestModel } from '../../__fixtures__/TestModel'
+import { Collection } from '../Collection'
 
 configure({ enforceActions: 'always' })
 
@@ -32,6 +34,38 @@ describe('Collection #collection', () => {
     expect(collection.getTransport()).toBe(transport)
   })
 
+  test('Create the model synchronously', () => {
+    const collection = fixtures.collection()
+    const modelData = { foo: 'new foo', bar: 'new bar', id: 'new id' }
+
+    const model = collection.create(modelData)
+
+    expect(model).toBeInstanceOf(TestModel)
+    expect(model.foo).toBe(modelData.foo)
+    expect(model.bar).toBe(modelData.bar)
+    expect(model.id).toBe(modelData.id)
+  })
+
+  test('Create the model assynchronously', async () => {
+    class AsyncCollection extends Collection<
+      TestModel,
+      typeof testModelFactoryAsync,
+      any
+    > {}
+
+    const collection = new AsyncCollection(
+      testModelFactoryAsync,
+      fixtures.transport()
+    )
+    const modelData = { foo: 'new foo', bar: 'new bar', id: 'new id' }
+
+    const model = await collection.create(modelData)
+
+    expect(model).toBeInstanceOf(TestModel)
+    expect(model.foo).toBe(modelData.foo)
+    expect(model.bar).toBe(modelData.bar)
+    expect(model.id).toBe(modelData.id)
+  })
   test('Create the model via the create method', () => {
     const collection = fixtures.collection()
     const modelData = { foo: 'new foo', bar: 'new bar', id: 'new id' }

@@ -1,14 +1,12 @@
 import { Collection } from '../collection/Collection'
-import { createModelFactory } from '../factory/factory'
 import { DeleteConfig, LoadConfig, SaveConfig, SaveStart } from '../utils/types'
-import { fixtureFactory } from './fixtureFactory'
-import { testModelFactory } from './TestFactory'
+import { testModelFactory, testModelFactoryAsync } from './TestFactory'
 import { TestModel } from './TestModel'
 import { TestTransport } from './TestTransport'
 
 export class TestCollection extends Collection<
   TestModel,
-  ReturnType<ReturnType<typeof fixtureFactory>['factory']>,
+  typeof testModelFactory,
   TestTransport
 > {
   onReset(added: TestModel[], removed: TestModel[], fromLoad = false): void {

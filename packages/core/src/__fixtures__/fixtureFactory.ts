@@ -1,35 +1,26 @@
-import { createModelFactory } from '../factory/factory'
-import {
-  CollectionConfig,
-  CollectionConfigWithAutoSave,
-  Factory
-} from '../utils/types'
+import { CollectionConfig, CollectionConfigWithAutoSave } from '../utils/types'
 import { TestCollection } from './TestCollection'
 import { TestCollectionWithAutoSave } from './TestCollectionWithAutoSave'
 import { testModelFactory, testModelFactoryAsync } from './TestFactory'
 import { TestModel, TestModelData } from './TestModel'
 import { TestTransport } from './TestTransport'
 
-const factorySync = createModelFactory(testModelFactory)
-const factoryAsync = createModelFactory(testModelFactoryAsync)
-
 export function fixtureFactory() {
   return {
     model(data?: TestModelData): TestModel {
-      return this.factory().create(data ? data : { foo: 'foo', bar: 'bar' })
+      return this.collection().create(data ? data : { foo: 'foo', bar: 'bar' })
     },
     factory() {
-      return factorySync
+      return testModelFactory
     },
     factoryAsync() {
-      return factoryAsync
+      return testModelFactoryAsync
     },
     collection(
-      factory?: typeof factorySync,
+      factory?: typeof testModelFactory,
       transport?: TestTransport,
       config?: CollectionConfig
     ) {
-      // modelClass = modelClass || TestModel
       config = config || {}
       factory = factory || this.factory()
       transport = transport || this.transport()
@@ -37,7 +28,7 @@ export function fixtureFactory() {
       return new TestCollection(factory, transport, config)
     },
     collectionWithAutoSave(
-      factory?: typeof factorySync,
+      factory?: typeof testModelFactory,
       transport?: TestTransport,
       config?: CollectionConfigWithAutoSave
     ) {

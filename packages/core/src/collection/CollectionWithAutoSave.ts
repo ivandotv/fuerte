@@ -3,15 +3,14 @@ import { Model } from '../model/Model'
 import { Transport } from '../transport/transport'
 import {
   CollectionConfigWithAutoSave,
-  Factory,
   RequiredCollectionConfigWithAutoSave
 } from '../utils/types'
 import { debounceReaction } from '../utils/utils'
-import { Collection } from './Collection'
+import { Collection, FactoryFn } from './Collection'
 
 export class CollectionWithAutoSave<
   TModel extends Model<Collection<any, any, any>>,
-  TFactory extends Factory<TModel>,
+  TFactory extends FactoryFn<TModel>,
   TTransport extends Transport<TModel>
 > extends Collection<TModel, TFactory, TTransport> {
   protected identityReactionByCid: Map<string, IReactionDisposer> = new Map()

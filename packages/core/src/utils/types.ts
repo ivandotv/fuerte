@@ -8,11 +8,6 @@ import { Transport } from '../transport/transport'
 
 export type UnwrapPromise<T> = T extends Promise<infer U> ? U : T
 
-export type FactoryFn<T, K = any> = (...args: K[]) => T | Promise<T>
-export type Factory<T, K = any> = {
-  create: FactoryFn<T, K>
-}
-
 /* SAVE TYPES */
 export type TransportSaveResponse<T extends Transport<any>> = UnwrapPromise<
   ReturnType<T['save']>

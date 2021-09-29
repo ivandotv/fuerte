@@ -17,7 +17,6 @@ import {
   DeleteError,
   DeleteStart,
   DeleteSuccess,
-  Factory,
   LoadConfig,
   LoadError,
   LoadStart,
@@ -36,11 +35,13 @@ import {
   TransportSaveResponse,
   UnwrapPromise
 } from '../utils/types'
-import { ASYNC_STATUS, wrapInArray } from '../utils/utils'
+import { ASYNC_STATUS, isPromise, wrapInArray } from '../utils/utils'
+
+export type FactoryFn<T, K = any> = (args: K) => T | Promise<T>
 
 export class Collection<
   TModel extends Model<Collection<any, any, any>>,
-  TFactory extends Factory<TModel>,
+  TFactory extends FactoryFn<TModel>,
   TTransport extends Transport<TModel>
 > {
   loadError = undefined
@@ -331,15 +332,22 @@ export class Collection<
     return models
   }
 
-  create(
-    data: Parameters<TFactory['create']>[0]
-  ): ReturnType<TFactory['create']> {
+  create(data: Parameters<TFactory>[0]): ReturnType<TFactory> {
+    const result = this.factory(data)
+    if (isPromise(result)) {
+      result.then((model: TModel) => {
+        model.init()
+      })
+    } else {
+      result.init()
+    }
+
     // @ts-expect-error - generic return type
-    return this.factory.create(data)
+    return result
   }
 
   async save(
-    modelOrModelData: TModel | Parameters<TFactory['create']>[0],
+    modelOrModelData: TModel | Parameters<TFactory>[0],
     config?: SaveConfig,
     loadConfig?: TransportSaveConfig<TTransport>
   ): Promise<
@@ -361,7 +369,15 @@ export class Collection<
 
     let model: TModel
     if (!this.isModel(modelOrModelData)) {
-      model = await this.factory.create(modelOrModelData)
+      try {
+        model = await this.factory(modelOrModelData)
+      } catch (error) {
+        return {
+          error,
+          response: undefined,
+          model: undefined
+        }
+      }
     } else {
       model = modelOrModelData
     }
@@ -858,13 +874,12 @@ export class Collection<
       const modelsToRemove: string[] = []
 
       for (const modelData of response.data) {
-        // check if model with the id of the new model is already in collection
         const modifiedData = this.onModelCreateData(modelData)
 
         if (!modifiedData) {
           continue
         }
-        const model = await this.factory.create(modifiedData)
+        const model = await this.factory(modifiedData)
 
         if (this.isUniqueByIdentifier(model)) {
           modelsToAdd.push(model)
@@ -974,7 +989,7 @@ export class Collection<
         continue
       }
 
-      const model = await this.factory.create(modifiedData)
+      const model = await this.factory(modifiedData)
 
       modelsToAdd.push(model)
     }
@@ -996,8 +1011,8 @@ export class Collection<
   protected onReset(_added: TModel[], _removed: TModel[]): void {}
 
   protected onModelCreateData(
-    data: Parameters<TFactory['create']>[0]
-  ): Parameters<TFactory['create']>[0] | void {
+    data: Parameters<TFactory>[0]
+  ): Parameters<TFactory>[0] | void {
     return data
   }
 
