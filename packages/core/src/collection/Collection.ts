@@ -31,7 +31,6 @@ import {
   SaveStartCallback,
   SaveSuccessCallback,
   TransportDeleteConfig,
-  TransportDeleteResponse,
   TransportLoadConfig,
   TransportLoadResponse,
   TransportSaveConfig,
@@ -312,8 +311,8 @@ export class Collection<
     this.modelByCid.delete(model.cid)
     this.modelByIdentity.delete(model.identity)
 
-    const identityR = this.identityReactionByCid.get(model.cid)
-    identityR ? identityR() : null
+    const reaction = this.identityReactionByCid.get(model.cid)
+    reaction ? reaction() : null
   }
 
   protected resolveModel(id: string): TModel | undefined {
@@ -479,24 +478,16 @@ export class Collection<
     }
   }
 
-  getByIdentity(value: string): TModel | undefined
+  getById(id: string): TModel | undefined
 
-  getByIdentity(values: string[]): TModel[] | undefined
+  getById(id: string[]): TModel[] | undefined
 
-  getByIdentity(values: string | string[]): TModel | TModel[] | undefined {
-    if (Array.isArray(values)) {
-      const result = []
-      for (const value of values) {
-        const model = this.modelByIdentity.get(value)
-        if (model) {
-          result.push(model)
-        }
-      }
-
-      return result
+  getById(id: string | string[]): TModel | TModel[] | undefined {
+    if (Array.isArray(id)) {
+      return this.resolveModels(id)
     }
 
-    return this.modelByIdentity.get(values)
+    return this.resolveModel(id)
   }
 
   protected onSaveStart(data: SaveStartCallback<TModel, TTransport>): void {}

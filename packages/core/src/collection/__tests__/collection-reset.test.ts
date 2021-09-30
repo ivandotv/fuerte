@@ -55,8 +55,8 @@ describe('Collection - reset #reset #collection', () => {
     await collection.reset(fixtures.rawModelData)
 
     expect(collection.models).toHaveLength(fixtures.rawModelData.length)
-    expect(collection.getByIdentity(models[0].cid)).toBeUndefined()
-    expect(collection.getByIdentity(models[1].cid)).toBeUndefined()
+    expect(collection.getById(models[0].cid)).toBeUndefined()
+    expect(collection.getById(models[1].cid)).toBeUndefined()
   })
 
   test('Reset the collection without adding new models', async () => {
