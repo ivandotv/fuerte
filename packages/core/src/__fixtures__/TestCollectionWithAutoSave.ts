@@ -1,18 +1,22 @@
 import { CollectionWithAutoSave } from '../collection/CollectionWithAutoSave'
 import {
-  CollectionConfig,
-  DeleteConfig,
-  LoadConfig,
-  SaveConfig,
-  SaveStart
+  DeleteErrorCallback,
+  DeleteStartCallback,
+  DeleteSuccessCallback,
+  LoadErrorCallback,
+  LoadStartCallback,
+  LoadSuccessCallback,
+  SaveErrorCallback,
+  SaveStartCallback,
+  SaveSuccessCallback
 } from '../utils/types'
-import { fixtureFactory } from './fixtureFactory'
+import { testModelFactory } from './TestFactory'
 import { TestModel } from './TestModel'
 import { TestTransport } from './TestTransport'
 
 export class TestCollectionWithAutoSave extends CollectionWithAutoSave<
   TestModel,
-  ReturnType<ReturnType<typeof fixtureFactory>['factory']>,
+  typeof testModelFactory,
   TestTransport
 > {
   onReset(added: TestModel[], removed: TestModel[], fromLoad = false): void {
@@ -27,65 +31,39 @@ export class TestCollectionWithAutoSave extends CollectionWithAutoSave<
     super.onAdded(model)
   }
 
-  onSaveSuccess(data: {
-    model: TestModel
-    response: any
-    config: SaveConfig
-    transportConfig: any
-  }): void {
+  onSaveSuccess(data: SaveSuccessCallback<TestModel, TestTransport>): void {
     super.onSaveSuccess(data)
   }
 
-  onSaveStart(data: SaveStart<TestTransport, TestModel>): void {
+  onSaveStart(data: SaveStartCallback<TestModel, TestTransport>): void {
     super.onSaveStart(data)
   }
 
-  onSaveError(data: {
-    model: TestModel
-    error: any
-    config: SaveConfig
-    transportConfig: any
-  }): void {
+  onSaveError(data: SaveErrorCallback<TestModel, TestTransport>): void {
     super.onSaveError(data)
   }
 
-  onDeleteSuccess(data: {
-    model: TestModel
-    response: any
-    config: DeleteConfig
-    transportConfig: any
-  }): void {
+  onDeleteStart(data: DeleteStartCallback<TestModel, TestTransport>): void {
+    super.onDeleteStart(data)
+  }
+
+  onDeleteSuccess(data: DeleteSuccessCallback<TestModel, TestTransport>): void {
     super.onDeleteSuccess(data)
   }
 
-  onDeleteError(data: {
-    model: TestModel
-    error: any
-    config: DeleteConfig
-    transportConfig: any
-  }): void {
+  onDeleteError(data: DeleteErrorCallback<TestModel, TestTransport>): void {
     super.onDeleteError(data)
   }
 
-  onLoadStart(data: { config: LoadConfig; transportConfig?: any }): void {
+  onLoadStart(data: LoadStartCallback<TestModel, TestTransport>): void {
     super.onLoadStart(data)
   }
 
-  onLoadSuccess(data: {
-    config: LoadConfig
-    transportConfig?: any
-    response: any
-    added: TestModel[]
-    removed: TestModel[]
-  }): void {
+  onLoadSuccess(data: LoadSuccessCallback<TestModel, TestTransport>): void {
     super.onLoadSuccess(data)
   }
 
-  onLoadError(data: {
-    config: LoadConfig
-    transportConfig?: any
-    error: any
-  }): void {
+  onLoadError(data: LoadErrorCallback<TestModel, TestTransport>): void {
     super.onLoadError(data)
   }
 

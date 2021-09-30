@@ -142,7 +142,6 @@ describe('Collection - delete #delete #collection', () => {
         .spyOn(transport, 'delete')
         .mockImplementation(() => Promise.resolve(response))
 
-      // @ts-expect-error - protected method
       const onDeleteStartSpy = jest.spyOn(collection, 'onDeleteStart')
       const modelDeleteStartSpy = jest.spyOn(model, 'onDeleteStart')
 

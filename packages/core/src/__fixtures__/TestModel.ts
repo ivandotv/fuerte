@@ -1,6 +1,9 @@
 import { makeObservable, observable } from 'mobx'
 import { Model } from '../model/Model'
 import {
+  ModelDeleteErrorCallback,
+  ModelDeleteStartCallback,
+  ModelDeleteSuccessCallback,
   SaveConfig,
   TransportSaveConfig,
   TransportSaveResponse
@@ -15,7 +18,6 @@ export type TestModelData = {
 
 export class TestModel extends Model<any> {
   static identityKey = 'id'
-  // id: string | undefined
 
   foo: string
 
@@ -73,15 +75,15 @@ export class TestModel extends Model<any> {
     super.onRemoved()
   }
 
-  onDeleteStart(data: any): void {
+  onDeleteStart(data: ModelDeleteStartCallback<TestTransport>): void {
     super.onDeleteStart(data)
   }
 
-  onDeleteSuccess(data: any): void {
+  onDeleteSuccess(data: ModelDeleteSuccessCallback<TestTransport>): void {
     super.onDeleteSuccess(data)
   }
 
-  onDeleteError(data: any): void {
+  onDeleteError(data: ModelDeleteErrorCallback<TestTransport>): void {
     super.onDeleteError(data)
   }
 

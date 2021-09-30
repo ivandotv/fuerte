@@ -8,6 +8,11 @@ import { Transport } from '../transport/transport'
 
 export type UnwrapPromise<T> = T extends Promise<infer U> ? U : T
 
+export type ModelTransportErrors<TSave = any | null, TDelete = any | null> = {
+  save: TSave
+  delete: TDelete
+}
+
 /* SAVE TYPES */
 export type TransportSaveResponse<T extends Transport<any>> = UnwrapPromise<
   ReturnType<T['save']>
@@ -17,20 +22,62 @@ export type TransportSaveConfig<T extends Transport<any>> = Parameters<
   T['save']
 >[1]
 
-export type SaveStart<T extends Transport<K>, K extends Model<any, any>> = {
-  model: K
+export type SaveResult<
+  TModel extends Model<any, any>,
+  TTransport extends Transport<TModel>
+> = Promise<
+  | {
+      response: TransportSaveResponse<TTransport>
+      model: TModel
+      error: undefined
+    }
+  | {
+      error: Omit<NonNullable<any>, 'false'>
+      response: undefined
+      model: undefined
+    }
+>
+
+export type SaveStartCallback<
+  TModel extends Model<any, any>,
+  TTransport extends Transport<TModel>
+> = {
+  model: TModel
   config: SaveConfig
-  transportConfig?: TransportSaveConfig<T>
+  transportConfig?: TransportSaveConfig<TTransport>
 }
 
-export type SaveSuccess<T extends Transport<K>, K extends Model<any, any>> = {
-  response: TransportSaveResponse<T>
-} & SaveStart<T, K>
+export type ModelSaveStartCallback<
+  TTransport extends Transport<Model> = Transport<Model>
+> = {
+  config: SaveConfig
+  transportConfig?: TransportSaveConfig<TTransport>
+}
 
-export type SaveError<
-  T extends Transport<K>,
-  K extends Model<any, any>
-> = SaveStart<T, K> & { error: any }
+export type SaveSuccessCallback<
+  TModel extends Model<any, any>,
+  TTransport extends Transport<TModel>
+> = {
+  response: TransportSaveResponse<TTransport>
+} & SaveStartCallback<TModel, TTransport>
+
+export type ModelSaveSuccessCallback<
+  TTransport extends Transport<Model> = Transport<Model>
+> = {
+  response: TransportSaveResponse<TTransport>
+} & ModelSaveStartCallback<TTransport>
+
+export type SaveErrorCallback<
+  TModel extends Model<any, any>,
+  TTransport extends Transport<TModel>,
+  TError = any
+> = SaveStartCallback<TModel, TTransport> & { error: TError }
+
+export type ModelSaveErrorCallback<
+  TDTO = any,
+  TTransport extends Transport<Model> = Transport<Model>,
+  TError = any
+> = ModelSaveStartCallback<TTransport> & { error: TError; dataToSave: TDTO }
 
 /* DELETE TYPES */
 
@@ -42,20 +89,57 @@ export type TransportDeleteConfig<T extends Transport<any>> = Parameters<
   T['delete']
 >[1]
 
-export type DeleteStart<T extends Transport<K>, K extends Model<any, any>> = {
-  model: K
+export type DeleteResult<
+  TModel extends Model<any, any>,
+  TTransport extends Transport<TModel>
+> = Promise<
+  | {
+      response: TransportDeleteResponse<TTransport>
+      model: TModel
+      error: undefined
+    }
+  | {
+      error: Omit<NonNullable<any>, 'false'>
+      response: undefined
+      model: undefined
+    }
+>
+
+export type DeleteStartCallback<
+  TModel extends Model<any, any>,
+  TTransport extends Transport<TModel>
+> = {
+  model: TModel
   config: DeleteConfig
-  transportConfig?: TransportDeleteConfig<T>
+  transportConfig?: TransportDeleteConfig<TTransport>
 }
 
-export type DeleteSuccess<T extends Transport<K>, K extends Model<any, any>> = {
-  response: TransportDeleteResponse<T>
-} & DeleteStart<T, K>
+export type ModelDeleteStartCallback<TTransport extends Transport<Model>> = {
+  config: DeleteConfig
+  transportConfig?: TransportDeleteConfig<TTransport>
+}
 
-export type DeleteError<
-  T extends Transport<K>,
-  K extends Model<any, any>
-> = DeleteStart<T, K> & { error: any }
+export type DeleteSuccessCallback<
+  TModel extends Model<any, any>,
+  TTransport extends Transport<TModel>
+> = {
+  response: TransportDeleteResponse<TTransport>
+} & DeleteStartCallback<TModel, TTransport>
+
+export type ModelDeleteSuccessCallback<TTransport extends Transport<Model>> = {
+  response: TransportDeleteResponse<TTransport>
+} & ModelDeleteStartCallback<TTransport>
+
+export type DeleteErrorCallback<
+  TModel extends Model<any, any>,
+  TTransport extends Transport<TModel>,
+  TError = any
+> = DeleteStartCallback<TModel, TTransport> & { error: TError }
+
+export type ModelDeleteErrorCallback<
+  TTransport extends Transport<Model>,
+  TError = any
+> = ModelDeleteStartCallback<TTransport> & { error: TError }
 
 /* LOAD TYPES */
 
@@ -67,24 +151,46 @@ export type TransportLoadConfig<T extends Transport<any>> = Parameters<
   T['load']
 >[0]
 
-export type LoadStart<T extends Transport<K>, K extends Model<any, any>> = {
+export type LoadResult<
+  TModel extends Model<any, any>,
+  TTransport extends Transport<TModel>
+> = Promise<
+  | {
+      added: TModel[]
+      removed: TModel[]
+      response: TransportLoadResponse<TTransport>
+      error: undefined
+    }
+  | {
+      error: Omit<NonNullable<any>, 'false'>
+      response: undefined
+      added: undefined
+      removed: undefined
+    }
+>
+
+export type LoadStartCallback<
+  TModel extends Model<any, any>,
+  TTransport extends Transport<TModel>
+> = {
   config: SaveConfig
-  transportConfig?: TransportLoadConfig<T>
+  transportConfig?: TransportLoadConfig<TTransport>
 }
 
-export type LoadSuccess<
-  T extends Transport<K>,
-  K extends Model<any, any>
-> = LoadStart<T, K> & {
-  added: K[]
-  removed: K[]
-  response: TransportLoadResponse<T>
+export type LoadSuccessCallback<
+  TModel extends Model<any, any>,
+  TTransport extends Transport<TModel>
+> = LoadStartCallback<TModel, TTransport> & {
+  added: TModel[]
+  removed: TModel[]
+  response: TransportLoadResponse<TTransport>
 }
 
-export type LoadError<
-  T extends Transport<K>,
-  K extends Model<any, any>
-> = LoadStart<T, K> & { error: any }
+export type LoadErrorCallback<
+  TModel extends Model<any, any>,
+  TTransport extends Transport<TModel>,
+  E = any
+> = LoadStartCallback<TModel, TTransport> & { error: E }
 
 export type CollectionConfig = {
   add?: AddConfig

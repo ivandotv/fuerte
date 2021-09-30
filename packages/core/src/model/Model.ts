@@ -8,18 +8,24 @@ import {
   observable
 } from 'mobx'
 import { nanoid } from 'nanoid/non-secure'
+import { TransportSaveConfig } from '../../dist/types'
 import { Collection } from '../collection/Collection'
-import { DeleteConfig, SaveConfig, UnwrapPromise } from '../utils/types'
+import { Transport } from '../transport/transport'
+import {
+  DeleteConfig,
+  ModelDeleteErrorCallback,
+  ModelDeleteStartCallback,
+  ModelDeleteSuccessCallback,
+  ModelSaveErrorCallback,
+  ModelSaveStartCallback,
+  ModelSaveSuccessCallback,
+  ModelTransportErrors,
+  SaveConfig,
+  TransportDeleteConfig,
+  UnwrapPromise
+} from '../utils/types'
 import { assertCollectionExists } from '../utils/utils'
 import { IdentityError } from './identity-error'
-
-export interface ModelTransportErrors<
-  TSave = any | null,
-  TDelete = any | null
-> {
-  save: TSave
-  delete: TDelete
-}
 
 export abstract class Model<
   TCollection extends Collection<any, any, any> = Collection<any, any, any>,
@@ -160,7 +166,6 @@ export abstract class Model<
   // @internal
   _onAdded(collection: TCollection): void {
     this.collection = collection
-    // this.payloadActionDisposer = this.startPayloadCompute()
     this.onAdded()
   }
 
@@ -170,7 +175,6 @@ export abstract class Model<
   _onRemoved(): void {
     this.onRemoved()
     this.collection = undefined
-    // this.payloadActionDisposer && this.payloadActionDisposer()
   }
 
   protected onRemoved(): void {}
@@ -195,9 +199,12 @@ export abstract class Model<
     return this._isDestroyed
   }
 
-  async delete<T extends TCollection = TCollection>(
+  async delete<
+    T extends TCollection = TCollection,
+    TTransport extends Transport<Model> = Transport<Model>
+  >(
     config?: DeleteConfig,
-    transportConfig?: any
+    transportConfig?: TransportDeleteConfig<TTransport>
   ): Promise<
     Pick<UnwrapPromise<ReturnType<T['delete']>>, 'response' | 'error'>
   > {
@@ -212,9 +219,12 @@ export abstract class Model<
     return { response, error }
   }
 
-  async save<T extends TCollection = TCollection>(
+  async save<
+    T extends TCollection = TCollection,
+    TTransport extends Transport = Transport
+  >(
     config?: SaveConfig,
-    transportConfig?: any //TODO - transport save config? - via collection.transport -> test
+    transportConfig?: TransportSaveConfig<TTransport>
   ): Promise<Pick<UnwrapPromise<ReturnType<T['save']>>, 'response' | 'error'>> {
     assertCollectionExists(this.collection)
 
@@ -258,10 +268,7 @@ export abstract class Model<
     this.onSaveStart({ config, transportConfig })
   }
 
-  protected onSaveStart(data: {
-    config: SaveConfig
-    transportConfig: any
-  }): void {}
+  protected onSaveStart(data: ModelSaveStartCallback): void {}
 
   // @internal
   _onSaveSuccess({
@@ -316,11 +323,7 @@ export abstract class Model<
     })
   }
 
-  protected onSaveSuccess(data: {
-    response: any
-    config: SaveConfig
-    transportConfig: any
-  }): void {}
+  protected onSaveSuccess(data: ModelSaveSuccessCallback): void {}
 
   _onSaveError({
     error,
@@ -349,21 +352,14 @@ export abstract class Model<
     })
   }
 
-  protected onSaveError(data: {
-    error: any
-    config: SaveConfig
-    transportConfig: any
-    dataToSave: TDTO
-  }): void {}
+  protected onSaveError(data: ModelSaveErrorCallback<TDTO>): void {}
 
   protected extractIdentityValue(
     data: any | undefined,
     config: any, // collection save config
     transportConfig: any // transportConfig - save
   ): string | undefined {
-    //todo - ovde mozda da odradim varijantu da se uvek vraca id
     return data && data[this.identityKey]
-    // return data && data.id
   }
 
   //todo - mozda izbaciti undefined
@@ -375,9 +371,6 @@ export abstract class Model<
   setIdentity(newValue: string): void {
     // @ts-expect-error force setting identifier property on the model
     this[this.identityKey] = newValue
-    if (this.collection) {
-      //update collections
-    }
   }
 
   get isNew(): boolean {
@@ -395,10 +388,7 @@ export abstract class Model<
     this.onDeleteStart(data)
   }
 
-  protected onDeleteStart(data: {
-    config: DeleteConfig
-    transportConfig: any
-  }): void {}
+  protected onDeleteStart(data: ModelDeleteStartCallback<Transport>): void {}
 
   _onDeleteSuccess(data: {
     response: any
@@ -409,16 +399,12 @@ export abstract class Model<
     this._isDeleting = false
     this.errors.delete = undefined
     this._isDeleted = true
-    // this._markedForDeletion = false
     this.onDeleteSuccess(data)
   }
 
-  protected onDeleteSuccess(data: {
-    response: any
-    data?: any
-    config: DeleteConfig
-    transportConfig: any
-  }): void {}
+  protected onDeleteSuccess(
+    data: ModelDeleteSuccessCallback<Transport>
+  ): void {}
 
   _onDeleteError(data: {
     error: any
@@ -433,12 +419,7 @@ export abstract class Model<
     this.onDeleteError(data)
   }
 
-  protected onDeleteError(data: {
-    error: any
-    data?: any
-    config: DeleteConfig
-    transportConfig: any
-  }): void {}
+  protected onDeleteError(data: ModelDeleteErrorCallback<Transport>): void {}
 
   get isDirty(): boolean {
     return this.modelIsDirty()

@@ -14,19 +14,22 @@ import {
   AddConfig,
   CollectionConfig,
   DeleteConfig,
-  DeleteError,
-  DeleteStart,
-  DeleteSuccess,
+  DeleteErrorCallback,
+  DeleteResult,
+  DeleteStartCallback,
+  DeleteSuccessCallback,
   LoadConfig,
-  LoadError,
-  LoadStart,
-  LoadSuccess,
+  LoadErrorCallback,
+  LoadResult,
+  LoadStartCallback,
+  LoadSuccessCallback,
   ModelInsertPosition,
   RequiredCollectionConfig,
   SaveConfig,
-  SaveError,
-  SaveStart,
-  SaveSuccess,
+  SaveErrorCallback,
+  SaveResult,
+  SaveStartCallback,
+  SaveSuccessCallback,
   TransportDeleteConfig,
   TransportDeleteResponse,
   TransportLoadConfig,
@@ -349,18 +352,7 @@ export class Collection<
     modelOrModelData: TModel | Parameters<TFactory>[0],
     config?: SaveConfig,
     loadConfig?: TransportSaveConfig<TTransport>
-  ): Promise<
-    | {
-        response: TransportSaveResponse<TTransport>
-        model: TModel
-        error: undefined
-      }
-    | {
-        error: Omit<NonNullable<any>, 'false'>
-        response: undefined
-        model: undefined
-      }
-  > {
+  ): SaveResult<TModel, TTransport> {
     const saveConfig = {
       ...this.config.save,
       ...config
@@ -507,11 +499,13 @@ export class Collection<
     return this.modelByIdentity.get(values)
   }
 
-  protected onSaveStart(_data: SaveStart<TTransport, TModel>): void {}
+  protected onSaveStart(data: SaveStartCallback<TModel, TTransport>): void {}
 
-  protected onSaveSuccess(_data: SaveSuccess<TTransport, TModel>): void {}
+  protected onSaveSuccess(
+    data: SaveSuccessCallback<TModel, TTransport>
+  ): void {}
 
-  protected onSaveError(_data: SaveError<TTransport, TModel>): void {}
+  protected onSaveError(data: SaveErrorCallback<TModel, TTransport>): void {}
 
   get models(): ReadonlyArray<TModel> {
     return this._models as ReadonlyArray<TModel>
@@ -652,18 +646,7 @@ export class Collection<
     id: string,
     config?: DeleteConfig,
     transportConfig?: TransportDeleteConfig<TTransport>
-  ): Promise<
-    | {
-        response: TransportDeleteResponse<TTransport>
-        model: TModel
-        error: undefined
-      }
-    | {
-        error: Omit<NonNullable<any>, 'false'>
-        response: undefined
-        model: undefined
-      }
-  > {
+  ): DeleteResult<TModel, TTransport> {
     const deleteConfig = {
       ...this.config.delete,
       ...config
@@ -773,15 +756,21 @@ export class Collection<
     }
   }
 
-  protected onDeleteStart(_data: DeleteStart<TTransport, TModel>): void {}
+  protected onDeleteStart(
+    data: DeleteStartCallback<TModel, TTransport>
+  ): void {}
 
-  protected onDeleteSuccess(_data: DeleteSuccess<TTransport, TModel>): void {}
+  protected onDeleteSuccess(
+    data: DeleteSuccessCallback<TModel, TTransport>
+  ): void {}
 
-  protected onDeleteError(_data: DeleteError<TTransport, TModel>): void {}
+  protected onDeleteError(
+    _data: DeleteErrorCallback<TModel, TTransport>
+  ): void {}
 
-  protected onRemoved(_model: TModel): void {}
+  protected onRemoved(model: TModel): void {}
 
-  protected onAdded(_model: TModel): void {}
+  protected onAdded(model: TModel): void {}
 
   serialize(): any {
     return {
@@ -807,20 +796,7 @@ export class Collection<
   async load(
     config?: LoadConfig,
     transportConfig?: TransportLoadConfig<TTransport>
-  ): Promise<
-    | {
-        response: TransportLoadResponse<TTransport>
-        added: TModel[]
-        removed: TModel[]
-        error: undefined
-      }
-    | {
-        error: Omit<NonNullable<any>, 'false'>
-        response: undefined
-        added: undefined
-        removed: undefined
-      }
-  > {
+  ): LoadResult<TModel, TTransport> {
     this.loadError = undefined
 
     const loadConfig = {
@@ -965,11 +941,13 @@ export class Collection<
     }
   }
 
-  protected onLoadStart(_data: LoadStart<TTransport, TModel>): void {}
+  protected onLoadStart(data: LoadStartCallback<TModel, TTransport>): void {}
 
-  protected onLoadSuccess(_data: LoadSuccess<TTransport, TModel>): void {}
+  protected onLoadSuccess(
+    data: LoadSuccessCallback<TModel, TTransport>
+  ): void {}
 
-  protected onLoadError(_data: LoadError<TTransport, TModel>): void {}
+  protected onLoadError(data: LoadErrorCallback<TModel, TTransport>): void {}
 
   protected async resetCollection<T>(data?: T[]): Promise<TModel[][]> {
     if (!data) {

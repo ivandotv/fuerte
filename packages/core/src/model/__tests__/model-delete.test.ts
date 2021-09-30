@@ -114,7 +114,7 @@ describe('Model - delete #delete #model', () => {
       }
       const transportConfig = 'config'
       const deleteStartSpy = jest.spyOn(model, 'onDeleteStart')
-      // @ts-expect-error - protected method
+
       const collectionStartSpy = jest.spyOn(collection, 'onDeleteStart')
 
       collection.add(model)

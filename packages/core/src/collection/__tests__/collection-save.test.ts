@@ -1,4 +1,5 @@
 import { configure } from 'mobx'
+import { unwrapResult } from '../..'
 import { SaveConfig } from '../../utils/types'
 import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
 import { TestModel } from '../../__fixtures__/TestModel'
