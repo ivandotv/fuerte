@@ -72,6 +72,39 @@ describe('Model - add #add #model', () => {
         expect(onAddedSpy).toHaveBeenCalled()
       })
 
+      test('Model is added to collection', () => {
+        const transport = fixtures.transport()
+        const collection = fixtures.collection(fixtures.factory(), transport)
+        const model = fixtures.model()
+
+        model.addTo(collection)
+
+        expect(collection.getById(model.cid)).toBe(model)
+      })
+
+      test('Model is added at specific index', () => {
+        const transport = fixtures.transport()
+        const collection = fixtures.collection(fixtures.factory(), transport)
+        const model = fixtures.model()
+        const index = 1
+        collection.add([fixtures.model(), fixtures.model(), fixtures.model()])
+
+        model.addTo(collection, index)
+
+        expect(collection.models[index]).toBe(model)
+      })
+
+      test('If index is not provided model goes at the end of the collection', () => {
+        const transport = fixtures.transport()
+        const collection = fixtures.collection(fixtures.factory(), transport)
+        const model = fixtures.model()
+        collection.add([fixtures.model(), fixtures.model(), fixtures.model()])
+
+        model.addTo(collection)
+
+        expect(collection.models[collection.models.length - 1]).toBe(model)
+      })
+
       test('If the model is in another collection, it is removed from that collection', () => {
         const transport = fixtures.transport()
         const firstCollection = fixtures.collection(

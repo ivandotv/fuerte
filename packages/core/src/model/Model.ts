@@ -244,9 +244,13 @@ export abstract class Model<
   }
 
   addTo<T extends Collection<any, any, any> = Collection<any, any, any>>(
-    collection: T
+    collection: T,
+    index?: number
   ): this | undefined {
-    return collection.add(this)
+    const l = collection.models.length
+    index = index ?? (l === 0 ? 0 : l)
+
+    return collection.addAtIndex(this, index)
   }
 
   // @internal
