@@ -8,7 +8,6 @@ import {
   observable
 } from 'mobx'
 import { nanoid } from 'nanoid/non-secure'
-import { TransportSaveConfig } from '../../dist/types'
 import { Collection } from '../collection/Collection'
 import { Transport } from '../transport/transport'
 import {
@@ -22,6 +21,7 @@ import {
   ModelTransportErrors,
   SaveConfig,
   TransportDeleteConfig,
+  TransportSaveConfig,
   UnwrapPromise
 } from '../utils/types'
 import { assertCollectionExists } from '../utils/utils'
