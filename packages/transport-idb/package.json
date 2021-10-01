@@ -21,16 +21,14 @@
   ],
   "scripts": {
     "lint": "eslint --fix \"src/**/\"",
-    "lint:check": "eslint \"src/**/\"",
-    "lint:ci": "yarn lint:check",
+    "lint:ci": "eslint \"src/**/\"",
     "docs": "del docs/api && typedoc --theme markdown --readme none --excludePrivate  --excludeInternal --exclude ./src/globals.d.ts --out docs/api ./src",
     "test": "cross-env BABEL_ENV=test jest --verbose --coverage --no-cache",
     "test:watch": "cross-env BABEL_ENV=test jest --watch",
     "test:ci": "cross-env BABEL_ENV=test jest --runInBand --ci --coverage --coverageDirectory=coverage",
     "type:check": "tsc -p tsconfig.check-types.json",
     "type:build": "del dist/types && del .buildcache && tsc -p tsconfig.build-types.json",
-    "browser:build": "yarn type:build && node ../../scripts/build-browser.js --bundle=umd,cjs,esm",
-    "build": "yarn browser:build",
+    "build": "yarn type:build && node ../../scripts/build-browser.js --bundle=umd,cjs,esm",
     "prepublishOnly": "yarn build"
   },
   "repository": {
@@ -41,7 +39,10 @@
     "url": "https://github.com/ivandotv/fuerte/issues"
   },
   "homepage": "https://github.com/ivandotv/fuerte#readme",
-  "keywords": [],
+  "keywords": [
+    "mobx",
+    "@fuerte"
+  ],
   "dependencies": {
     "idb": "^6.1.2"
   },

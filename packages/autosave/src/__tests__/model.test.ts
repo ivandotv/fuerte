@@ -1,5 +1,5 @@
 import { configure } from 'mobx'
-import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
+import { fixtureFactory } from '../__fixtures__/fixtureFactory'
 
 configure({ enforceActions: 'never' })
 
@@ -7,7 +7,7 @@ const fixtures = fixtureFactory()
 
 describe('Model - autosave #autosave #model', () => {
   test('By default autosave option is disabled', async () => {
-    const collection = fixtures.collectionWithAutoSave()
+    const collection = fixtures.collection()
 
     expect(collection.getConfig().autoSave.enabled).toBe(false)
     expect(collection.getConfig().autoSave.debounce).toBe(0)
@@ -15,15 +15,11 @@ describe('Model - autosave #autosave #model', () => {
 
   test('When the model is changed, it is immediately saved', () => {
     const transport = fixtures.transport()
-    const collection = fixtures.collectionWithAutoSave(
-      fixtures.factory(),
-      transport,
-      {
-        autoSave: {
-          enabled: true
-        }
+    const collection = fixtures.collection(fixtures.factory(), transport, {
+      autoSave: {
+        enabled: true
       }
-    )
+    })
     const autoSaveSpy = jest.spyOn(collection, 'autoSave')
     const transportSaveSpy = jest.spyOn(transport, 'save')
     const model = fixtures.model()
@@ -38,15 +34,11 @@ describe('Model - autosave #autosave #model', () => {
 
   test('When the model is changed payload property reflects new model data', () => {
     const transport = fixtures.transport()
-    const collection = fixtures.collectionWithAutoSave(
-      fixtures.factory(),
-      transport,
-      {
-        autoSave: {
-          enabled: true
-        }
+    const collection = fixtures.collection(fixtures.factory(), transport, {
+      autoSave: {
+        enabled: true
       }
-    )
+    })
     const autoSaveSpy = jest.spyOn(collection, 'autoSave')
     const model = fixtures.model()
     collection.add(model)
@@ -63,16 +55,12 @@ describe('Model - autosave #autosave #model', () => {
   test('When the debounce option is enabled, model is saved with a delay', () => {
     jest.useFakeTimers()
     const transport = fixtures.transport()
-    const collection = fixtures.collectionWithAutoSave(
-      fixtures.factory(),
-      transport,
-      {
-        autoSave: {
-          enabled: true,
-          debounce: 100
-        }
+    const collection = fixtures.collection(fixtures.factory(), transport, {
+      autoSave: {
+        enabled: true,
+        debounce: 100
       }
-    )
+    })
     const autoSaveSpy = jest.spyOn(collection, 'autoSave')
     const transportSaveSpy = jest.spyOn(transport, 'save')
     const model = fixtures.model()
@@ -98,15 +86,11 @@ describe('Model - autosave #autosave #model', () => {
 
   test('When the model is removed from the collection, autosave is disabled', () => {
     const transport = fixtures.transport()
-    const collection = fixtures.collectionWithAutoSave(
-      fixtures.factory(),
-      transport,
-      {
-        autoSave: {
-          enabled: true
-        }
+    const collection = fixtures.collection(fixtures.factory(), transport, {
+      autoSave: {
+        enabled: true
       }
-    )
+    })
     const autoSaveSpy = jest.spyOn(collection, 'autoSave')
     const model = fixtures.model()
     collection.add(model)
@@ -117,15 +101,11 @@ describe('Model - autosave #autosave #model', () => {
 
   test('Start autosave for one model', () => {
     const transport = fixtures.transport()
-    const collection = fixtures.collectionWithAutoSave(
-      fixtures.factory(),
-      transport,
-      {
-        autoSave: {
-          enabled: false
-        }
+    const collection = fixtures.collection(fixtures.factory(), transport, {
+      autoSave: {
+        enabled: false
       }
-    )
+    })
     const model = fixtures.model()
     collection.add(model)
 
@@ -137,15 +117,11 @@ describe('Model - autosave #autosave #model', () => {
 
   test('Start autosave for multiple models', () => {
     const transport = fixtures.transport()
-    const collection = fixtures.collectionWithAutoSave(
-      fixtures.factory(),
-      transport,
-      {
-        autoSave: {
-          enabled: false
-        }
+    const collection = fixtures.collection(fixtures.factory(), transport, {
+      autoSave: {
+        enabled: false
       }
-    )
+    })
     const transportSaveSpy = jest.spyOn(transport, 'save')
     const callbackSpy = jest.spyOn(collection, 'onStartAutoSave')
     const model = fixtures.model()
@@ -165,15 +141,11 @@ describe('Model - autosave #autosave #model', () => {
 
   test('Dont start autosave if autosave is already started for a particular model', () => {
     const transport = fixtures.transport()
-    const collection = fixtures.collectionWithAutoSave(
-      fixtures.factory(),
-      transport,
-      {
-        autoSave: {
-          enabled: false
-        }
+    const collection = fixtures.collection(fixtures.factory(), transport, {
+      autoSave: {
+        enabled: false
       }
-    )
+    })
     const model = fixtures.model()
     const modelTwo = fixtures.model()
     collection.add(model)
@@ -190,15 +162,11 @@ describe('Model - autosave #autosave #model', () => {
 
   test('Stop autosave for one model', () => {
     const transport = fixtures.transport()
-    const collection = fixtures.collectionWithAutoSave(
-      fixtures.factory(),
-      transport,
-      {
-        autoSave: {
-          enabled: true
-        }
+    const collection = fixtures.collection(fixtures.factory(), transport, {
+      autoSave: {
+        enabled: true
       }
-    )
+    })
     const autoSaveSpy = jest.spyOn(collection, 'autoSave')
     const transportSaveSpy = jest.spyOn(transport, 'save')
     const callbackSpy = jest.spyOn(collection, 'onStopAutoSave')
@@ -219,15 +187,11 @@ describe('Model - autosave #autosave #model', () => {
 
   test('Stop autosave for multiple models', () => {
     const transport = fixtures.transport()
-    const collection = fixtures.collectionWithAutoSave(
-      fixtures.factory(),
-      transport,
-      {
-        autoSave: {
-          enabled: true
-        }
+    const collection = fixtures.collection(fixtures.factory(), transport, {
+      autoSave: {
+        enabled: true
       }
-    )
+    })
     const autoSaveSpy = jest.spyOn(collection, 'autoSave')
     const transportSaveSpy = jest.spyOn(transport, 'save')
     const callbackSpy = jest.spyOn(collection, 'onStopAutoSave')
@@ -251,15 +215,11 @@ describe('Model - autosave #autosave #model', () => {
 
   test('Dont stop autosave for already stoped model', () => {
     const transport = fixtures.transport()
-    const collection = fixtures.collectionWithAutoSave(
-      fixtures.factory(),
-      transport,
-      {
-        autoSave: {
-          enabled: false
-        }
+    const collection = fixtures.collection(fixtures.factory(), transport, {
+      autoSave: {
+        enabled: false
       }
-    )
+    })
     const autoSaveSpy = jest.spyOn(collection, 'autoSave')
     const transportSaveSpy = jest.spyOn(transport, 'save')
     const model = fixtures.model()

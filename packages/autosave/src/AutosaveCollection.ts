@@ -1,12 +1,12 @@
 import { IReactionDisposer, reaction } from 'mobx'
-import { Model } from '../model/Model'
-import { Transport } from '../transport/transport'
+import { Model } from '@fuerte/core'
+import { Transport } from '@fuerte/core'
 import {
-  CollectionConfigWithAutoSave,
-  RequiredCollectionConfigWithAutoSave
-} from '../utils/types'
-import { debounceReaction } from '../utils/utils'
-import { Collection, FactoryFn } from './Collection'
+  AutosaveCollectionConfig,
+  RequiredAutosaveCollectionConfig
+} from './types'
+import { debounceReaction } from './utils'
+import { Collection, FactoryFn } from '@fuerte/core'
 
 export class AutosaveCollection<
   TModel extends Model<Collection<any, any, any>>,
@@ -17,12 +17,12 @@ export class AutosaveCollection<
 
   protected saveReactionByCid: Map<string, IReactionDisposer> = new Map()
 
-  protected declare config: RequiredCollectionConfigWithAutoSave
+  protected declare config: RequiredAutosaveCollectionConfig
 
   constructor(
     factory: TFactory,
     transport: TTransport,
-    config?: CollectionConfigWithAutoSave
+    config?: AutosaveCollectionConfig
   ) {
     super(factory, transport, config)
     this.config.autoSave = {
@@ -32,8 +32,8 @@ export class AutosaveCollection<
     }
   }
 
-  getConfig(): RequiredCollectionConfigWithAutoSave {
-    return super.getConfig() as RequiredCollectionConfigWithAutoSave
+  override getConfig(): RequiredAutosaveCollectionConfig {
+    return super.getConfig() as RequiredAutosaveCollectionConfig
   }
 
   protected override startTracking(model: TModel) {

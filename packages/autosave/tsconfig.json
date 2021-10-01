@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "strict": true,
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": true,
+    "stripInternal": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "incremental": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "useUnknownInCatchVariables": false
+  }
+}

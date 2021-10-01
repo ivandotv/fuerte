@@ -199,23 +199,11 @@ export type CollectionConfig = {
   load?: LoadConfig
 }
 
-export interface AutoSaveConfig {
-  enabled?: boolean
-  debounce?: number
-}
-export type CollectionConfigWithAutoSave = CollectionConfig & {
-  autoSave?: AutoSaveConfig
-}
-
 export type RequiredCollectionConfig = {
-  // autoSave: Required<AutoSaveConfig>
   add: Required<AddConfig>
   save: Required<SaveConfig>
   delete: Required<DeleteConfig>
   load: Required<LoadConfig>
-}
-export type RequiredCollectionConfigWithAutoSave = RequiredCollectionConfig & {
-  autoSave: Required<AutoSaveConfig>
 }
 
 export type ModelInsertPosition = 'start' | 'end'
