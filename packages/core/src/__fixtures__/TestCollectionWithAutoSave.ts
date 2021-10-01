@@ -1,4 +1,4 @@
-import { CollectionWithAutoSave } from '../collection/CollectionWithAutoSave'
+import { AutosaveCollection } from '../collection/CollectionWithAutoSave'
 import {
   DeleteErrorCallback,
   DeleteStartCallback,
@@ -14,7 +14,7 @@ import { testModelFactory } from './TestFactory'
 import { TestModel } from './TestModel'
 import { TestTransport } from './TestTransport'
 
-export class TestCollectionWithAutoSave extends CollectionWithAutoSave<
+export class TestCollectionWithAutoSave extends AutosaveCollection<
   TestModel,
   typeof testModelFactory,
   TestTransport

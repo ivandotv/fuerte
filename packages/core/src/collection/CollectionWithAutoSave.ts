@@ -8,7 +8,7 @@ import {
 import { debounceReaction } from '../utils/utils'
 import { Collection, FactoryFn } from './Collection'
 
-export class CollectionWithAutoSave<
+export class AutosaveCollection<
   TModel extends Model<Collection<any, any, any>>,
   TFactory extends FactoryFn<TModel>,
   TTransport extends Transport<TModel>
