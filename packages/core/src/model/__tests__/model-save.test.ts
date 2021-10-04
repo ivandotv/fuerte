@@ -126,18 +126,6 @@ test('When saved successfully, model property holds the last saved data', async 
   expect(model.lastSavedData).toEqual(expect.objectContaining(modelData))
 })
 
-test('When created and saved from a data object, model property holds the last saved data', async () => {
-  const modelData = { foo: 'fooInit', bar: 'barInit' }
-  const collection = fixtures.collection()
-
-  const { model } = await collection.save({
-    foo: modelData.foo,
-    bar: modelData.bar
-  })
-
-  expect(model!.lastSavedData).toEqual(expect.objectContaining(modelData))
-})
-
 test('When model is saved, it is not dirty anymore', async () => {
   const collection = fixtures.collection()
   const model = fixtures.model({ id: 'id' })

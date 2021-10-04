@@ -161,13 +161,9 @@ export class Collection<
   }
 
   protected assertIsModel(model: unknown): asserts model is TModel {
-    if (!this.isModel(model)) {
+    if (!(model instanceof Model)) {
       throw new Error(`model is not instance of Model class`)
     }
-  }
-
-  protected isModel(model: unknown): model is TModel {
-    return model instanceof Model
   }
 
   push(model: TModel[]): TModel[]
@@ -348,28 +344,13 @@ export class Collection<
   }
 
   async save(
-    modelOrModelData: TModel | Parameters<TFactory>[0],
+    model: TModel,
     config?: SaveConfig,
     loadConfig?: TransportSaveConfig<TTransport>
   ): SaveResult<TModel, TTransport> {
     const saveConfig = {
       ...this.config.save,
       ...config
-    }
-
-    let model: TModel
-    if (!this.isModel(modelOrModelData)) {
-      try {
-        model = await this.factory(modelOrModelData)
-      } catch (error) {
-        return {
-          error,
-          response: undefined,
-          model: undefined
-        }
-      }
-    } else {
-      model = modelOrModelData
     }
 
     if (saveConfig.addImmediately) {

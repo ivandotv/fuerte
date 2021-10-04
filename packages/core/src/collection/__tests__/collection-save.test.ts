@@ -52,27 +52,6 @@ describe('Collection - save #save #collection', () => {
     expect(collection.syncing).toEqual([model, modelTwo])
   })
 
-  test('Save and create the new model via model data', async () => {
-    const transport = fixtures.transport()
-    const data = { foo: 'foo-prop', bar: 'bar-prop' }
-    const collection = fixtures.collection(fixtures.factory(), transport)
-
-    await collection.save(data)
-
-    expect(collection.models[0].foo).toBe(data.foo)
-    expect(collection.models[0].bar).toBe(data.bar)
-  })
-
-  test('Saving with raw model data creates and returns the new model', async () => {
-    const transport = fixtures.transport()
-    const data = { foo: 'foo-prop', bar: 'bar-prop' }
-    const collection = fixtures.collection(fixtures.factory(), transport)
-
-    const response = await collection.save(data)
-
-    expect(response.model).toBeInstanceOf(TestModel)
-  })
-
   test('Return value is object with the response and the model that is being saved', async () => {
     const transport = fixtures.transport()
     const model = fixtures.model()
