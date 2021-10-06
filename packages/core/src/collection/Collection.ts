@@ -20,7 +20,7 @@ import {
   DeleteSuccessCallback,
   LoadConfig,
   LoadErrorCallback,
-  LoadResult,
+  LoadResultPromise,
   LoadStartCallback,
   LoadSuccessCallback,
   ModelInsertPosition,
@@ -768,7 +768,7 @@ export class Collection<
   async load(
     config?: LoadConfig,
     transportConfig?: TransportLoadConfig<TTransport>
-  ): LoadResult<TModel, TTransport> {
+  ): LoadResultPromise<TModel, TTransport> {
     this.loadError = undefined
 
     const loadConfig = {

@@ -151,7 +151,7 @@ export type TransportLoadConfig<T extends Transport<any>> = Parameters<
   T['load']
 >[0]
 
-export type LoadResult<
+export type PromiseLoadResult<
   TModel extends Model<any, any>,
   TTransport extends Transport<TModel>
 > = Promise<
@@ -168,6 +168,11 @@ export type LoadResult<
       removed: undefined
     }
 >
+
+export type LoadResult<
+  TModel extends Model<any, any>,
+  TTransport extends Transport<TModel>
+> = UnwrapPromise<PromiseLoadResult<TModel, TTransport>>
 
 export type LoadStartCallback<
   TModel extends Model<any, any>,
