@@ -20,7 +20,7 @@ import {
   DeleteSuccessCallback,
   LoadConfig,
   LoadErrorCallback,
-  LoadResultPromise,
+  LoadResult,
   LoadStartCallback,
   LoadSuccessCallback,
   ModelInsertPosition,
@@ -236,7 +236,7 @@ export class Collection<
     for (const model of models) {
       this.assertIsModel(model)
       // model with the same id is already in the collection
-      if (!this.isUniqueByIdentifier(model)) {
+      if (!this.notPresent(model)) {
         continue
       }
 
@@ -274,11 +274,11 @@ export class Collection<
     return Array.isArray(model) ? newModels : newModels[0]
   }
 
-  protected isUniqueByIdentifier(model: TModel): boolean {
+  protected notPresent(model: TModel): boolean {
     const byCid = !this.modelByCid.get(model.cid)
     let byIdentifier = false
     const identifier = model.identity
-    // if there is an identifier value we need to check that also
+    // if there is an identifier value then we also need to check that
     if (identifier) {
       byIdentifier = !!this.modelByIdentity.get(identifier)
     }
@@ -347,7 +347,7 @@ export class Collection<
     model: TModel,
     config?: SaveConfig,
     loadConfig?: TransportSaveConfig<TTransport>
-  ): SaveResult<TModel, TTransport> {
+  ): Promise<SaveResult<TModel, TTransport>> {
     const saveConfig = {
       ...this.config.save,
       ...config
@@ -446,8 +446,8 @@ export class Collection<
 
       return {
         error,
-        response: undefined,
-        model: undefined
+        model: undefined,
+        response: undefined
       }
     } finally {
       const tokenData = this._saving.get(model.cid)
@@ -618,7 +618,7 @@ export class Collection<
     id: string,
     config?: DeleteConfig,
     transportConfig?: TransportDeleteConfig<TTransport>
-  ): DeleteResult<TModel, TTransport> {
+  ): Promise<DeleteResult<TModel, TTransport>> {
     const deleteConfig = {
       ...this.config.delete,
       ...config
@@ -768,7 +768,7 @@ export class Collection<
   async load(
     config?: LoadConfig,
     transportConfig?: TransportLoadConfig<TTransport>
-  ): LoadResultPromise<TModel, TTransport> {
+  ): Promise<LoadResult<TModel, TTransport>> {
     this.loadError = undefined
 
     const loadConfig = {
@@ -828,7 +828,7 @@ export class Collection<
         }
         const model = await this.factory(modifiedData)
 
-        if (this.isUniqueByIdentifier(model)) {
+        if (this.notPresent(model)) {
           modelsToAdd.push(model)
         } else {
           // model is already present
@@ -855,7 +855,7 @@ export class Collection<
                   break
 
                 case 'KEEP_BOTH':
-                  if (!this.isUniqueByIdentifier(model)) {
+                  if (!this.notPresent(model)) {
                     throw new Error('New model has a non unique identity')
                   }
                   modelsToAdd.push(model)

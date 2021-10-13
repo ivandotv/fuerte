@@ -25,7 +25,7 @@ describe('Model - delete #delete #model', () => {
 
     const result = await model.delete(config, transportConfig)
 
-    expect(result).toEqual({ response, error: undefined })
+    expect(result).toEqual({ response, error: undefined, model })
   })
 
   test('When deletion is in progress, model is in deleting state', async () => {

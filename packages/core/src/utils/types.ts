@@ -25,18 +25,17 @@ export type TransportSaveConfig<T extends Transport<any>> = Parameters<
 export type SaveResult<
   TModel extends Model<any, any>,
   TTransport extends Transport<TModel>
-> = Promise<
+> =
   | {
+      error: undefined
       response: TransportSaveResponse<TTransport>
       model: TModel
-      error: undefined
     }
   | {
       error: Omit<NonNullable<any>, 'false'>
       response: undefined
       model: undefined
     }
->
 
 export type SaveStartCallback<
   TModel extends Model<any, any>,
@@ -92,18 +91,17 @@ export type TransportDeleteConfig<T extends Transport<any>> = Parameters<
 export type DeleteResult<
   TModel extends Model<any, any>,
   TTransport extends Transport<TModel>
-> = Promise<
+> =
   | {
+      error: undefined
       response: TransportDeleteResponse<TTransport>
       model: TModel
-      error: undefined
     }
   | {
       error: Omit<NonNullable<any>, 'false'>
       response: undefined
       model: undefined
     }
->
 
 export type DeleteStartCallback<
   TModel extends Model<any, any>,
@@ -151,10 +149,10 @@ export type TransportLoadConfig<T extends Transport<any>> = Parameters<
   T['load']
 >[0]
 
-export type PromiseLoadResult<
+export type LoadResult<
   TModel extends Model<any, any>,
   TTransport extends Transport<TModel>
-> = Promise<
+> =
   | {
       added: TModel[]
       removed: TModel[]
@@ -167,12 +165,6 @@ export type PromiseLoadResult<
       added: undefined
       removed: undefined
     }
->
-
-export type LoadResult<
-  TModel extends Model<any, any>,
-  TTransport extends Transport<TModel>
-> = UnwrapPromise<PromiseLoadResult<TModel, TTransport>>
 
 export type LoadStartCallback<
   TModel extends Model<any, any>,

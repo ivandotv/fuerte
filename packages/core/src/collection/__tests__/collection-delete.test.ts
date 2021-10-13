@@ -236,7 +236,9 @@ describe('Collection - delete #delete #collection', () => {
       const modelOnRemovedSpy = jest.spyOn(model, 'onRemoved')
       collection.add(model)
 
-      const result = collection.delete(model.cid, { removeImmediately: false })
+      const result = collection.delete(model.cid, {
+        removeImmediately: false
+      })
       expect(modelOnRemovedSpy).not.toHaveBeenCalled()
       await result
       expect(modelOnRemovedSpy).toHaveBeenCalled()
@@ -263,7 +265,9 @@ describe('Collection - delete #delete #collection', () => {
       const model = fixtures.model()
       collection.add(model)
 
-      const result = collection.delete(model.cid, { removeImmediately: false })
+      const result = collection.delete(model.cid, {
+        removeImmediately: false
+      })
 
       expect(collection.models).toHaveLength(1)
       await result

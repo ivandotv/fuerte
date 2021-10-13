@@ -50,7 +50,7 @@ test('Saving the model, returns transport save response', async () => {
 
   const result = await model.save(saveConfig, transportConfig)
 
-  expect(result).toStrictEqual({ response, error: undefined })
+  expect(result).toStrictEqual({ response, error: undefined, model })
 })
 
 test('When saving is in progress, model is in the saving state', async () => {

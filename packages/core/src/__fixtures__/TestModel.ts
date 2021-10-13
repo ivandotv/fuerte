@@ -8,6 +8,7 @@ import {
   TransportSaveConfig,
   TransportSaveResponse
 } from '../utils/types'
+import type { TestCollection } from './TestCollection'
 import { TestTransport } from './TestTransport'
 
 export type TestModelData = {
@@ -16,7 +17,9 @@ export type TestModelData = {
   id?: string
 }
 
-export class TestModel extends Model<any> {
+export class TestModel<
+  T extends TestCollection = TestCollection
+> extends Model<T> {
   static identityKey = 'id'
 
   foo: string

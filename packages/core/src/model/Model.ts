@@ -21,8 +21,7 @@ import {
   ModelTransportErrors,
   SaveConfig,
   TransportDeleteConfig,
-  TransportSaveConfig,
-  UnwrapPromise
+  TransportSaveConfig
 } from '../utils/types'
 import { assertCollectionExists } from '../utils/utils'
 import { IdentityError } from './identity-error'
@@ -205,18 +204,10 @@ export abstract class Model<
   >(
     config?: DeleteConfig,
     transportConfig?: TransportDeleteConfig<TTransport>
-  ): Promise<
-    Pick<UnwrapPromise<ReturnType<T['delete']>>, 'response' | 'error'>
-  > {
+  ): Promise<ReturnType<T['delete']>> {
     assertCollectionExists(this.collection)
 
-    const { response, error } = await this.collection.delete(
-      this.cid,
-      config,
-      transportConfig
-    )
-
-    return { response, error }
+    return this.collection.delete(this.cid, config, transportConfig)
   }
 
   async save<
@@ -225,16 +216,10 @@ export abstract class Model<
   >(
     config?: SaveConfig,
     transportConfig?: TransportSaveConfig<TTransport>
-  ): Promise<Pick<UnwrapPromise<ReturnType<T['save']>>, 'response' | 'error'>> {
+  ): Promise<ReturnType<T['save']>> {
     assertCollectionExists(this.collection)
 
-    const { response, error } = await this.collection.save(
-      this,
-      config,
-      transportConfig
-    )
-
-    return { response, error }
+    return this.collection.save(this, config, transportConfig)
   }
 
   remove(): this {
@@ -343,7 +328,7 @@ export abstract class Model<
     dataToSave: any
   }): void {
     if (this.pendingSaveCall?.token === token) {
-      /* Only when there is no more save errros */
+      /* Only when there is no more save errors */
       this._isSaving = false
       this.errors.save = error
       this.pendingSaveCall.state = 'rejected'
@@ -366,7 +351,6 @@ export abstract class Model<
     return data && data[this.identityKey]
   }
 
-  //todo - mozda izbaciti undefined
   get identity(): string {
     // @ts-expect-error  dynamic key access
     return this[this.identityKey]
