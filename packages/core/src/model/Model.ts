@@ -19,11 +19,8 @@ import {
   ModelSaveStartCallback,
   ModelSaveSuccessCallback,
   ModelTransportErrors,
-  SaveConfig,
-  TransportDeleteConfig,
-  TransportSaveConfig
+  SaveConfig
 } from '../utils/types'
-import { assertCollectionExists } from '../utils/utils'
 import { IdentityError } from './identity-error'
 
 export abstract class Model<
@@ -196,46 +193,6 @@ export abstract class Model<
 
   get isDestroyed(): boolean {
     return this._isDestroyed
-  }
-
-  async delete<
-    T extends TCollection = TCollection,
-    TTransport extends Transport<Model> = Transport<Model>
-  >(
-    config?: DeleteConfig,
-    transportConfig?: TransportDeleteConfig<TTransport>
-  ): Promise<ReturnType<T['delete']>> {
-    assertCollectionExists(this.collection)
-
-    return this.collection.delete(this.cid, config, transportConfig)
-  }
-
-  async save<
-    T extends TCollection = TCollection,
-    TTransport extends Transport = Transport
-  >(
-    config?: SaveConfig,
-    transportConfig?: TransportSaveConfig<TTransport>
-  ): Promise<ReturnType<T['save']>> {
-    assertCollectionExists(this.collection)
-
-    return this.collection.save(this, config, transportConfig)
-  }
-
-  remove(): this {
-    assertCollectionExists(this.collection)
-
-    return this.collection.remove(this.identity)
-  }
-
-  addTo<T extends Collection<any, any, any> = Collection<any, any, any>>(
-    collection: T,
-    index?: number
-  ): this | undefined {
-    const l = collection.models.length
-    index = index ?? (l === 0 ? 0 : l)
-
-    return collection.addAtIndex(this, index)
   }
 
   // @internal

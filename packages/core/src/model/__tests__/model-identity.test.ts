@@ -43,7 +43,7 @@ describe('Model - identity #identity #model', () => {
     const model = fixtures.model()
     collection.add(model)
 
-    await model.save()
+    await collection.save(model)
 
     expect(model.identity).toBe(newId)
 
