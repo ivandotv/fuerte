@@ -777,13 +777,6 @@ export class Collection<
     }
 
     try {
-      // throw immediately if the compare function is not provided
-      if (
-        config?.duplicateModelStrategy === 'COMPARE' &&
-        typeof config.compareFn === 'undefined'
-      ) {
-        throw new Error('No compare function')
-      }
       this.loadStatus = 'PENDING'
       this.onLoadStart({
         config: loadConfig,

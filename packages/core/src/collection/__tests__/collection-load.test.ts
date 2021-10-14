@@ -392,16 +392,6 @@ describe('Collection - load #load #collection', () => {
         expect(collection.models).toHaveLength(1)
       })
 
-      test('If the resolve function is not provided, throw error', async () => {
-        const collection = fixtures.collection()
-
-        const result = await collection.load({
-          duplicateModelStrategy: DuplicateModelStrategy.COMPARE
-        })
-
-        expect((result.error as Error).message).toMatch(/No compare function/)
-      })
-
       test('Keep both models', async () => {
         const transport = fixtures.transport()
         const collection = new TestCollection(fixtures.factory(), transport, {
