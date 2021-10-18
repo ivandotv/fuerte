@@ -1,6 +1,6 @@
 {
   "name": "@fuerte/transport-idb",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "author": "Ivan Vlatkovic",
   "description": "IndexedDB transport mechanism for @fuerte/core",
