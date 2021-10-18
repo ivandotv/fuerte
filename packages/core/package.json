@@ -1,7 +1,7 @@
 {
   "name": "@fuerte/core",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
   "author": "Ivan Vlatkovic",
   "description": "Backbone.js inspired Mobx library",
   "buildTarget": "server",
@@ -20,6 +20,9 @@
     "dist",
     "src"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "lint": "eslint --fix \"src/**/\"",
     "lint:ci": "eslint \"src/**/\"",
