@@ -14,7 +14,7 @@
     "type:build": "lerna run type:build --stream",
     "build": "lerna run build --stream",
     "prepare": "husky install",
-    "release": "yarn lerna run prepublish --stream && yarn changeset publish"
+    "release": "yarn lerna run prepublishOnly --stream && yarn changeset publish"
   },
   "devDependencies": {
     "@babel/cli": "^7.15.4",
