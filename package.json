@@ -14,8 +14,8 @@
     "type:build": "lerna run type:build --stream",
     "build": "lerna run build --stream",
     "prepare": "husky install",
-    "release:old": "yarn lerna run prepublish && yarn changeset publish",
-    "release": "yarn lerna publish from-package --no-git-reset --yes"
+    "release": "yarn lerna run prepublish --stream && yarn changeset publish",
+    "release:2": "yarn lerna publish from-package --no-git-reset --yes"
   },
   "devDependencies": {
     "@babel/cli": "^7.15.4",
