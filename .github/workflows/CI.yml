@@ -56,7 +56,7 @@ jobs:
       - name: Generate Code Coverage
         # only when running in node v14
         if: matrix.node == 14
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2
 
       - name: 'Publish to NPM'
         if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'ivandotv/fuerte' && matrix.node == 14
