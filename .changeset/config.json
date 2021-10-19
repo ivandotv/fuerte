@@ -5,6 +5,7 @@
   "linked": [],
   "access": "restricted",
   "baseBranch": "master",
-  "updateInternalDependencies": "patch",
+  "updateInternalDependencies": "minor",
+  "onlyUpdatePeerDependentsWhenOutOfRange": true,
   "ignore": []
 }
