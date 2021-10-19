@@ -1,5 +1,11 @@
 # @fuerte/core
 
+## 1.1.0
+
+### Minor Changes
+
+- 550add8: Collection child classes can override transport calls.
+
 ## 1.0.1
 
 ### Patch Changes

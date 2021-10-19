@@ -1,6 +1,6 @@
 {
   "name": "@fuerte/autosave",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "private": false,
   "author": "Ivan Vlatkovic",
   "description": "Autosave collection for @fuerte/core",
