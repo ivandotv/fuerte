@@ -31,6 +31,7 @@ import {
   SaveStartCallback,
   SaveSuccessCallback,
   TransportDeleteConfig,
+  TransportDeleteResponse,
   TransportLoadConfig,
   TransportLoadResponse,
   TransportSaveConfig,
@@ -346,7 +347,7 @@ export class Collection<
   async save(
     model: TModel,
     config?: SaveConfig,
-    loadConfig?: TransportSaveConfig<TTransport>
+    transportConfig?: TransportSaveConfig<TTransport>
   ): Promise<SaveResult<TModel, TTransport>> {
     const saveConfig = {
       ...this.config.save,
@@ -371,20 +372,16 @@ export class Collection<
       this.onSaveStart({
         model,
         config: saveConfig,
-        transportConfig: loadConfig
+        transportConfig
       })
       // model.clearSaveError()
       model._onSaveStart({
         config: saveConfig,
-        transportConfig: loadConfig,
+        transportConfig,
         token
       })
 
-      const response = (await this.transport.save(
-        model,
-        loadConfig
-      )) as TransportSaveResponse<TTransport>
-
+      const response = await this.callTransportSave(model, transportConfig)
       // add it to the collection after save
       if (!saveConfig.addImmediately) {
         this.addToCollection(model, {
@@ -396,13 +393,13 @@ export class Collection<
         model,
         response,
         config: saveConfig,
-        transportConfig: loadConfig
+        transportConfig
       })
 
       model._onSaveSuccess({
         response,
         config: saveConfig,
-        transportConfig: loadConfig,
+        transportConfig,
         savedData: dataToSave,
         token
       })
@@ -433,13 +430,13 @@ export class Collection<
         model,
         error,
         config: saveConfig,
-        transportConfig: loadConfig
+        transportConfig
       })
 
       model._onSaveError({
         error,
         config: saveConfig,
-        transportConfig: loadConfig,
+        transportConfig,
         token,
         dataToSave
       })
@@ -457,6 +454,30 @@ export class Collection<
         })
       }
     }
+  }
+
+  protected callTransportSave(
+    model: TModel,
+    config?: TransportSaveConfig<TTransport>
+  ) {
+    return this.transport.save(model, config) as Promise<
+      TransportSaveResponse<TTransport>
+    >
+  }
+
+  protected callTransportDelete(
+    model: TModel,
+    config?: TransportDeleteConfig<TTransport>
+  ) {
+    return this.transport.delete(model, config) as Promise<
+      TransportDeleteResponse<TTransport>
+    >
+  }
+
+  protected callTransportLoad(config?: TransportLoadConfig<TTransport>) {
+    return this.transport.load(config) as Promise<
+      TransportLoadResponse<TTransport>
+    >
   }
 
   getById(id: string): TModel | undefined
@@ -652,10 +673,7 @@ export class Collection<
         transportConfig: transportConfig
       })
 
-      const response = (await this.transport.delete(
-        model,
-        transportConfig
-      )) as UnwrapPromise<ReturnType<TTransport['delete']>>
+      const response = await this.callTransportDelete(model, transportConfig)
 
       if (deleteConfig.remove && !deleteConfig.removeImmediately) {
         this.removeFromCollection(model)
@@ -780,11 +798,10 @@ export class Collection<
       this.loadStatus = 'PENDING'
       this.onLoadStart({
         config: loadConfig,
-        transportConfig: transportConfig
-      })
-      const response = (await this.transport.load(
         transportConfig
-      )) as TransportLoadResponse<TTransport>
+      })
+
+      const response = await this.callTransportLoad(transportConfig)
 
       runInAction(() => {
         this.loadStatus = 'RESOLVED'
@@ -796,7 +813,7 @@ export class Collection<
 
         this.onLoadSuccess({
           config: loadConfig,
-          transportConfig: transportConfig,
+          transportConfig,
           response,
           added,
           removed
@@ -869,7 +886,7 @@ export class Collection<
       // this.load
       this.onLoadSuccess({
         config: loadConfig,
-        transportConfig: transportConfig,
+        transportConfig,
         response,
         added,
         removed
@@ -892,7 +909,7 @@ export class Collection<
 
       this.onLoadError({
         config: loadConfig,
-        transportConfig: transportConfig,
+        transportConfig,
         error
       })
 
@@ -902,7 +919,6 @@ export class Collection<
         added: undefined,
         removed: undefined
       }
-      // throw error
     }
   }
 
