@@ -163,6 +163,15 @@ export abstract class Model<
 
   // @internal
   _onAdded(collection: TCollection): void {
+    if (__DEV__) {
+      if (this.collection) {
+        console.warn(
+          `Model=> onAdded: model is already in a different collection. This can lead to inconsistencies in model state.
+           Old collection: ${this.collection.constructor}
+           New collection: ${collection.constructor}`
+        )
+      }
+    }
     this.collection = collection
     this.onAdded()
   }
