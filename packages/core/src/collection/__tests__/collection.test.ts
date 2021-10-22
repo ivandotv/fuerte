@@ -1,4 +1,4 @@
-import { configure } from 'mobx'
+import { configure, isObservableProp } from 'mobx'
 import { CollectionConfig } from '../../utils/types'
 import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
 import { testModelFactoryAsync } from '../../__fixtures__/TestFactory'

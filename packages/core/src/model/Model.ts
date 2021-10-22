@@ -8,7 +8,7 @@ import {
   observable
 } from 'mobx'
 import { nanoid } from 'nanoid/non-secure'
-import { Collection } from '../collection/Collection'
+import { LiteCollection } from '../collection/LiteCollection'
 import { Transport } from '../transport/transport'
 import {
   DeleteConfig,
@@ -27,7 +27,7 @@ import { IdentityError } from './identity-error'
 type Payload<T extends Model> = ReturnType<T['serialize']>
 
 export abstract class Model<
-  TCollection extends Collection<any, any, any> = Collection<any, any, any>
+  TCollection extends LiteCollection<any, any> = LiteCollection<any, any>
 > {
   static identityKey = 'cid'
 
