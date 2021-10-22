@@ -23,7 +23,7 @@ export type TransportSaveConfig<T extends Transport<any>> = Parameters<
 >[1]
 
 export type SaveResult<
-  TModel extends Model<any, any>,
+  TModel extends Model<any>,
   TTransport extends Transport<TModel>
 > =
   | {
@@ -38,7 +38,7 @@ export type SaveResult<
     }
 
 export type SaveStartCallback<
-  TModel extends Model<any, any>,
+  TModel extends Model<any>,
   TTransport extends Transport<TModel>
 > = {
   model: TModel
@@ -54,7 +54,7 @@ export type ModelSaveStartCallback<
 }
 
 export type SaveSuccessCallback<
-  TModel extends Model<any, any>,
+  TModel extends Model<any>,
   TTransport extends Transport<TModel>
 > = {
   response: TransportSaveResponse<TTransport>
@@ -67,7 +67,7 @@ export type ModelSaveSuccessCallback<
 } & ModelSaveStartCallback<TTransport>
 
 export type SaveErrorCallback<
-  TModel extends Model<any, any>,
+  TModel extends Model<any>,
   TTransport extends Transport<TModel>,
   TError = any
 > = SaveStartCallback<TModel, TTransport> & { error: TError }
@@ -89,7 +89,7 @@ export type TransportDeleteConfig<T extends Transport<any>> = Parameters<
 >[1]
 
 export type DeleteResult<
-  TModel extends Model<any, any>,
+  TModel extends Model<any>,
   TTransport extends Transport<TModel>
 > =
   | {
@@ -104,7 +104,7 @@ export type DeleteResult<
     }
 
 export type DeleteStartCallback<
-  TModel extends Model<any, any>,
+  TModel extends Model<any>,
   TTransport extends Transport<TModel>
 > = {
   model: TModel
@@ -118,7 +118,7 @@ export type ModelDeleteStartCallback<TTransport extends Transport<Model>> = {
 }
 
 export type DeleteSuccessCallback<
-  TModel extends Model<any, any>,
+  TModel extends Model<any>,
   TTransport extends Transport<TModel>
 > = {
   response: TransportDeleteResponse<TTransport>
@@ -129,7 +129,7 @@ export type ModelDeleteSuccessCallback<TTransport extends Transport<Model>> = {
 } & ModelDeleteStartCallback<TTransport>
 
 export type DeleteErrorCallback<
-  TModel extends Model<any, any>,
+  TModel extends Model<any>,
   TTransport extends Transport<TModel>,
   TError = any
 > = DeleteStartCallback<TModel, TTransport> & { error: TError }
@@ -150,7 +150,7 @@ export type TransportLoadConfig<T extends Transport<any>> = Parameters<
 >[0]
 
 export type LoadResult<
-  TModel extends Model<any, any>,
+  TModel extends Model<any>,
   TTransport extends Transport<TModel>
 > =
   | {
@@ -167,7 +167,7 @@ export type LoadResult<
     }
 
 export type LoadStartCallback<
-  TModel extends Model<any, any>,
+  TModel extends Model<any>,
   TTransport extends Transport<TModel>
 > = {
   config: SaveConfig
@@ -175,7 +175,7 @@ export type LoadStartCallback<
 }
 
 export type LoadSuccessCallback<
-  TModel extends Model<any, any>,
+  TModel extends Model<any>,
   TTransport extends Transport<TModel>
 > = LoadStartCallback<TModel, TTransport> & {
   added: TModel[]
@@ -184,7 +184,7 @@ export type LoadSuccessCallback<
 }
 
 export type LoadErrorCallback<
-  TModel extends Model<any, any>,
+  TModel extends Model<any>,
   TTransport extends Transport<TModel>,
   E = any
 > = LoadStartCallback<TModel, TTransport> & { error: E }

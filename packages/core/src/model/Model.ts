@@ -23,9 +23,11 @@ import {
 } from '../utils/types'
 import { IdentityError } from './identity-error'
 
+// @ts-ignore - using return type on protected method
+type Payload<T extends Model> = ReturnType<T['serialize']>
+
 export abstract class Model<
-  TCollection extends Collection<any, any, any> = Collection<any, any, any>,
-  TDTO = any
+  TCollection extends Collection<any, any, any> = Collection<any, any, any>
 > {
   static identityKey = 'cid'
 
@@ -61,7 +63,7 @@ export abstract class Model<
       }
     | undefined
 
-  lastSavedData: TDTO | undefined = undefined
+  lastSavedData: Payload<this> | undefined = undefined
 
   get identityKey(): string {
     return (this.constructor as typeof Model).identityKey
@@ -130,16 +132,16 @@ export abstract class Model<
   }
 
   // https://alexhisen.gitbook.io/mobx-recipes/use-computedstruct-for-computed-objects
-  get payload(): TDTO {
+  get payload(): Payload<this> {
     return this.computePayload
   }
 
   //computed struct
-  protected get computePayload(): TDTO {
+  protected get computePayload(): Payload<this> {
     return this.serialize()
   }
 
-  protected abstract serialize(): TDTO
+  protected abstract serialize(): any
 
   protected startPayloadCompute(): IReactionDisposer {
     return autorun(() => {
@@ -298,7 +300,7 @@ export abstract class Model<
     })
   }
 
-  protected onSaveError(data: ModelSaveErrorCallback<TDTO>): void {}
+  protected onSaveError(data: ModelSaveErrorCallback<Payload<this>>): void {}
 
   protected extractIdentityValue(
     data: any | undefined,

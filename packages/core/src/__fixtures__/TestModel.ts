@@ -17,9 +17,7 @@ export type TestModelData = {
   id?: string
 }
 
-export class TestModel<
-  T extends TestCollection = TestCollection
-> extends Model<T> {
+export class TestModel extends Model<TestCollection> {
   static identityKey = 'id'
 
   foo: string
@@ -45,7 +43,7 @@ export class TestModel<
     return b
   }
 
-  serialize(): TestModelData {
+  serialize() {
     return {
       foo: this.foo,
       bar: this.bar,
