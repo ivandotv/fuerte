@@ -189,19 +189,25 @@ export type LoadErrorCallback<
   E = any
 > = LoadStartCallback<TModel, TTransport> & { error: E }
 
-export type CollectionConfig = {
+export type LiteCollectionConfig = {
   add?: AddConfig
+}
+
+export type RequiredLiteCollectionConfig = {
+  add: Required<AddConfig>
+}
+
+export type CollectionConfig = {
   save?: SaveConfig
   delete?: DeleteConfig
   load?: LoadConfig
-}
+} & LiteCollectionConfig
 
 export type RequiredCollectionConfig = {
-  add: Required<AddConfig>
   save: Required<SaveConfig>
   delete: Required<DeleteConfig>
   load: Required<LoadConfig>
-}
+} & RequiredLiteCollectionConfig
 
 export type ModelInsertPosition = 'start' | 'end'
 

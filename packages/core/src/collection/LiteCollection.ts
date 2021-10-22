@@ -4,41 +4,16 @@ import {
   IReactionDisposer,
   makeObservable,
   observable,
-  reaction,
-  runInAction
+  reaction
 } from 'mobx'
-import { IdentityError } from '../model/identity-error'
 import { Model } from '../model/Model'
-import { Transport } from '../transport/transport'
 import {
   AddConfig,
-  CollectionConfig,
-  DeleteConfig,
-  DeleteErrorCallback,
-  DeleteResult,
-  DeleteStartCallback,
-  DeleteSuccessCallback,
-  LoadConfig,
-  LoadErrorCallback,
-  LoadResult,
-  LoadStartCallback,
-  LoadSuccessCallback,
+  LiteCollectionConfig,
   ModelInsertPosition,
-  RequiredCollectionConfig,
-  SaveConfig,
-  SaveErrorCallback,
-  SaveResult,
-  SaveStartCallback,
-  SaveSuccessCallback,
-  TransportDeleteConfig,
-  TransportDeleteResponse,
-  TransportLoadConfig,
-  TransportLoadResponse,
-  TransportSaveConfig,
-  TransportSaveResponse,
-  UnwrapPromise
+  RequiredLiteCollectionConfig
 } from '../utils/types'
-import { ASYNC_STATUS, isPromise, wrapInArray } from '../utils/utils'
+import { isPromise, wrapInArray } from '../utils/utils'
 
 export type FactoryFn<T, K = any> = (args: K) => T | Promise<T>
 
@@ -48,49 +23,19 @@ export class LiteCollection<
 > {
   protected _models: TModel[] = []
 
-  // holds models that are immediately removed while deleting
-  // _deleting: Map<string, TModel> = new Map()
-
-  // holds models that are saving but are not yet added to collection
-  // protected _saving: Map<
-  //   string,
-  //   { token: Record<string, never>; model: TModel }
-  // > = new Map()
-
   protected modelByCid: Map<string, TModel> = new Map()
 
   protected modelByIdentity: Map<string | number, TModel> = new Map()
 
-  protected config: RequiredCollectionConfig
+  protected config: RequiredLiteCollectionConfig
 
   protected identityReactionByCid: Map<string, IReactionDisposer> = new Map()
 
-  constructor(protected factory: TFactory, config?: CollectionConfig) {
+  constructor(protected factory: TFactory, config?: LiteCollectionConfig) {
     this.config = {
-      save: {
-        insertPosition: 'end',
-        addImmediately: true,
-        addOnError: true,
-        ...(config?.save ? config.save : undefined)
-      },
       add: {
         insertPosition: 'end',
         ...(config?.add ? config.add : undefined)
-      },
-      delete: {
-        remove: true,
-        removeImmediately: true,
-        removeOnError: false,
-        ...(config?.delete ? config.delete : undefined)
-      },
-      load: {
-        duplicateModelStrategy: 'KEEP_NEW',
-        compareFn: () => {
-          return 'KEEP_NEW'
-        },
-        insertPosition: 'end',
-        reset: false,
-        ...(config?.load ? config.load : undefined)
       }
     }
 
@@ -99,18 +44,11 @@ export class LiteCollection<
       | 'addToCollection'
       | 'removeFromCollection'
       | 'modelByCid'
-      // | '_deleting'
-      // | '_saving'
       | '_models'
       | 'modelByIdentity'
     >(this, {
-      // save: action,
       add: action,
-      // delete: action,
-      // load: action,
       _models: observable.shallow,
-      // _saving: observable.shallow,
-      // _deleting: observable.shallow,
       modelByCid: observable.shallow,
       modelByIdentity: observable.shallow,
       addToCollection: action,
@@ -124,7 +62,7 @@ export class LiteCollection<
     })
   }
 
-  getConfig(): RequiredCollectionConfig {
+  getConfig(): RequiredLiteCollectionConfig {
     return this.config
   }
 
@@ -210,15 +148,16 @@ export class LiteCollection<
 
       newModels.push(model)
 
-      const previousCollection = model.getCollection()
-      // model is already in some other collection
-      if (previousCollection) {
-        previousCollection.removeFromCollection(model)
-      }
+      // const previousCollection = model.getCollection()
+      // // model is already in some other collection
+      // if (previousCollection) {
+      //   previousCollection.removeFromCollection(model)
+      // }
 
       this.startTracking(model)
 
-      model._onAdded(this)
+      // model._onAdded(this)
+      this.notifyAdded(model)
 
       this.onAdded(model)
     }
@@ -422,9 +361,8 @@ export class LiteCollection<
         if (inCollection) {
           this._models.splice(i, 1)
           removed.push(model)
-          // this.modelByClientId.delete(model.cid)
           this.stopTracking(model)
-          model._onRemoved()
+          this.notifyRemoved(model)
           this.onRemoved(model)
           break
         }
@@ -438,9 +376,8 @@ export class LiteCollection<
         const inCollection = modelCids.has(model.cid)
         if (inCollection) {
           removed.push(model)
-          // this.modelByClientId.delete(model.cid)
           this.stopTracking(model)
-          model._onRemoved()
+          this.notifyRemoved(model)
           this.onRemoved(model)
         } else {
           modelsToKeep.push(model)
@@ -451,6 +388,14 @@ export class LiteCollection<
     }
 
     return Array.isArray(model) ? removed : removed[0]
+  }
+
+  protected notifyRemoved(model: TModel): void {
+    model._onRemoved(this, true)
+  }
+
+  protected notifyAdded(model: TModel): void {
+    model._onAdded(this, true)
   }
 
   protected onRemoved(model: TModel): void {}
@@ -524,14 +469,10 @@ export class LiteCollection<
   destroy(): void {
     this.onDestroy()
 
-    this.identityReactionByCid.forEach(dispose => {
-      dispose()
-    })
+    this.identityReactionByCid.forEach(dispose => dispose())
 
-    const models = this.removeFromCollection(this._models)
-
-    models.forEach(model => {
-      model.destroy()
+    this._models.forEach(model => {
+      this.notifyRemoved(model)
     })
   }
 

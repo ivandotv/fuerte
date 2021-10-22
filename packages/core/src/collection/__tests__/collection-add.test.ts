@@ -197,24 +197,6 @@ describe('Collection - add #add #collection', () => {
     expect(onAddedSpy).toHaveBeenCalledTimes(0)
   })
 
-  test('When model is added to another collection it is removed from the previous collection', () => {
-    const transport = fixtures.transport()
-    const collection = fixtures.collection(fixtures.factory(), transport)
-    const collectionTwo = fixtures.collection(fixtures.factory(), transport)
-    const models = modelPool.slice(0, 5)
-    const onRemovedSpy = jest.spyOn(collection, 'onRemoved')
-
-    collection.add(models)
-    collectionTwo.add(models)
-
-    for (let i = 0; i < models.length; i++) {
-      expect(onRemovedSpy.mock.calls[i]).toEqual(
-        expect.arrayContaining([models[i]])
-      )
-    }
-    expect(onRemovedSpy).toHaveBeenCalledTimes(models.length)
-  })
-
   describe('React to model identity changes', () => {
     test('Get model by custom identity key', () => {
       const collection = fixtures.collection()

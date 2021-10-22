@@ -23,7 +23,7 @@ import {
 } from '../utils/types'
 import { IdentityError } from './identity-error'
 
-// @ts-ignore - using return type on protected method
+// @ts-ignore - using return type on a protected method
 type Payload<T extends Model> = ReturnType<T['serialize']>
 
 export abstract class Model<
@@ -77,8 +77,8 @@ export abstract class Model<
       | '_isDeleted'
       | '_isSaving'
       | '_isDestroyed'
-      | 'errors'
       | '_isDeleting'
+      | 'errors'
       | 'computePayload'
       | 'lastSavedData'
     >(this, {
@@ -162,29 +162,27 @@ export abstract class Model<
   }
 
   // @internal
-  _onAdded(collection: TCollection): void {
-    if (__DEV__) {
-      if (this.collection) {
-        console.warn(
-          `Model=> onAdded: model is already in a different collection. This can lead to inconsistencies in model state.
-           Old collection: ${this.collection.constructor}
-           New collection: ${collection.constructor}`
-        )
-      }
+  _onAdded(collection: TCollection, isLite: boolean): void {
+    if (this.collection && !isLite) {
+      throw new Error('Model can be in only one non "lite" collection')
     }
-    this.collection = collection
-    this.onAdded()
+    if (!isLite) {
+      this.collection = collection
+    }
+    this.onAdded(collection, isLite)
   }
 
-  protected onAdded(): void {}
+  protected onAdded(collection: TCollection, isLite: boolean): void {}
 
   // @internal
-  _onRemoved(): void {
-    this.onRemoved()
-    this.collection = undefined
+  _onRemoved(collection: TCollection, isLite: boolean): void {
+    this.onRemoved(collection, isLite)
+    if (collection === this.collection) {
+      this.collection = undefined
+    }
   }
 
-  protected onRemoved(): void {}
+  protected onRemoved(collection: TCollection, isLite: boolean): void {}
 
   get isDeleted(): boolean {
     return this._isDeleted
@@ -389,15 +387,11 @@ export abstract class Model<
     return this.collection
   }
 
+  // @internal
   destroy(): void {
     this.onDestroy()
     this._isDestroyed = true
-    if (this.collection) {
-      this.collection.remove(this.cid)
-    }
-    if (this.payloadActionDisposer) {
-      this.payloadActionDisposer()
-    }
+    this.payloadActionDisposer()
   }
 
   onDestroy(): void {}
