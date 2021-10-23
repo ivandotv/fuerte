@@ -1,5 +1,15 @@
 # @fuerte/autosave
 
+## 3.0.0
+
+### Patch Changes
+
+- 2db05a7: Fix type import from core
+- Updated dependencies [66d03e1]
+- Updated dependencies [2db05a7]
+- Updated dependencies [082abd6]
+  - @fuerte/core@2.0.0
+
 ## 2.0.0
 
 ### Patch Changes
