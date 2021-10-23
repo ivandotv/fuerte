@@ -1,12 +1,12 @@
 import { IReactionDisposer, reaction } from 'mobx'
-import { Model } from '@fuerte/core'
+import { FactoryFn, Model } from '@fuerte/core'
 import { Transport } from '@fuerte/core'
 import {
   AutosaveCollectionConfig,
   RequiredAutosaveCollectionConfig
 } from './types'
 import { debounceReaction } from './utils'
-import { Collection, FactoryFn } from '@fuerte/core'
+import { Collection } from '@fuerte/core'
 
 export class AutosaveCollection<
   TModel extends Model<Collection<any, any, any>>,

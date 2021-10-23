@@ -9,6 +9,7 @@ import {
   DeleteResult,
   DeleteStartCallback,
   DeleteSuccessCallback,
+  FactoryFn,
   LoadConfig,
   LoadErrorCallback,
   LoadResult,
@@ -28,7 +29,7 @@ import {
   TransportSaveResponse
 } from '../utils/types'
 import { ASYNC_STATUS } from '../utils/utils'
-import { FactoryFn, LiteCollection } from './LiteCollection'
+import { LiteCollection } from './LiteCollection'
 
 export class Collection<
   TModel extends Model<Collection<any, any, any>>,
@@ -67,6 +68,7 @@ export class Collection<
       },
       delete: {
         remove: true,
+        destroyOnRemoval: true,
         removeImmediately: true,
         removeOnError: false,
         ...(config?.delete ? config.delete : undefined)
@@ -77,35 +79,9 @@ export class Collection<
           return 'KEEP_NEW'
         },
         insertPosition: 'end',
+        destroyOnRemoval: true,
         reset: false,
-        ...(config?.load ? config.load : undefined)
-      }
-    }
-
-    this.config = {
-      save: {
-        insertPosition: 'end',
-        addImmediately: true,
-        addOnError: true,
-        ...(config?.save ? config.save : undefined)
-      },
-      add: {
-        insertPosition: 'end',
-        ...(config?.add ? config.add : undefined)
-      },
-      delete: {
-        remove: true,
-        removeImmediately: true,
-        removeOnError: false,
-        ...(config?.delete ? config.delete : undefined)
-      },
-      load: {
-        duplicateModelStrategy: 'KEEP_NEW',
-        compareFn: () => {
-          return 'KEEP_NEW'
-        },
-        insertPosition: 'end',
-        reset: false,
+        destroyOnReset: false,
         ...(config?.load ? config.load : undefined)
       }
     }
@@ -331,7 +307,9 @@ export class Collection<
     }
 
     if (deleteConfig.remove && deleteConfig.removeImmediately) {
-      this.removeFromCollection(model)
+      this.removeFromCollection(model, {
+        destroy: deleteConfig.destroyOnRemoval
+      })
     }
     try {
       this._deleting.set(model.cid, model)
@@ -349,7 +327,9 @@ export class Collection<
       const response = await this.callTransportDelete(model, transportConfig)
 
       if (deleteConfig.remove && !deleteConfig.removeImmediately) {
-        this.removeFromCollection(model)
+        this.removeFromCollection(model, {
+          destroy: deleteConfig.destroyOnRemoval
+        })
       }
       this.onDeleteSuccess({
         model,
@@ -374,7 +354,9 @@ export class Collection<
         !deleteConfig.removeImmediately &&
         deleteConfig.removeOnError
       ) {
-        this.removeFromCollection(model)
+        this.removeFromCollection(model, {
+          destroy: deleteConfig.destroyOnRemoval
+        })
       }
       this.onDeleteError({
         model,
@@ -457,7 +439,9 @@ export class Collection<
 
       // run reset instead of the rest of the load function
       if (loadConfig.reset) {
-        const [added, removed] = await this.resetCollection(response.data)
+        const [added, removed] = await this.resetCollection(response.data, {
+          destroy: loadConfig.destroyOnReset
+        })
 
         this.onLoadSuccess({
           config: loadConfig,
@@ -523,7 +507,9 @@ export class Collection<
         }
       } //end for
 
-      const removed = this.remove(modelsToRemove)
+      const removed = this.remove(modelsToRemove, {
+        destroy: loadConfig.destroyOnRemoval
+      })
       const added = this.addToCollection(modelsToAdd, {
         insertPosition: loadConfig.insertPosition
       })

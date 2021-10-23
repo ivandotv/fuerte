@@ -14,7 +14,7 @@ describe('Model - add #add #model', () => {
 
       collection.add(model)
 
-      expect(model.getCollection()).toBe(collection)
+      expect(model.collection).toBe(collection)
     })
 
     test('"onAdded" callback is executed', () => {
@@ -58,7 +58,7 @@ describe('Model - add #add #model', () => {
 
       expect(onRemovedSpy).toHaveBeenCalledTimes(0)
       expect(onAddedSpy).toHaveBeenCalledTimes(3)
-      expect(model.getCollection()).toBe(firstCollection)
+      expect(model.collection).toBe(firstCollection)
     })
   })
 })

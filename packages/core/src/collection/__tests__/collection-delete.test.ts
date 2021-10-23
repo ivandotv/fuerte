@@ -40,6 +40,37 @@ describe('Collection - delete #delete #collection', () => {
     expect(collection.deleted).toStrictEqual([model])
   })
 
+  test('Delete and destroy the model', async () => {
+    const transport = fixtures.transport()
+    const model = fixtures.model()
+    const onDestroySpy = jest.spyOn(model, 'onDestroy')
+    const collection = fixtures.collection(fixtures.factory(), transport)
+    collection.add(model)
+
+    await collection.delete(model.cid, { remove: true, destroyOnRemoval: true })
+
+    expect(model.isDestroyed).toBe(true)
+    expect(model.collection).toBeUndefined()
+    expect(onDestroySpy).toHaveBeenCalledTimes(1)
+  })
+
+  test('If the model is not removed, it will not be destroyed', async () => {
+    const transport = fixtures.transport()
+    const model = fixtures.model()
+    const onDestroySpy = jest.spyOn(model, 'onDestroy')
+    const collection = fixtures.collection(fixtures.factory(), transport)
+    collection.add(model)
+
+    await collection.delete(model.cid, {
+      remove: false,
+      destroyOnRemoval: true
+    })
+
+    expect(model.isDestroyed).toBe(false)
+    expect(model.collection).toBe(collection)
+    expect(onDestroySpy).not.toHaveBeenCalled()
+  })
+
   test('When delete is in progress, we can retrieve all the models that are deleting', async () => {
     const transport = fixtures.transport()
     const model = fixtures.model()
@@ -131,10 +162,11 @@ describe('Collection - delete #delete #collection', () => {
       const model = fixtures.model()
       const response = { data: 'deleted' }
       const transportConfig = 'config'
-      const config: DeleteConfig = {
+      const config: Required<DeleteConfig> = {
         remove: true,
         removeImmediately: false,
-        removeOnError: false
+        removeOnError: false,
+        destroyOnRemoval: true
       }
       const collection = fixtures.collection(fixtures.factory(), transport)
       collection.add(model)
@@ -161,10 +193,11 @@ describe('Collection - delete #delete #collection', () => {
       const transport = fixtures.transport()
       const model = fixtures.model()
       const response = { data: 'deleted' }
-      const config: DeleteConfig = {
+      const config: Required<DeleteConfig> = {
         remove: true,
         removeImmediately: false,
-        removeOnError: false
+        removeOnError: false,
+        destroyOnRemoval: true
       }
       const transportConfig = 'config'
       const collection = fixtures.collection(fixtures.factory(), transport)
@@ -194,10 +227,11 @@ describe('Collection - delete #delete #collection', () => {
       const model = fixtures.model()
       const response = { data: 'deleted' }
       const transportConfig = 'config'
-      const config: DeleteConfig = {
+      const config: Required<DeleteConfig> = {
         remove: true,
         removeImmediately: false,
-        removeOnError: false
+        removeOnError: false,
+        destroyOnRemoval: true
       }
       const collection = fixtures.collection(fixtures.factory(), transport)
       const onDeleteErrorSpy = jest.spyOn(collection, 'onDeleteError')
@@ -304,7 +338,7 @@ describe('Collection - delete #delete #collection', () => {
 
       expect(collection.models).toHaveLength(1)
       expect(collection.models[0]).toBe(model)
-      expect(model.getCollection()).toBe(collection)
+      expect(model.collection).toBe(collection)
     })
 
     test('After failed deletion, model is not removed', async () => {
@@ -321,7 +355,7 @@ describe('Collection - delete #delete #collection', () => {
 
       expect(collection.models).toHaveLength(1)
       expect(collection.models[0]).toBe(model)
-      expect(model.getCollection()).toBe(collection)
+      expect(model.collection).toBe(collection)
     })
   })
 })

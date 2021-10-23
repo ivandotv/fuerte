@@ -326,7 +326,7 @@ describe('Collection - save #save #collection', () => {
       })
 
       expect(collection.models).toHaveLength(0)
-      expect(model.getCollection()).toBeUndefined()
+      expect(model.collection).toBeUndefined()
     })
   })
 })

@@ -6,6 +6,8 @@ import {
 import { Model } from '../model/Model'
 import { Transport } from '../transport/transport'
 
+export type FactoryFn<T, K = any> = (args: K) => T | Promise<T>
+
 export type UnwrapPromise<T> = T extends Promise<infer U> ? U : T
 
 export type ModelTransportErrors<TSave = any | null, TDelete = any | null> = {
@@ -191,22 +193,30 @@ export type LoadErrorCallback<
 
 export type LiteCollectionConfig = {
   add?: AddConfig
+  remove?: RemoveConfig
+  reset?: ResetConfig
 }
 
 export type RequiredLiteCollectionConfig = {
   add: Required<AddConfig>
+  remove: Required<RemoveConfig>
+  reset: Required<RemoveConfig>
 }
 
 export type CollectionConfig = {
   save?: SaveConfig
   delete?: DeleteConfig
   load?: LoadConfig
+  remove?: RemoveConfig
+  reset?: ResetConfig
 } & LiteCollectionConfig
 
 export type RequiredCollectionConfig = {
   save: Required<SaveConfig>
   delete: Required<DeleteConfig>
   load: Required<LoadConfig>
+  remove: Required<RemoveConfig>
+  reset: Required<ResetConfig>
 } & RequiredLiteCollectionConfig
 
 export type ModelInsertPosition = 'start' | 'end'
@@ -214,6 +224,14 @@ export type ModelInsertPosition = 'start' | 'end'
 export type AddConfig = {
   insertPosition?: ModelInsertPosition
   // removeFromPreviousCollection?: boolean
+}
+
+export type RemoveConfig = {
+  destroy?: boolean
+}
+
+export type ResetConfig = {
+  destroy?: boolean
 }
 export interface SaveConfig {
   insertPosition?: ModelInsertPosition
@@ -225,6 +243,7 @@ export interface DeleteConfig {
   remove?: boolean
   removeImmediately?: boolean
   removeOnError?: boolean
+  destroyOnRemoval?: boolean
 }
 
 type BivariantCompareFn<T extends Model<Collection<any, any, any>>> = {
@@ -233,8 +252,10 @@ type BivariantCompareFn<T extends Model<Collection<any, any, any>>> = {
 
 export interface LoadConfig {
   duplicateModelStrategy?: keyof typeof DuplicateModelStrategy
+  destroyOnRemoval?: boolean
   // https://stackoverflow.com/questions/52667959/what-is-the-purpose-of-bivariancehack-in-typescript-types
   compareFn?: BivariantCompareFn<Model<Collection<any, any, any>>>
   insertPosition?: ModelInsertPosition
   reset?: boolean
+  destroyOnReset?: false
 }

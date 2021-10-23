@@ -33,7 +33,7 @@ export abstract class Model<
 
   static setIdentityFromResponse = false
 
-  collection: TCollection | undefined
+  readonly collection: TCollection | undefined
 
   readonly cid: string
 
@@ -167,6 +167,7 @@ export abstract class Model<
       throw new Error('Model can be in only one non "lite" collection')
     }
     if (!isLite) {
+      // @ts-expect-error - readonly property
       this.collection = collection
     }
     this.onAdded(collection, isLite)
@@ -178,6 +179,7 @@ export abstract class Model<
   _onRemoved(collection: TCollection, isLite: boolean): void {
     this.onRemoved(collection, isLite)
     if (collection === this.collection) {
+      // @ts-expect-error - readonly property
       this.collection = undefined
     }
   }
@@ -381,10 +383,6 @@ export abstract class Model<
 
   protected modelIsDirty(): boolean {
     return !equal(this.lastSavedData, this.payload)
-  }
-
-  getCollection(): TCollection | undefined {
-    return this.collection
   }
 
   // @internal
