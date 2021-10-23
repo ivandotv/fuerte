@@ -52,7 +52,7 @@
     "mobx": "^6.3.3"
   },
   "peerDependencies": {
-    "@fuerte/core": "^1.0.0`",
+    "@fuerte/core": "^1.0.0",
     "mobx": "^6.3.3"
   }
 }
