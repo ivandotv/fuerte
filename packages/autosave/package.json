@@ -1,6 +1,6 @@
 {
   "name": "@fuerte/autosave",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": false,
   "author": "Ivan Vlatkovic",
   "description": "Autosave collection for @fuerte/core",
@@ -48,11 +48,11 @@
   ],
   "devDependencies": {
     "@types/jest": "^27.0.1",
-    "@fuerte/core": "^1.0.0",
+    "@fuerte/core": "^2.0.0",
     "mobx": "^6.3.3"
   },
   "peerDependencies": {
-    "@fuerte/core": "^1.0.0",
+    "@fuerte/core": "^2.0.0",
     "mobx": "^6.3.3"
   }
 }

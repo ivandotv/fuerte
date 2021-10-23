@@ -1,5 +1,16 @@
 # @fuerte/core
 
+## 2.0.0
+
+### Major Changes
+
+- 2db05a7: Splict Collection class in two
+
+### Patch Changes
+
+- 66d03e1: core: make model payload getter have full type support
+- 082abd6: core: Warn when model is added to a different collection.
+
 ## 1.1.0
 
 ### Minor Changes
