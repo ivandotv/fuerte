@@ -38,36 +38,4 @@ describe('Model #model', () => {
       expect(model.isDirty).toBe(false)
     })
   })
-
-  describe('When the model destroy method is called', () => {
-    test('All destroy hooks are called', () => {
-      const model = fixtures.model({ foo: 'f', bar: 'b', id: '1' })
-      const collection = fixtures.collection()
-      collection.add(model)
-      const onDestroySpy = jest.spyOn(model, 'onDestroy')
-      const onRemovedSpy = jest.spyOn(model, 'onRemoved')
-
-      model.destroy()
-
-      expect(onDestroySpy).toHaveBeenCalledTimes(1)
-      expect(onRemovedSpy).toHaveBeenCalledTimes(1)
-    })
-
-    test('Model is removed from the collection', () => {
-      const model = fixtures.model({ foo: 'f', bar: 'b', id: '1' })
-      const collection = fixtures.collection()
-      collection.add(model)
-      model.destroy()
-
-      expect(collection.models).toHaveLength(0)
-    })
-
-    test('Model is destroyed', () => {
-      const model = fixtures.model({ foo: 'f', bar: 'b', id: '1' })
-
-      model.destroy()
-
-      expect(model.isDestroyed).toBe(true)
-    })
-  })
 })

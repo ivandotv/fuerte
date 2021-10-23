@@ -1,6 +1,7 @@
-import { CollectionConfig } from '../utils/types'
+import { CollectionConfig, LiteCollectionConfig } from '../utils/types'
 import { TestCollection } from './TestCollection'
 import { testModelFactory, testModelFactoryAsync } from './TestFactory'
+import { TestLiteCollection } from './TestLiteCollection'
 import { TestModel, TestModelData } from './TestModel'
 import { TestTransport } from './TestTransport'
 
@@ -14,6 +15,15 @@ export function fixtureFactory() {
     },
     factoryAsync() {
       return testModelFactoryAsync
+    },
+    liteCollection(
+      factory?: typeof testModelFactory,
+      config?: LiteCollectionConfig
+    ) {
+      config = config || {}
+      factory = factory || this.factory()
+
+      return new TestLiteCollection(factory, config)
     },
     collection(
       factory?: typeof testModelFactory,

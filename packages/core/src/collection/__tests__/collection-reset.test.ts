@@ -72,6 +72,21 @@ describe('Collection - reset #reset #collection', () => {
     expect(result).toEqual([[], models])
   })
 
+  test('Destroy removed models', async () => {
+    const collection = fixtures.collection()
+    const models = modelPool.splice(0, 5)
+    collection.add(models)
+
+    const result = await collection.reset(fixtures.rawModelData, {
+      destroy: true
+    })
+
+    expect(result).toEqual([collection.models, models])
+    models.forEach(m => {
+      expect(m.isDestroyed).toBe(true)
+    })
+  })
+
   test('Model creation data can be modified before constructing new models', async () => {
     const modelData: TestModelData = {
       id: '123',

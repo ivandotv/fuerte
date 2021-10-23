@@ -14,14 +14,13 @@ describe('Model - add #add #model', () => {
 
       collection.add(model)
 
-      expect(model.getCollection()).toBe(collection)
+      expect(model.collection).toBe(collection)
     })
 
     test('"onAdded" callback is executed', () => {
       const transport = fixtures.transport()
       const collection = fixtures.collection(fixtures.factory(), transport)
       const model = fixtures.model()
-      // @ts-expect-error - testing protected method
       const onAddedSpy = jest.spyOn(model, 'onAdded')
 
       collection.add(model)
@@ -29,7 +28,7 @@ describe('Model - add #add #model', () => {
       expect(onAddedSpy).toHaveBeenCalled()
     })
 
-    test('If the model is in another collection, it is removed from that collection', () => {
+    test('If the model is added to another collection which is not lite, it will throw error', () => {
       const transport = fixtures.transport()
       const firstCollection = fixtures.collection(fixtures.factory(), transport)
       const secondCollection = fixtures.collection(
@@ -38,15 +37,28 @@ describe('Model - add #add #model', () => {
       )
       const model = fixtures.model()
       firstCollection.add(model)
-      // @ts-expect-error - testing protected method
+
+      expect(() => secondCollection.add(model)).toThrow()
+    })
+
+    test('Model can be added to multiple "lite" collections', () => {
+      const transport = fixtures.transport()
+      const firstCollection = fixtures.collection(fixtures.factory(), transport)
+      const secondCollection = fixtures.liteCollection()
+      const thirdCollection = fixtures.liteCollection()
+
+      const model = fixtures.model()
+
       const onAddedSpy = jest.spyOn(model, 'onAdded')
       const onRemovedSpy = jest.spyOn(model, 'onRemoved')
 
+      firstCollection.add(model)
       secondCollection.add(model)
+      thirdCollection.add(model)
 
-      expect(onRemovedSpy).toHaveBeenCalledTimes(1)
-      expect(onAddedSpy).toHaveBeenCalled()
-      expect(model.getCollection()).toBe(secondCollection)
+      expect(onRemovedSpy).toHaveBeenCalledTimes(0)
+      expect(onAddedSpy).toHaveBeenCalledTimes(3)
+      expect(model.collection).toBe(firstCollection)
     })
   })
 })

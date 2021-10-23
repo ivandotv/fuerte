@@ -308,6 +308,30 @@ describe('Collection - load #load #collection', () => {
       expect(collection.models[0].foo).toBe(newValue)
     })
 
+    test('Destroy removed models', async () => {
+      const transport = fixtures.transport()
+      const collection = fixtures.collection(fixtures.factory(), transport)
+      jest.spyOn(transport, 'load').mockResolvedValueOnce({
+        data: fixtures.rawModelData.slice(0, 2)
+      })
+
+      collection.add([
+        collection.create(fixtures.rawModelData[0]),
+        collection.create(fixtures.rawModelData[1])
+      ])
+
+      const result = await collection.load({
+        duplicateModelStrategy: DuplicateModelStrategy.KEEP_NEW,
+        destroyOnRemoval: true
+      })
+
+      expect(result.removed?.length).toBeTruthy()
+
+      result.removed?.forEach(m => {
+        expect(m.isDestroyed).toBe(true)
+      })
+    })
+
     describe('Custom compare function', () => {
       test('Compare function is called with appropriate arguments', async () => {
         const transport = fixtures.transport()
@@ -482,11 +506,13 @@ describe('Collection - load #load #collection', () => {
     test('On load start, start callback is called', async () => {
       const transport = fixtures.transport()
       const transportConfig = 'config'
-      const config: LoadConfig = {
+      const config: Required<LoadConfig> = {
         duplicateModelStrategy: DuplicateModelStrategy.COMPARE,
         reset: false,
         compareFn: () => ModelCompareResult.KEEP_NEW,
-        insertPosition: 'end'
+        insertPosition: 'end',
+        destroyOnRemoval: false,
+        destroyOnReset: false
       }
       const collection = fixtures.collection(fixtures.factory(), transport)
       const loadStartSpy = jest.spyOn(collection, 'onLoadStart')

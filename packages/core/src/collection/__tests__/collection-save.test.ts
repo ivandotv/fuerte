@@ -139,7 +139,6 @@ describe('Collection - save #save #collection', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
-    // @ts-expect-error - onAdded is a protected method
     const modelOnAddedSpy = jest.spyOn(model, 'onAdded')
 
     collection.save(model)
@@ -153,7 +152,6 @@ describe('Collection - save #save #collection', () => {
     const model = fixtures.model()
     collection.add(model)
     const onSaveSuccessSpy = jest.spyOn(collection, 'onSaveSuccess')
-    // @ts-expect-error - protected method
     const onModelAddedSpy = jest.spyOn(model, 'onAdded')
     const onModelSaveStartSpy = jest.spyOn(model, 'onSaveStart')
     const onModelSaveSuccessSpy = jest.spyOn(model, 'onSaveSuccess')
@@ -274,7 +272,6 @@ describe('Collection - save #save #collection', () => {
       const transport = fixtures.transport()
       const collection = fixtures.collection(fixtures.factory(), transport)
       const model = fixtures.model()
-      // @ts-expect-error - onAdded is a protected method
       const modelOnAddedSpy = jest.spyOn(model, 'onAdded')
 
       const result = collection.save(model, { addImmediately: false })
@@ -329,7 +326,7 @@ describe('Collection - save #save #collection', () => {
       })
 
       expect(collection.models).toHaveLength(0)
-      expect(model.getCollection()).toBeUndefined()
+      expect(model.collection).toBeUndefined()
     })
   })
 })

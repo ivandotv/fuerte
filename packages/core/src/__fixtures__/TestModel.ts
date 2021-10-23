@@ -72,8 +72,12 @@ export class TestModel extends Model<TestCollection> {
     super.onSaveStart(data)
   }
 
-  onRemoved(): void {
-    super.onRemoved()
+  override onAdded(c: TestCollection, isLite: boolean): void {
+    super.onAdded(c, isLite)
+  }
+
+  override onRemoved(c: TestCollection, isLite: boolean): void {
+    super.onRemoved(c, isLite)
   }
 
   onDeleteStart(data: ModelDeleteStartCallback<TestTransport>): void {
