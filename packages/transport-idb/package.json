@@ -32,7 +32,7 @@
     "test:ci": "cross-env BABEL_ENV=test jest --runInBand --ci --coverage --coverageDirectory=coverage",
     "type:check": "tsc -p tsconfig.check-types.json",
     "type:build": "del dist/types && del .buildcache && tsc -p tsconfig.build-types.json",
-    "build": "yarn type:build && node ../../scripts/build-browser.js --bundle=umd,cjs,esm",
+    "build": "yarn type:check && yarn type:build && node ../../scripts/build-browser.js --bundle=umd,cjs,esm",
     "prepublishOnly": "yarn build"
   },
   "repository": {
