@@ -48,7 +48,7 @@
     "@fuerte"
   ],
   "dependencies": {
-    "idb": "^6.1.2"
+    "idb": "^7.0.0"
   },
   "devDependencies": {
     "@types/jest": "^27.0.1",
