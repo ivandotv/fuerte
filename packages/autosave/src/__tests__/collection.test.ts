@@ -1,5 +1,5 @@
 import { configure } from 'mobx'
-import { AutosaveCollectionConfig } from '../utils/types'
+import { AutosaveCollectionConfig } from '../types'
 import { fixtureFactory } from '../__fixtures__/fixtureFactory'
 
 configure({ enforceActions: 'never' })
