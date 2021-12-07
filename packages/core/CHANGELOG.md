@@ -1,5 +1,12 @@
 # @fuerte/core
 
+## 2.0.1
+
+### Patch Changes
+
+- 54fcdd0: Remove "instanceOf" check and replace it with "isPrototypeOf". The reason for this
+  is because "instanceOf" does not work in IE11.
+
 ## 2.0.0
 
 ### Major Changes
