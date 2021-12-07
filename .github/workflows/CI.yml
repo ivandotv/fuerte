@@ -1,13 +1,11 @@
 name: Test
 on:
   push:
-  # branches:
-  #   - master
-  #   - develop
+    branches:
+      - '*'
   pull_request:
-    # branches:
-    #   - master
-    #   - develop
+    branches:
+      - master
 jobs:
   build:
     name: Node unit tests
@@ -18,60 +16,63 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          # This makes Actions fetch all Git history so that Changesets can generate changelogs with the correct commits
-          fetch-depth: 0
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v2
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+      - name: Cache .pnpm-store
+        uses: actions/cache@v2
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-node${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
 
       - name: Setup node
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
 
+      - name: Install pnpm
+        run: curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@6
+
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install
 
       - name: Lint source
         run: |
-          yarn lint:ci
+          pnpm lint:ci
 
-      - name: Build
+      - name: Check types
         run: |
-          yarn build
+          pnpm type:check
 
       - name: Run tests
         run: |
-          yarn test:ci
+          pnpm test:ci
         env:
           CI: true
 
       - name: Generate Code Coverage
-        # only when running in node v14
-        if: matrix.node == 14
-        uses: codecov/codecov-action@v1
+        # only when running in node v16
+        if: matrix.node == 16
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
-      - name: 'Publish to NPM'
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'ivandotv/fuerte' && matrix.node == 14
-        uses: changesets/action@master
+      - name: 'Consume changesets'
+        if: github.event_name == 'push' && github.repository == 'ivandotv/dumba' && matrix.node == 16 && github.ref == 'refs/heads/master'
+        uses: changesets/action@v1
+        id: 'changesets'
         with:
           # This expects you to have a script called release which does a build for your packages and calls changeset publish
-          publish: yarn release
-          commit: Version release
+          publish: pnpm release
+          commit: version bump
           title: Next release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: 'Generate docs'
+        if: steps.changesets.outputs.published == 'true'
+        run: pnpm gen:docs
 
-      - name: 'Debug environment'
-        uses: hmarr/debug-action@v2
+      - name: Commit docs
+        if: steps.changesets.outputs.published == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: 'Generate docs'

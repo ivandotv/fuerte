@@ -4,8 +4,7 @@ module.exports = {
     // commonjs: true,
     es6: true,
     node: true,
-    jest: true,
-    browser: true
+    jest: true
   },
   globals: {
     __DEV__: true,
@@ -13,66 +12,59 @@ module.exports = {
     __COMMIT_SHA__: true,
     __BUILD_DATE__: true
   },
-  plugins: ['@typescript-eslint/eslint-plugin', 'prettier'],
+  plugins: [
+    '@typescript-eslint/eslint-plugin',
+    'eslint-plugin-tsdoc',
+    'prettier'
+  ],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended'
+    'plugin:jest/recommended',
+    'prettier'
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
+    /* enabling "project" field is a performance hit
+      https://github.com/typescript-eslint/typescript-eslint/blob/master/docs/getting-started/linting/TYPED_LINTING.md#performance
+    */
     sourceType: 'module'
   },
-  settings: {
-    react: {
-      version: 'detect'
-    }
-  },
   rules: {
-    'react/prop-types': 'off',
-    'react/react-in-jsx-scope': 'off',
-    'no-unused-vars': 'off',
+    'tsdoc/syntax': 'warn',
+    // 'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': ['off', { argsIgnorePattern: '^_' }],
     'generator-star-spacing': ['error', { before: false, after: true }],
     'space-before-function-paren': 'off',
     'no-dupe-class-members': 'off',
     'no-useless-constructor': 'off',
     '@typescript-eslint/no-useless-constructor': 'off',
-    '@typescript-eslint/ban-ts-comment': [
-      'warn',
-      {
-        'ts-expect-error': 'allow-with-description',
-        'ts-ignore': 'allow-with-description'
-      }
-    ],
     'prettier/prettier': ['error'],
     'lines-between-class-members': ['error', 'always'],
     'padding-line-between-statements': [
       'error',
       { blankLine: 'always', prev: '*', next: 'return' }
     ],
-    'no-restricted-imports': [
+    '@typescript-eslint/explicit-function-return-type': [
       'error',
       {
-        patterns: ['@material-ui/*/*/*', '!@material-ui/core/test-utils/*']
+        allowExpressions: true,
+        allowTypedFunctionExpressions: true
       }
     ],
-    // '@typescript-eslint/explicit-function-return-type': [
-    //   'error',
-    //   {
-    //     allowExpressions: true,
-    //     allowTypedFunctionExpressions: true
-    //   }
-    // ],
-
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/explicit-member-accessibility': [
       'error',
       {
         accessibility: 'no-public'
       }
     ],
-    '@typescript-eslint/no-non-null-assertion': ['off'],
+    '@typescript-eslint/ban-ts-comment': [
+      'error',
+      {
+        'ts-expect-error': 'allow-with-description'
+      }
+    ],
+    '@typescript-eslint/no-non-null-assertion': [2],
     '@typescript-eslint/member-delimiter-style': [
       'error',
       {
@@ -85,17 +77,14 @@ module.exports = {
           requireLast: false
         }
       }
-    ],
-    '@typescript-eslint/no-unused-vars': [
-      'error',
-      { varsIgnorePattern: '^_', argsIgnorePattern: '^_' }
     ]
   },
   overrides: [
     {
       files: ['*.js', '*.jsx'],
       rules: {
-        '@typescript-eslint/explicit-function-return-type': 'off'
+        '@typescript-eslint/explicit-function-return-type': 'off',
+        '@typescript-eslint/no-var-requires': 'off'
       }
     }
   ]
