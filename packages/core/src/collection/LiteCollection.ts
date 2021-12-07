@@ -76,7 +76,8 @@ export class LiteCollection<
   }
 
   protected assertIsModel(model: unknown): asserts model is TModel {
-    if (!(model instanceof Model)) {
+    /* eslint-disable-next-line no-prototype-builtins */
+    if (!Model.prototype.isPrototypeOf(model as any)) {
       throw new Error(`model is not instance of Model class`)
     }
   }
