@@ -1,5 +1,5 @@
-node_modules
-coverage
+node_modules/
+coverage/
 dist/
 /.buildcache
 /.vscode/settings.json
