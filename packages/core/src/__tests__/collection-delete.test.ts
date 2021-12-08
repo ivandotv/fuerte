@@ -1,6 +1,6 @@
 import { configure } from 'mobx'
-import { DeleteConfig } from '../../utils/types'
-import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
+import { DeleteConfig } from '../utils/types'
+import { fixtureFactory } from './__fixtures__/fixtureFactory'
 
 configure({ enforceActions: 'always' })
 

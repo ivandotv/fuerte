@@ -1,5 +1,5 @@
 import { makeObservable, observable } from 'mobx'
-import { Model } from '../model/Model'
+import { Model } from '../../model/Model'
 import {
   ModelDeleteErrorCallback,
   ModelDeleteStartCallback,
@@ -7,7 +7,7 @@ import {
   SaveConfig,
   TransportSaveConfig,
   TransportSaveResponse
-} from '../utils/types'
+} from '../../utils/types'
 import type { TestCollection } from './TestCollection'
 import { TestTransport } from './TestTransport'
 

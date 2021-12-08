@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for collection/collection-config.ts</title>
+    <title>Code coverage report for transport/transport.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,13 +19,13 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">collection</a> collection-config.ts</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">transport</a> transport.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>0/3</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>0/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>0/3</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -74,28 +74,70 @@
 <a name='L9'></a><a href='#L9'>9</a>
 <a name='L10'></a><a href='#L10'>10</a>
 <a name='L11'></a><a href='#L11'>11</a>
-<a name='L12'></a><a href='#L12'>12</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export const DuplicateModelStrategy = {
-  KEEP_NEW: 'KEEP_NEW',
-  KEEP_OLD: 'KEEP_OLD',
-  COMPARE: 'COMPARE'
-} as const
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import type { Model } from '../model/Model'
 &nbsp;
-export const ModelCompareResult = {
-  KEEP_NEW: 'KEEP_NEW',
-  KEEP_OLD: 'KEEP_OLD',
-  KEEP_BOTH: 'KEEP_BOTH'
-} as const
+export interface Transport&lt;TModel extends Model&lt;any&gt; = Model&lt;any&gt;, TDTO = any&gt; {
+  load(config?: any): Promise&lt;{ data: TDTO[] }&gt;
+&nbsp;
+  save(model: TModel, config?: any): Promise&lt;{ data?: any } | void&gt;
+&nbsp;
+  delete(model: TModel, config?: any): Promise&lt;{ data?: any } | void&gt;
+}
+&nbsp;
+export class StubTransport&lt;TModel extends Model&lt;any&gt; = Model&lt;any&gt;, TDTO = any&gt;
+  implements Transport&lt;TModel, TDTO&gt;
+{
+<span class="fstat-no" title="function not covered" >  lo</span>ad(): Promise&lt;{ data: TDTO[] }&gt; {
+<span class="cstat-no" title="statement not covered" >    return Promise.resolve({ data: [] })</span>
+  }
+&nbsp;
+<span class="fstat-no" title="function not covered" >  sa</span>ve(m: TModel): Promise&lt;void&gt; {
+<span class="cstat-no" title="statement not covered" >    return Promise.resolve()</span>
+  }
+&nbsp;
+<span class="fstat-no" title="function not covered" >  de</span>lete(): Promise&lt;void&gt; {
+<span class="cstat-no" title="statement not covered" >    return Promise.resolve()</span>
+  }
+}
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -103,7 +145,7 @@ export const ModelCompareResult = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener">istanbul</a>
-                at Wed Dec 08 2021 15:36:06 GMT+0100 (Central European Standard Time)
+                at Wed Dec 08 2021 15:35:08 GMT+0100 (Central European Standard Time)
             </div>
         </div>
         <script src="../prettify.js"></script>

@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import { Transport } from '../transport/transport'
+import { Transport } from '../../transport/transport'
 import { TestModel } from './TestModel'
 
 export class TestTransport implements Transport<TestModel> {

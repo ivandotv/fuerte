@@ -1,4 +1,4 @@
-import { LiteCollection } from '../collection/LiteCollection'
+import { LiteCollection } from '../../collection/LiteCollection'
 import { testModelFactory } from './TestFactory'
 import { TestModel } from './TestModel'
 
