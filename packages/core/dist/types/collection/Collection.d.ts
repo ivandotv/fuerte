@@ -1,6 +1,6 @@
 import { Model } from '../model/Model';
 import { Transport } from '../transport/transport';
-import { CollectionConfig, DeleteConfig, DeleteErrorCallback, DeleteResult, DeleteStartCallback, DeleteSuccessCallback, FactoryFn, LoadConfig, LoadErrorCallback, LoadResult, LoadStartCallback, LoadSuccessCallback, RequiredCollectionConfig, SaveConfig, SaveErrorCallback, SaveResult, SaveStartCallback, SaveSuccessCallback, TransportDeleteConfig, TransportLoadConfig, TransportSaveConfig } from '../utils/types';
+import { CollectionConfig, DeleteConfig, DeleteErrorCallback, DeleteResult, DeleteStartCallback, DeleteSuccessCallback, FactoryFn, LoadConfig, LoadErrorCallback, LoadResult, LoadStartCallback, LoadSuccessCallback, RequiredCollectionConfig, SaveConfig, SaveErrorCallback, SaveResult, SaveStartCallback, SaveSuccessCallback, TransportDeleteConfig, TransportDeleteResponse, TransportLoadConfig, TransportLoadResponse, TransportSaveConfig, TransportSaveResponse } from '../utils/types';
 import { ASYNC_STATUS } from '../utils/utils';
 import { LiteCollection } from './LiteCollection';
 export declare class Collection<TModel extends Model<Collection<any, any, any>>, TFactory extends FactoryFn<TModel>, TTransport extends Transport<TModel>> extends LiteCollection<TModel, TFactory> {
@@ -17,9 +17,9 @@ export declare class Collection<TModel extends Model<Collection<any, any, any>>,
     getConfig(): RequiredCollectionConfig;
     getTransport(): TTransport;
     save(model: TModel, config?: SaveConfig, transportConfig?: TransportSaveConfig<TTransport>): Promise<SaveResult<TModel, TTransport>>;
-    protected callTransportSave(model: TModel, config?: TransportSaveConfig<TTransport>): Promise<import("../utils/types").UnwrapPromise<ReturnType<TTransport["save"]>>>;
-    protected callTransportDelete(model: TModel, config?: TransportDeleteConfig<TTransport>): Promise<import("../utils/types").UnwrapPromise<ReturnType<TTransport["delete"]>>>;
-    protected callTransportLoad(config?: TransportLoadConfig<TTransport>): Promise<import("../utils/types").UnwrapPromise<ReturnType<TTransport["load"]>>>;
+    protected callTransportSave(model: TModel, config?: TransportSaveConfig<TTransport>): Promise<TransportSaveResponse<TTransport>>;
+    protected callTransportDelete(model: TModel, config?: TransportDeleteConfig<TTransport>): Promise<TransportDeleteResponse<TTransport>>;
+    protected callTransportLoad(config?: TransportLoadConfig<TTransport>): Promise<TransportLoadResponse<TTransport>>;
     protected onSaveStart(data: SaveStartCallback<TModel, TTransport>): void;
     protected onSaveSuccess(data: SaveSuccessCallback<TModel, TTransport>): void;
     protected onSaveError(data: SaveErrorCallback<TModel, TTransport>): void;

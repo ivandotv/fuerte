@@ -12,4 +12,4 @@ export declare function unwrapResult<T extends {
     error: any;
 }>(result: T): Omit<Extract<T, {
     error: 0 | '' | false | undefined | null;
-}>, "error">;
+}>, 'error'>;
