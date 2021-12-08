@@ -1,13 +1,39 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+      core:
+        target: auto
+        flags:
+          - core
+      autosave:
+        target: auto
+        flags:
+          - autosave
+      transport-idb:
+        target: auto
+        flags:
+          - transport-idb
+
+comment:
+  layout: 'reach, diff, flags, files'
+  behavior: default
+  require_changes: false
+  require_base: true
+  require_head: true
+  branches: [master]
+
 flags:
   core:
-    carryforward: true
     paths:
       - packages/core/
-  autosave:
     carryforward: true
+  autosave:
     paths:
       - packages/autosave/
-  transport-idb:
     carryforward: true
+  transport-idb:
     paths:
       - packages/transport-idb/
+    carryforward: true
