@@ -82,7 +82,7 @@ describe('Collection - reset #reset #collection', () => {
     })
 
     expect(result).toEqual([collection.models, models])
-    models.forEach(m => {
+    models.forEach((m) => {
       expect(m.isDestroyed).toBe(true)
     })
   })

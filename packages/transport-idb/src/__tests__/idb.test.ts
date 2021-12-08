@@ -1,6 +1,6 @@
 import { Model } from '@fuerte/core'
 import 'fake-indexeddb/auto'
-// @ts-ignore - no .d.ts files
+// @ts-expect-error - no .d.ts files
 import FDBFactory from 'fake-indexeddb/lib/FDBFactory'
 import { openDB } from 'idb'
 import { TransportIDB } from '../idb-transport'
@@ -20,7 +20,7 @@ class TestModel extends Model {
     super()
   }
 
-  serialize() {
+  serialize(): Record<string, string> {
     return {
       id: this.id,
       foo: this.foo,
@@ -47,8 +47,8 @@ describe('Transport IDB', () => {
     const transport = new TransportIDB(dbName)
     const db = await transport.getDB()
 
-    expect(transport.keyPath).toEqual('cid')
-    expect(transport.store).toEqual('models')
+    expect(transport.keyPath).toBe('cid')
+    expect(transport.store).toBe('models')
     expect(db.name).toBe(dbName)
     expect(db.objectStoreNames).toEqual(['models'])
   })
@@ -76,7 +76,7 @@ describe('Transport IDB', () => {
 
     expect(db.name).toBe(dbName)
     expect(db.objectStoreNames).toEqual([store])
-    expect(createFn).toBeCalledWith(dbName, store, keyPath)
+    expect(createFn).toHaveBeenCalledWith(dbName, store, keyPath)
   })
 
   test('Save model', async () => {

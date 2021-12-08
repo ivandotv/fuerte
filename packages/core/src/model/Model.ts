@@ -23,7 +23,7 @@ import {
 } from '../utils/types'
 import { IdentityError } from './identity-error'
 
-// @ts-ignore - using return type on a protected method
+// @ts-expect-error: using return type on a protected method
 type Payload<T extends Model> = ReturnType<T['serialize']>
 
 export abstract class Model<

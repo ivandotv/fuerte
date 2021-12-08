@@ -1,6 +1,7 @@
 import { Model, Transport } from '@fuerte/core'
 import { IDBPDatabase, openDB } from 'idb'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class TransportIDB<T extends Model = Model, K = any>
   implements Transport<T, K>
 {
@@ -24,19 +25,19 @@ export class TransportIDB<T extends Model = Model, K = any>
     return { data }
   }
 
-  async save(model: T) {
+  async save(model: T): Promise<void> {
     const db = await this.getDB()
 
     await db.put(this.store, model.payload)
   }
 
-  async delete(model: T) {
+  async delete(model: T): Promise<void> {
     const db = await this.getDB()
 
     await db.delete(this.store, model.identity)
   }
 
-  async deleteAll() {
+  async deleteAll(): Promise<void> {
     const db = await this.getDB()
 
     await db.clear(this.store)
@@ -50,7 +51,7 @@ export class TransportIDB<T extends Model = Model, K = any>
     }
   }
 
-  async initDB() {
+  async initDB(): Promise<IDBPDatabase> {
     const db = await openDB(this.dbName, 1, {
       upgrade: (db, oldVersion) => {
         /* istanbul ignore next */
@@ -81,7 +82,7 @@ export class TransportIDB<T extends Model = Model, K = any>
     return db
   }
 
-  async getDB() {
+  async getDB(): Promise<IDBPDatabase> {
     if (!this.db) {
       if (this.customInitFn) {
         this.db = await this.customInitFn(this.dbName, this.store, this.keyPath)

@@ -242,7 +242,7 @@ export class Collection<
   protected callTransportSave(
     model: TModel,
     config?: TransportSaveConfig<TTransport>
-  ) {
+  ): Promise<TransportSaveResponse<TTransport>> {
     return this.transport.save(model, config) as Promise<
       TransportSaveResponse<TTransport>
     >
@@ -251,13 +251,15 @@ export class Collection<
   protected callTransportDelete(
     model: TModel,
     config?: TransportDeleteConfig<TTransport>
-  ) {
+  ): Promise<TransportDeleteResponse<TTransport>> {
     return this.transport.delete(model, config) as Promise<
       TransportDeleteResponse<TTransport>
     >
   }
 
-  protected callTransportLoad(config?: TransportLoadConfig<TTransport>) {
+  protected callTransportLoad(
+    config?: TransportLoadConfig<TTransport>
+  ): Promise<TransportLoadResponse<TTransport>> {
     return this.transport.load(config) as Promise<
       TransportLoadResponse<TTransport>
     >
@@ -277,7 +279,7 @@ export class Collection<
 
   get saving(): TModel[] {
     const models: TModel[] = []
-    this._saving.forEach(data => {
+    this._saving.forEach((data) => {
       models.push(data.model)
     })
 
@@ -475,6 +477,7 @@ export class Collection<
         } else {
           // model is already present
           // resolve if it should be added
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           const oldModel = this.modelByIdentity.get(model.identity)!
 
           const compareResult = loadConfig.compareFn(model, oldModel)
@@ -562,18 +565,18 @@ export class Collection<
 
   protected onLoadError(data: LoadErrorCallback<TModel, TTransport>): void {}
 
-  protected override notifyAdded(model: TModel) {
+  protected override notifyAdded(model: TModel): void {
     model._onAdded(this, false)
   }
 
-  protected override notifyRemoved(model: TModel) {
+  protected override notifyRemoved(model: TModel): void {
     model._onRemoved(this, false)
   }
 
   override destroy(): void {
     super.destroy()
 
-    this._models.forEach(model => {
+    this._models.forEach((model) => {
       model.destroy()
     })
     this._models = []

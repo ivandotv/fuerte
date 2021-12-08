@@ -108,7 +108,7 @@ test('When saving the model fails, model property holds the transport error', as
   await collection.save(model)
 
   expect(model.saveError).toEqual(response)
-  expect(model.hasErrors).toEqual(true)
+  expect(model.hasErrors).toBe(true)
 })
 
 test('When save process starts, previous save error is cleared.', async () => {
@@ -122,7 +122,7 @@ test('When save process starts, previous save error is cleared.', async () => {
   await collection.save(model).catch(() => {})
 
   expect(model.saveError).toEqual(response)
-  expect(model.hasErrors).toEqual(true)
+  expect(model.hasErrors).toBe(true)
 
   await collection.save(model)
 

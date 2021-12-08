@@ -37,7 +37,12 @@ const jestConfig = {
         }
       }
     ],
-    '@babel/preset-typescript'
+    [
+      '@babel/preset-typescript',
+      {
+        allowDeclareFields: true
+      }
+    ]
   ],
   ignore: ['node_modules'],
   sourceMaps: 'inline'

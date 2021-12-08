@@ -21,7 +21,7 @@ export const ASYNC_STATUS = {
   IDLE: 'IDLE'
 } as const
 
-const isObject = (value: unknown) =>
+const isObject = (value: unknown): boolean =>
   value !== null && (typeof value === 'object' || typeof value === 'function')
 
 export function isPromise<T>(value: Promise<T> | T): value is Promise<T> {
@@ -35,7 +35,17 @@ export function isPromise<T>(value: Promise<T> | T): value is Promise<T> {
   )
 }
 
-export function unwrapResult<T extends { error: any }>(result: T) {
+export function unwrapResult<T extends { error: any }>(
+  result: T
+): Omit<
+  Extract<
+    T,
+    {
+      error: 0 | '' | false | undefined | null
+    }
+  >,
+  'error'
+> {
   const data = result
 
   if (data.error) {

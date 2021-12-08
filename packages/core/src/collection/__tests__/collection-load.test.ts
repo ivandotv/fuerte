@@ -327,7 +327,7 @@ describe('Collection - load #load #collection', () => {
 
       expect(result.removed?.length).toBeTruthy()
 
-      result.removed?.forEach(m => {
+      result.removed?.forEach((m) => {
         expect(m.isDestroyed).toBe(true)
       })
     })
