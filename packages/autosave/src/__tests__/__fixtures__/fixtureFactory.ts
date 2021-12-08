@@ -1,4 +1,4 @@
-import { AutosaveCollectionConfig } from '../types'
+import { AutosaveCollectionConfig } from '../../types'
 import { TestAutosaveCollection } from './TestAutosaveCollection'
 import { testModelFactory } from './TestFactory'
 import { TestModel, TestModelData } from './TestModel'
