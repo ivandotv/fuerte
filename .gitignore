@@ -3,9 +3,8 @@ coverage/
 dist/
 /.buildcache
 /.vscode/settings.json
-scratch/
+/scratch
 /reports
-# rollup visualizer artifacts
-stats.html
 scratch
 *.tsbuildinfo
+.pnpm-debug.log
