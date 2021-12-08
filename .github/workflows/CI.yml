@@ -17,6 +17,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          # This makes Actions fetch all Git history so that Changesets can generate changelogs with the correct commits
+          fetch-depth: 0
 
       - name: Cache .pnpm-store
         uses: actions/cache@v2
@@ -57,7 +60,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: 'Consume changesets'
-        if: github.event_name == 'push' && github.repository == 'ivandotv/dumba' && matrix.node == 16 && github.ref == 'refs/heads/master'
+        if: github.event_name == 'push' && github.repository == 'ivandotv/fuerte' && matrix.node == 16 && github.ref == 'refs/heads/master'
         uses: changesets/action@v1
         id: 'changesets'
         with:
