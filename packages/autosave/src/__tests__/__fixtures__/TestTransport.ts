@@ -25,6 +25,6 @@ export class TestTransport implements Transport<TestModel> {
   }
 
   async getById(id: string) {
-    return { data: this.data.find(model => model.id === id) }
+    return { data: this.data.find((model) => model.id === id) }
   }
 }

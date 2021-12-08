@@ -1,4 +1,4 @@
-import { AutosaveCollection } from '../AutosaveCollection'
+import { AutosaveCollection } from '../../AutosaveCollection'
 import { testModelFactory } from './TestFactory'
 import { TestModel } from './TestModel'
 import { TestTransport } from './TestTransport'

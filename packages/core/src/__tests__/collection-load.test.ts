@@ -1,13 +1,13 @@
 import { configure, runInAction } from 'mobx'
-import { LoadConfig } from '../../utils/types'
-import { ASYNC_STATUS } from '../../utils/utils'
-import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
-import { TestCollection } from '../../__fixtures__/TestCollection'
-import { TestModel, TestModelData } from '../../__fixtures__/TestModel'
+import { LoadConfig } from '../utils/types'
+import { ASYNC_STATUS } from '../utils/utils'
+import { fixtureFactory } from './__fixtures__/fixtureFactory'
+import { TestCollection } from './__fixtures__/TestCollection'
+import { TestModel, TestModelData } from './__fixtures__/TestModel'
 import {
   DuplicateModelStrategy,
   ModelCompareResult
-} from '../collection-config'
+} from '../collection/collection-config'
 
 configure({ enforceActions: 'never' })
 
@@ -327,7 +327,7 @@ describe('Collection - load #load #collection', () => {
 
       expect(result.removed?.length).toBeTruthy()
 
-      result.removed?.forEach(m => {
+      result.removed?.forEach((m) => {
         expect(m.isDestroyed).toBe(true)
       })
     })

@@ -1,4 +1,4 @@
-import { CollectionConfig, LiteCollectionConfig } from '../utils/types'
+import { CollectionConfig, LiteCollectionConfig } from '../../utils/types'
 import { TestCollection } from './TestCollection'
 import { testModelFactory, testModelFactoryAsync } from './TestFactory'
 import { TestLiteCollection } from './TestLiteCollection'

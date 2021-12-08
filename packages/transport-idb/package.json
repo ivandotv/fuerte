@@ -3,18 +3,15 @@
   "version": "3.0.0",
   "private": false,
   "author": "Ivan Vlatkovic",
-  "description": "IndexedDB transport mechanism for @fuerte/core",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/transport-idb.esm.js",
-  "unpkg": "dist/unpkg/transport-idb.min.js",
-  "jsdelivr": "dist/unpkg/transport-idb.min.js",
+  "description": "IndexedDB transport mechanism form @fuerte/core",
+  "main": "./dist/prod/transport-idb.js",
+  "umd": "./dist/prod/transport-idb.umd.js",
   "exports": {
-    "import": "./dist/esm/transport-idb.esm.js",
-    "require": "./dist/cjs/transport-idb.js",
-    "development": "./dist/cjs/transport-idb.development.js"
+    "development": "./dist/dev/transport-idb.esm.js",
+    "import": "./dist/prod/transport-idb.esm.js",
+    "require": "./dist/prod/transport-idb.js"
   },
-  "sideEffects": false,
-  "types": "dist/types/",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist",
     "src"
@@ -25,15 +22,20 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint --fix \"src/**/\"",
-    "lint:ci": "eslint \"src/**/\"",
-    "docs": "del docs/api && typedoc --theme markdown --readme none --excludePrivate  --excludeInternal --exclude ./src/globals.d.ts --out docs/api ./src",
-    "test": "cross-env BABEL_ENV=test jest --verbose --coverage --no-cache",
-    "test:watch": "cross-env BABEL_ENV=test jest --watch",
-    "test:ci": "cross-env BABEL_ENV=test jest --runInBand --ci --coverage --coverageDirectory=coverage",
-    "type:check": "tsc -p tsconfig.check-types.json",
-    "type:build": "del dist/types && del .buildcache && tsc -p tsconfig.build-types.json",
-    "build": "yarn type:check && yarn type:build && node ../../scripts/build-browser.js --bundle=umd,cjs,esm",
-    "prepublishOnly": "yarn build"
+    "lint:check": "eslint \"src/**/\"",
+    "lint:ci": "pnpm lint:check && pnpm format:check",
+    "format": "prettier --write src/**",
+    "format:check": "prettier --check src/**",
+    "test": "cross-env NODE_ENV=test jest --verbose --coverage --no-cache",
+    "test:watch": "cross-env NODE_ENV=test jest --watch",
+    "test:ci": "cross-env NODE_ENV=test jest --runInBand --ci --coverage --coverageDirectory=coverage",
+    "build:prod": "cross-env NODE_ENV=production microbundle --tsconfig ./tsconfig.json  --format modern,cjs,umd  --output dist/prod",
+    "build:dev": "cross-env NODE_ENV=development microbundle --define process.env.NODE_ENV=development --tsconfig ./tsconfig.json --generateTypes false --format modern --output dist/dev",
+    "build": "rm -rf ./dist && pnpm build:dev && pnpm build:prod",
+    "type:check": "tsc --noEmit true",
+    "gen:docs": "rm -rf ./docs/api && typedoc --theme markdown --readme none --excludePrivate  --excludeInternal --exclude ./src/globals.d.ts --exclude ./src/__tests__ --out docs/api ./src",
+    "prepublishOnly": "pnpm build",
+    "release": "pnpm run prepublishOnly && pnpm changeset publish"
   },
   "repository": {
     "type": "git",
@@ -48,14 +50,38 @@
     "@fuerte"
   ],
   "dependencies": {
-    "idb": "^6.1.2"
+    "idb": "^7.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^27.0.1",
-    "fake-indexeddb": "^3.1.3",
-    "@fuerte/core": "^2.0.0"
+    "mobx": "^6.3.8",
+    "@babel/preset-typescript": "^7.16.0",
+    "@changesets/cli": "^2.18.1",
+    "@types/jest": "^27.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.6.0",
+    "@typescript-eslint/parser": "^5.6.0",
+    "babel-plugin-dev-expression": "^0.2.3",
+    "babel-plugin-transform-define": "^2.0.1",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.4.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-jest": "^25.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-promise": "^5.2.0",
+    "eslint-plugin-tsdoc": "^0.2.14",
+    "husky": "^7.0.4",
+    "jest": "^27.4.3",
+    "jest-mock-console": "^1.2.3",
+    "jest-watch-typeahead": "^1.0.0",
+    "lint-staged": "^12.1.2",
+    "microbundle": "^0.14.2",
+    "prettier": "^2.5.1",
+    "shx": "^0.3.3",
+    "typedoc": "^0.22.10",
+    "typedoc-plugin-markdown": "^3.11.7",
+    "fake-indexeddb": "^3.1.7",
+    "@fuerte/core": "workspace:*"
   },
   "peerDependencies": {
-    "@fuerte/core": "^2.0.0"
+    "@fuerte/core": "workspace:*"
   }
 }

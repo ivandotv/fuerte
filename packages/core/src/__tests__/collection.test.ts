@@ -1,9 +1,9 @@
-import { configure, isObservableProp } from 'mobx'
-import { CollectionConfig } from '../../utils/types'
-import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
-import { testModelFactoryAsync } from '../../__fixtures__/TestFactory'
-import { TestModel } from '../../__fixtures__/TestModel'
-import { Collection } from '../Collection'
+import { configure } from 'mobx'
+import { Collection } from '../collection/Collection'
+import { CollectionConfig } from '../utils/types'
+import { fixtureFactory } from './__fixtures__/fixtureFactory'
+import { testModelFactoryAsync } from './__fixtures__/TestFactory'
+import { TestModel } from './__fixtures__/TestModel'
 
 configure({ enforceActions: 'always' })
 

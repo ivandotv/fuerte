@@ -1,12 +1,10 @@
-node_modules
-coverage
-dist
+node_modules/
+coverage/
+dist/
 /.buildcache
 /.vscode/settings.json
-scratch
-reports
-# rollup visualizer artifacts
-stats.html
+/scratch
+/reports
 scratch
 *.tsbuildinfo
-lerna-debug.log
+.pnpm-debug.log

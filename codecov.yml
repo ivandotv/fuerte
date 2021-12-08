@@ -1,7 +1,13 @@
 flags:
-  # filter the folder(s) you wish to measure by that flag
-  dumba:
-    # only include files in the backend folder
+  core:
     carryforward: true
     paths:
-      - packages/dumba/
+      - packages/core/
+  autosave:
+    carryforward: true
+    paths:
+      - packages/autosave/
+  transport-idb:
+    carryforward: true
+    paths:
+      - packages/transport-idb/

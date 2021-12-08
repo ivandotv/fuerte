@@ -1,6 +1,6 @@
 import { configure } from 'mobx'
-import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
-import { TestModel } from '../../__fixtures__/TestModel'
+import { fixtureFactory } from './__fixtures__/fixtureFactory'
+import { TestModel } from './__fixtures__/TestModel'
 
 configure({ enforceActions: 'observed' })
 
@@ -156,7 +156,7 @@ describe('Collection - remove #remove #collection', () => {
       const onRemovedSpy = jest.spyOn(collection, 'onRemoved')
 
       collection.add(models)
-      collection.remove(models.map(model => model.cid))
+      collection.remove(models.map((model) => model.cid))
 
       for (let i = 0; i < models.length; i++) {
         expect(onRemovedSpy.mock.calls[i]).toEqual(

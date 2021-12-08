@@ -212,7 +212,7 @@ export class LiteCollection<
 
     const idReaction = reaction(
       () => model.identity,
-      value => {
+      (value) => {
         this.modelByIdentity.set(value, model)
       },
       { name: `id-${model.cid}` }
@@ -277,13 +277,13 @@ export class LiteCollection<
   }
 
   get new(): TModel[] {
-    return this.models.filter(model => {
+    return this.models.filter((model) => {
       return model.isNew
     })
   }
 
   get deleted(): TModel[] {
-    return this.models.filter(model => {
+    return this.models.filter((model) => {
       return model.isDeleted
     })
   }
@@ -293,11 +293,11 @@ export class LiteCollection<
   }
 
   get deleting(): TModel[] {
-    return this._models.filter(m => m.isDeleting)
+    return this._models.filter((m) => m.isDeleting)
   }
 
   get saving(): TModel[] {
-    return this._models.filter(m => m.isSaving)
+    return this._models.filter((m) => m.isSaving)
   }
 
   pop(config?: RemoveConfig): TModel | undefined {
@@ -365,7 +365,7 @@ export class LiteCollection<
     config?: RemoveConfig
   ): TModel | TModel[] | undefined {
     const modelCids = new Set(
-      wrapInArray(model).map(model => {
+      wrapInArray(model).map((model) => {
         return model.cid
       })
     )
@@ -373,7 +373,7 @@ export class LiteCollection<
     const removed: TModel[] = []
     const currentCount = this._models.length
 
-    const handleRemoval = (m: TModel) => {
+    const handleRemoval = (m: TModel): void => {
       removed.push(m)
       this.stopTracking(m)
       this.notifyRemoved(m)
@@ -496,9 +496,9 @@ export class LiteCollection<
   destroy(): void {
     this.onDestroy()
 
-    this.identityReactionByCid.forEach(dispose => dispose())
+    this.identityReactionByCid.forEach((dispose) => dispose())
 
-    this._models.forEach(model => {
+    this._models.forEach((model) => {
       this.notifyRemoved(model)
     })
   }

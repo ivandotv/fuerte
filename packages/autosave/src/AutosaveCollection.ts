@@ -9,6 +9,7 @@ import { debounceReaction } from './utils'
 import { Collection } from '@fuerte/core'
 
 export class AutosaveCollection<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   TModel extends Model<Collection<any, any, any>>,
   TFactory extends FactoryFn<TModel>,
   TTransport extends Transport<TModel>
@@ -36,7 +37,7 @@ export class AutosaveCollection<
     return super.getConfig() as RequiredAutosaveCollectionConfig
   }
 
-  protected override startTracking(model: TModel) {
+  protected override startTracking(model: TModel): void {
     super.startTracking(model)
 
     if (this.config.autoSave.enabled) {
@@ -52,7 +53,7 @@ export class AutosaveCollection<
     this.stopAutoSave(model)
   }
 
-  protected autoSave(payload: { data: any; model: TModel }): void {
+  protected autoSave(payload: { data: unknown; model: TModel }): void {
     this.save(payload.model)
   }
 
@@ -70,7 +71,7 @@ export class AutosaveCollection<
       : this._models
 
     const modelsStarted: TModel[] = []
-    modelsArr.forEach(model => {
+    modelsArr.forEach((model) => {
       const enabled = this.saveReactionByCid.get(model.cid)
       if (!enabled) {
         modelsStarted.push(model)
@@ -121,7 +122,7 @@ export class AutosaveCollection<
       : this._models
 
     const modelsStopped: TModel[] = []
-    modelsArr.forEach(model => {
+    modelsArr.forEach((model) => {
       const disposer = this.saveReactionByCid.get(model.cid)
       if (disposer) {
         disposer()
@@ -146,7 +147,7 @@ export class AutosaveCollection<
 
   protected onStartAutoSave(models: TModel[]): void {}
 
-  override destroy() {
+  override destroy(): void {
     super.destroy()
 
     this.stopAutoSave()

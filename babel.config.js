@@ -13,201 +13,39 @@ const commitSha = execSync('git rev-parse --short HEAD')
   .toString()
   .replace(/[\r\n]+$/, '')
 
-const ignoreForTests = ['node_modules', 'src/**/*.d.ts']
-const ignoreForProduction = [
-  'node_modules',
-  'src/**/__tests__/**/*',
-  'src/**/*.spec.ts',
-  'src/**/*.test.ts',
-  'src/**/*.d.ts',
-  'src/scratch/**'
-]
-
 const replacements = {
   __VERSION__: pkgVersion,
   __BUILD_DATE__: buildDate,
-  __COMMIT_SHA__: commitSha
+  __COMMIT_SHA__: commitSha,
+  'process.env.NODE_ENV': nodeEnv
 }
 
-//browser only replacements
-const browserReplacements = Object.assign(
-  {},
-  {
-    'process.env.NODE_ENV': nodeEnv
-  },
-  replacements
-)
+const plugins = ['dev-expression', ['transform-define', replacements]]
 
-const plugins = [
-  [
-    '@babel/plugin-transform-typescript',
-    {
-      allowDeclareFields: true
-    }
-  ],
-  ['@babel/plugin-proposal-nullish-coalescing-operator'], //node v10
-  ['@babel/plugin-proposal-optional-chaining'], // node v10
-  ['@babel/proposal-class-properties', { loose: true }], // stage-3 proposal
-  ['@babel/proposal-private-methods', { loose: true }], // stage-3 proposal
-  ['@babel/plugin-proposal-private-property-in-object', { loose: true }],
-  ['annotate-pure-calls'],
-  'dev-expression',
-  ['transform-define', replacements]
-].concat('production' === nodeEnv ? 'minify-dead-code-elimination' : [])
+//default babel config
+const config = { plugins }
 
-module.exports = {
-  presets: ['@babel/preset-env'],
+//babel config for Jest tests
+const jestConfig = {
   plugins,
-  exclude: ['transform-async-to-generator', 'transform-regenerator'],
-  env: {
-    test: {
-      presets: [
-        [
-          '@babel/env',
-          {
-            targets: {
-              node: 'current'
-            }
-          }
-        ]
-      ],
-      ignore: ignoreForTests,
-      sourceMaps: 'inline'
-    },
-    browserWatch: {
-      presets: [
-        [
-          '@babel/env',
-          {
-            useBuiltIns: 'usage',
-            corejs: 3,
-            targets: {
-              browsers: [
-                'last 1 chrome version',
-                'last 1 firefox version',
-                'last 1 safari version'
-              ]
-            }
-          }
-        ]
-      ],
-      plugins: [['transform-define', browserReplacements]],
-      ignore: ignoreForProduction
-    },
-    browser: {
-      presets: [
-        [
-          '@babel/env',
-          {
-            useBuiltIns: 'usage',
-            corejs: 3,
-            targets: {
-              // browsers: ['>0.2%', 'not dead', 'not op_mini all']
-              browsers: [
-                'last 2 chrome version',
-                'last 2 firefox version',
-                'last 2 safari version'
-              ]
-            }
-          }
-        ]
-      ],
-      plugins: [['transform-define', browserReplacements]],
-      ignore: ignoreForProduction
-    },
-    browserDev: {
-      presets: [
-        [
-          '@babel/env',
-          {
-            useBuiltIns: 'usage',
-            corejs: 3,
-            targets: {
-              // browsers: ['>0.2%', 'not dead', 'not op_mini all']
-              // browsers: ['last 2 chrome version']
-              browsers: [
-                'last 1 chrome version',
-                'last 1 firefox version',
-                'last 1 safari version'
-              ]
-            }
-          }
-        ]
-      ],
-      ignore: ignoreForProduction,
-      plugins: [['transform-define', browserReplacements]]
-    },
-    browserModule: {
-      // target node runtime
-      presets: [
-        [
-          '@babel/env',
-          {
-            targets: {
-              // esmodules: true
-              // browsers: ['last 2 chrome version']
-              browsers: [
-                'last 2 chrome version',
-                'last 2 firefox version',
-                'last 2 safari version'
-              ]
-            }
-          }
-        ]
-      ],
-
-      plugins: [['transform-define', browserReplacements]],
-      ignore: ignoreForProduction
-    },
-    cjsWatch: {
-      // commonjs for node
-      presets: [
-        [
-          '@babel/env',
-          {
-            // debug: true,
-            modules: 'cjs',
-            targets: {
-              node: 'current'
-            }
-          }
-        ]
-      ],
-      // plugins: serverPlugins,
-      ignore: ignoreForProduction
-    },
-    cjs: {
-      // commonjs for node
-      presets: [
-        [
-          '@babel/env',
-          {
-            // debug: true,
-            modules: 'cjs',
-            targets: {
-              node: 14 // es2028
-            }
-          }
-        ]
-      ],
-      // plugins: serverPlugins,
-      ignore: ignoreForProduction
-    },
-    esm: {
-      // esm for node (also "module" field in package.json)
-      presets: [
-        [
-          '@babel/env',
-          {
-            modules: false,
-            targets: {
-              node: 14 // es2028
-            }
-          }
-        ]
-      ],
-      // plugins: serverPlugins,
-      ignore: ignoreForProduction
-    }
-  }
+  presets: [
+    [
+      '@babel/preset-env',
+      {
+        targets: {
+          node: 'current'
+        }
+      }
+    ],
+    [
+      '@babel/preset-typescript',
+      {
+        allowDeclareFields: true
+      }
+    ]
+  ],
+  ignore: ['node_modules'],
+  sourceMaps: 'inline'
 }
+
+module.exports = process.env.NODE_ENV === 'test' ? jestConfig : config

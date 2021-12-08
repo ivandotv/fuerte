@@ -5,6 +5,7 @@ module.exports = {
   ...baseConfig,
   rootDir: '.',
   projects: undefined,
+  testEnvironment: 'jsdom',
   testMatch: ['<rootDir>/src/**/__tests__/?(*.)+(spec|test).[jt]s?(x)'],
   collectCoverageFrom: [
     '<rootDir>/src/**',

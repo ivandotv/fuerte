@@ -1,8 +1,6 @@
 import { configure } from 'mobx'
-import { unwrapResult } from '../..'
-import { SaveConfig } from '../../utils/types'
-import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
-import { TestModel } from '../../__fixtures__/TestModel'
+import { SaveConfig } from '../utils/types'
+import { fixtureFactory } from './__fixtures__/fixtureFactory'
 
 configure({ enforceActions: 'always' })
 
@@ -102,7 +100,7 @@ describe('Collection - save #save #collection', () => {
     const firstResult = collection.save(model)
     jest.spyOn(transport, 'save').mockImplementationOnce(
       () =>
-        new Promise(resolve =>
+        new Promise((resolve) =>
           setTimeout(() => {
             resolve({ data: { id: '123' } })
           }, 10)

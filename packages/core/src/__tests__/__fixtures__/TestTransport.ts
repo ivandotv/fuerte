@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import { Transport } from '../transport/transport'
+import { Transport } from '../../transport/transport'
 import { TestModel } from './TestModel'
 
 export class TestTransport implements Transport<TestModel> {
@@ -26,6 +26,6 @@ export class TestTransport implements Transport<TestModel> {
   }
 
   async getById(id: string) {
-    return { data: this.data.find(model => model.id === id) }
+    return { data: this.data.find((model) => model.id === id) }
   }
 }

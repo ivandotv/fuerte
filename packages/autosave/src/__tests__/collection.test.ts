@@ -1,6 +1,6 @@
 import { configure } from 'mobx'
 import { AutosaveCollectionConfig } from '../types'
-import { fixtureFactory } from '../__fixtures__/fixtureFactory'
+import { fixtureFactory } from './__fixtures__/fixtureFactory'
 
 configure({ enforceActions: 'never' })
 

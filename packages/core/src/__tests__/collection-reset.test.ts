@@ -1,7 +1,7 @@
 import { configure } from 'mobx'
-import { fixtureFactory } from '../../__fixtures__/fixtureFactory'
-import { TestCollection } from '../../__fixtures__/TestCollection'
-import { TestModelData } from '../../__fixtures__/TestModel'
+import { fixtureFactory } from './__fixtures__/fixtureFactory'
+import { TestCollection } from './__fixtures__/TestCollection'
+import { TestModelData } from './__fixtures__/TestModel'
 
 configure({ enforceActions: 'always' })
 
@@ -82,7 +82,7 @@ describe('Collection - reset #reset #collection', () => {
     })
 
     expect(result).toEqual([collection.models, models])
-    models.forEach(m => {
+    models.forEach((m) => {
       expect(m.isDestroyed).toBe(true)
     })
   })
