@@ -1,5 +1,14 @@
 # @fuerte/transport-idb
 
+## 3.0.1
+
+### Patch Changes
+
+- da5f43f: switch all build tasks to use microbundle.
+  Fix eslint errors.
+- Updated dependencies [da5f43f]
+  - @fuerte/core@2.0.2
+
 ## 3.0.0
 
 ### Patch Changes

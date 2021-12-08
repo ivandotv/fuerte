@@ -1,5 +1,12 @@
 # @fuerte/core
 
+## 2.0.2
+
+### Patch Changes
+
+- da5f43f: switch all build tasks to use microbundle.
+  Fix eslint errors.
+
 ## 2.0.1
 
 ### Patch Changes
