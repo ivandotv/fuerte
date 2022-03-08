@@ -466,7 +466,7 @@ export class LiteCollection<
         continue
       }
 
-      const model = await this.factory(modifiedData)
+      const model = await Promise.resolve(this.create(modifiedData))
 
       modelsToAdd.push(model)
     }

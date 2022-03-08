@@ -470,8 +470,7 @@ export class Collection<
         if (!modifiedData) {
           continue
         }
-        const model = await this.factory(modifiedData)
-
+        const model = await Promise.resolve(this.create(modifiedData))
         if (this.notPresent(model)) {
           modelsToAdd.push(model)
         } else {
