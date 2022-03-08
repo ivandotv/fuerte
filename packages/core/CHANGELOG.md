@@ -1,5 +1,11 @@
 # @fuerte/core
 
+## 2.0.3
+
+### Patch Changes
+
+- 654507b: fix: initialize model immediately after the creation
+
 ## 2.0.2
 
 ### Patch Changes

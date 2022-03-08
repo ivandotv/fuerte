@@ -1,5 +1,12 @@
 # @fuerte/transport-idb
 
+## 3.0.2
+
+### Patch Changes
+
+- Updated dependencies [654507b]
+  - @fuerte/core@2.0.3
+
 ## 3.0.1
 
 ### Patch Changes
