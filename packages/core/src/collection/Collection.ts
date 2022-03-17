@@ -119,7 +119,7 @@ export class Collection<
     })
   }
 
-  getConfig(): RequiredCollectionConfig {
+  override getConfig(): RequiredCollectionConfig {
     return this.config
   }
 
@@ -273,11 +273,11 @@ export class Collection<
 
   protected onSaveError(data: SaveErrorCallback<TModel, TTransport>): void {}
 
-  get deleting(): TModel[] {
+  override get deleting(): TModel[] {
     return [...this._deleting.values()]
   }
 
-  get saving(): TModel[] {
+  override get saving(): TModel[] {
     const models: TModel[] = []
     this._saving.forEach((data) => {
       models.push(data.model)
