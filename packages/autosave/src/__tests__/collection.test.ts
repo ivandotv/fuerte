@@ -4,6 +4,10 @@ import { fixtureFactory } from './__fixtures__/fixtureFactory'
 
 configure({ enforceActions: 'never' })
 
+beforeEach(() => {
+  jest.clearAllMocks()
+})
+
 const fixtures = fixtureFactory()
 describe('Collection - autosave #autosave #collection', () => {
   test('Can pass in custom configuration', () => {

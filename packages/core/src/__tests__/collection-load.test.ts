@@ -20,6 +20,7 @@ beforeEach(() => {
     const model = fixtures.model()
     modelPool.push(model)
   }
+  jest.clearAllMocks()
 })
 
 describe('Collection - load #load #collection', () => {

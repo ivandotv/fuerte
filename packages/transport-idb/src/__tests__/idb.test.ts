@@ -1,9 +1,13 @@
 import { Model } from '@fuerte/core'
 import 'fake-indexeddb/auto'
-// @ts-expect-error - no .d.ts files
 import FDBFactory from 'fake-indexeddb/lib/FDBFactory'
 import { openDB } from 'idb'
 import { TransportIDB } from '../idb-transport'
+
+beforeEach(() => {
+  global.indexedDB = new FDBFactory()
+  jest.clearAllMocks()
+})
 
 const dbName = 'test_db'
 const store = 'test_store'
@@ -30,11 +34,6 @@ class TestModel extends Model {
 }
 
 describe('Transport IDB', () => {
-  beforeEach(() => {
-    // @ts-expect-error - global
-    global.indexedDB = new FDBFactory()
-  })
-
   test('Create DB', async () => {
     const transport = new TransportIDB(dbName, store, keyPath)
     const db = await transport.getDB()
@@ -85,9 +84,11 @@ describe('Transport IDB', () => {
 
     await transport.save(model)
 
-    const result = await transport.getById(model.identity)
+    const result = (await transport.getById(model.identity)) as {
+      data: unknown
+    }
 
-    expect(result?.data).toEqual(model.payload)
+    expect(result.data).toEqual(model.payload)
   })
 
   test('Load all data', async () => {

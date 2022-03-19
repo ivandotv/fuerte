@@ -7,6 +7,10 @@ import { TestModel } from './__fixtures__/TestModel'
 
 configure({ enforceActions: 'always' })
 
+beforeEach(() => {
+  jest.clearAllMocks()
+})
+
 const fixtures = fixtureFactory()
 
 describe('Collection #collection', () => {
