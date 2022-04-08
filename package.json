@@ -13,11 +13,11 @@
     "release": "pnpm multi run prepublishOnly --workspace-concurrency 1 && pnpm changeset publish"
   },
   "dependencies": {
-    "@changesets/cli": "^2.21.1",
+    "@changesets/cli": "^2.22.0",
     "husky": "^7.0.4",
     "lint-staged": "^12.3.7"
   },
   "devDependencies": {
-    "prettier": "^2.6.0"
+    "prettier": "^2.6.2"
   }
 }

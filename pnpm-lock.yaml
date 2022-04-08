@@ -4,16 +4,16 @@ importers:
 
   .:
     specifiers:
-      '@changesets/cli': ^2.21.1
+      '@changesets/cli': ^2.22.0
       husky: ^7.0.4
       lint-staged: ^12.3.7
-      prettier: ^2.6.0
+      prettier: ^2.6.2
     dependencies:
-      '@changesets/cli': 2.21.1
+      '@changesets/cli': 2.22.0
       husky: 7.0.4
       lint-staged: 12.3.7
     devDependencies:
-      prettier: 2.6.0
+      prettier: 2.6.2
 
   packages/autosave:
     specifiers:
@@ -1670,6 +1670,25 @@ packages:
       prettier: 1.19.1
       resolve-from: 5.0.0
       semver: 5.7.1
+    dev: true
+
+  /@changesets/apply-release-plan/6.0.0:
+    resolution: {integrity: sha512-gp6nIdVdfYdwKww2+f8whckKmvfE4JEm4jJgBhTmooi0uzHWhnxvk6JIzQi89qEAMINN0SeVNnXiAtbFY0Mj3w==}
+    dependencies:
+      '@babel/runtime': 7.16.3
+      '@changesets/config': 2.0.0
+      '@changesets/get-version-range-type': 0.3.2
+      '@changesets/git': 1.3.2
+      '@changesets/types': 5.0.0
+      '@manypkg/get-packages': 1.1.3
+      detect-indent: 6.1.0
+      fs-extra: 7.0.1
+      lodash.startcase: 4.4.0
+      outdent: 0.5.0
+      prettier: 1.19.1
+      resolve-from: 5.0.0
+      semver: 5.7.1
+    dev: false
 
   /@changesets/assemble-release-plan/5.1.1:
     resolution: {integrity: sha512-TQRZnK1sqYuoibJdSwpqE81rfDh0Xrkkr/M6bCQZ1ogGoRJNVbNYDWvNfkNvR4rEdRylri8cfKzffo/ruoy8QA==}
@@ -1680,11 +1699,30 @@ packages:
       '@changesets/types': 4.1.0
       '@manypkg/get-packages': 1.1.3
       semver: 5.7.1
+    dev: true
+
+  /@changesets/assemble-release-plan/5.1.2:
+    resolution: {integrity: sha512-nOFyDw4APSkY/vh5WNwGEtThPgEjVShp03PKVdId6wZTJALVcAALCSLmDRfeqjE2z9EsGJb7hZdDlziKlnqZgw==}
+    dependencies:
+      '@babel/runtime': 7.16.3
+      '@changesets/errors': 0.1.4
+      '@changesets/get-dependents-graph': 1.3.2
+      '@changesets/types': 5.0.0
+      '@manypkg/get-packages': 1.1.3
+      semver: 5.7.1
+    dev: false
 
   /@changesets/changelog-git/0.1.10:
     resolution: {integrity: sha512-4t7zqPOv3aDZp4Y+AyDhiOG2ypaUXDpOz+MT1wOk3uSZNv78AaDByam0hdk5kfYuH1RlMecWU4/U5lO1ZL5eaA==}
     dependencies:
       '@changesets/types': 4.1.0
+    dev: true
+
+  /@changesets/changelog-git/0.1.11:
+    resolution: {integrity: sha512-sWJvAm+raRPeES9usNpZRkooeEB93lOpUN0Lmjz5vhVAb7XGIZrHEJ93155bpE1S0c4oJ5Di9ZWgzIwqhWP/Wg==}
+    dependencies:
+      '@changesets/types': 5.0.0
+    dev: false
 
   /@changesets/cli/2.21.1:
     resolution: {integrity: sha512-4AJKo/UW0P217m2VHjiuhZy+CstLw54eu9I1fsY7tst76GeEN7mX0mVrTNEisR6CvOH7wLav3ITqvDcKVPbKsw==}
@@ -1721,6 +1759,45 @@ packages:
       spawndamnit: 2.0.0
       term-size: 2.2.1
       tty-table: 2.8.13
+    dev: true
+
+  /@changesets/cli/2.22.0:
+    resolution: {integrity: sha512-4bA3YoBkd5cm5WUxmrR2N9WYE7EeQcM+R3bVYMUj2NvffkQVpU3ckAI+z8UICoojq+HRl2OEwtz+S5UBmYY4zw==}
+    hasBin: true
+    dependencies:
+      '@babel/runtime': 7.16.3
+      '@changesets/apply-release-plan': 6.0.0
+      '@changesets/assemble-release-plan': 5.1.2
+      '@changesets/changelog-git': 0.1.11
+      '@changesets/config': 2.0.0
+      '@changesets/errors': 0.1.4
+      '@changesets/get-dependents-graph': 1.3.2
+      '@changesets/get-release-plan': 3.0.8
+      '@changesets/git': 1.3.2
+      '@changesets/logger': 0.0.5
+      '@changesets/pre': 1.0.11
+      '@changesets/read': 0.5.5
+      '@changesets/types': 5.0.0
+      '@changesets/write': 0.1.8
+      '@manypkg/get-packages': 1.1.3
+      '@types/is-ci': 3.0.0
+      '@types/semver': 6.2.3
+      chalk: 2.4.2
+      enquirer: 2.3.6
+      external-editor: 3.1.0
+      fs-extra: 7.0.1
+      human-id: 1.0.2
+      is-ci: 3.0.1
+      meow: 6.1.1
+      outdent: 0.5.0
+      p-limit: 2.3.0
+      preferred-pm: 3.0.3
+      resolve-from: 5.0.0
+      semver: 5.7.1
+      spawndamnit: 2.0.0
+      term-size: 2.2.1
+      tty-table: 2.8.13
+    dev: false
 
   /@changesets/config/1.7.0:
     resolution: {integrity: sha512-Ctk6ZO5Ay6oZ95bbKXyA2a1QG0jQUePaGCY6BKkZtUG4PgysesfmiQOPgOY5OsRMt8exJeo6l+DJ75YiKmh0rQ==}
@@ -1732,6 +1809,19 @@ packages:
       '@manypkg/get-packages': 1.1.3
       fs-extra: 7.0.1
       micromatch: 4.0.4
+    dev: true
+
+  /@changesets/config/2.0.0:
+    resolution: {integrity: sha512-r5bIFY6CN3K6SQ+HZbjyE3HXrBIopONR47mmX7zUbORlybQXtympq9rVAOzc0Oflbap8QeIexc+hikfZoREXDg==}
+    dependencies:
+      '@changesets/errors': 0.1.4
+      '@changesets/get-dependents-graph': 1.3.2
+      '@changesets/logger': 0.0.5
+      '@changesets/types': 5.0.0
+      '@manypkg/get-packages': 1.1.3
+      fs-extra: 7.0.1
+      micromatch: 4.0.4
+    dev: false
 
   /@changesets/errors/0.1.4:
     resolution: {integrity: sha512-HAcqPF7snsUJ/QzkWoKfRfXushHTu+K5KZLJWPb34s4eCZShIf8BFO3fwq6KU8+G7L5KdtN2BzQAXOSXEyiY9Q==}
@@ -1746,6 +1836,17 @@ packages:
       chalk: 2.4.2
       fs-extra: 7.0.1
       semver: 5.7.1
+    dev: true
+
+  /@changesets/get-dependents-graph/1.3.2:
+    resolution: {integrity: sha512-tsqA6qZRB86SQuApSoDvI8yEWdyIlo/WLI4NUEdhhxLMJ0dapdeT6rUZRgSZzK1X2nv5YwR0MxQBbDAiDibKrg==}
+    dependencies:
+      '@changesets/types': 5.0.0
+      '@manypkg/get-packages': 1.1.3
+      chalk: 2.4.2
+      fs-extra: 7.0.1
+      semver: 5.7.1
+    dev: false
 
   /@changesets/get-release-plan/3.0.7:
     resolution: {integrity: sha512-zDp6RIEKvERIF4Osy8sJ5BzqTiiLMhPWBO02y6w3nzTQJ0VBMaTs4hhwImQ/54O9I34eUHR3D0DwmwGQ27ifaw==}
@@ -1757,6 +1858,19 @@ packages:
       '@changesets/read': 0.5.4
       '@changesets/types': 4.1.0
       '@manypkg/get-packages': 1.1.3
+    dev: true
+
+  /@changesets/get-release-plan/3.0.8:
+    resolution: {integrity: sha512-TJYiWNuP0Lzu2dL/KHuk75w7TkiE5HqoYirrXF7SJIxkhlgH9toQf2C7IapiFTObtuF1qDN8HJAX1CuIOwXldg==}
+    dependencies:
+      '@babel/runtime': 7.16.3
+      '@changesets/assemble-release-plan': 5.1.2
+      '@changesets/config': 2.0.0
+      '@changesets/pre': 1.0.11
+      '@changesets/read': 0.5.5
+      '@changesets/types': 5.0.0
+      '@manypkg/get-packages': 1.1.3
+    dev: false
 
   /@changesets/get-version-range-type/0.3.2:
     resolution: {integrity: sha512-SVqwYs5pULYjYT4op21F2pVbcrca4qA/bAA3FmFXKMN7Y+HcO8sbZUTx3TAy2VXulP2FACd1aC7f2nTuqSPbqg==}
@@ -1770,6 +1884,18 @@ packages:
       '@manypkg/get-packages': 1.1.3
       is-subdir: 1.2.0
       spawndamnit: 2.0.0
+    dev: true
+
+  /@changesets/git/1.3.2:
+    resolution: {integrity: sha512-p5UL+urAg0Nnpt70DLiBe2iSsMcDubTo9fTOD/61krmcJ466MGh71OHwdAwu1xG5+NKzeysdy1joRTg8CXcEXA==}
+    dependencies:
+      '@babel/runtime': 7.16.3
+      '@changesets/errors': 0.1.4
+      '@changesets/types': 5.0.0
+      '@manypkg/get-packages': 1.1.3
+      is-subdir: 1.2.0
+      spawndamnit: 2.0.0
+    dev: false
 
   /@changesets/logger/0.0.5:
     resolution: {integrity: sha512-gJyZHomu8nASHpaANzc6bkQMO9gU/ib20lqew1rVx753FOxffnCrJlGIeQVxNWCqM+o6OOleCo/ivL8UAO5iFw==}
@@ -1781,6 +1907,14 @@ packages:
     dependencies:
       '@changesets/types': 4.1.0
       js-yaml: 3.14.1
+    dev: true
+
+  /@changesets/parse/0.3.13:
+    resolution: {integrity: sha512-wh9Ifa0dungY6d2nMz6XxF6FZ/1I7j+mEgPAqrIyKS64nifTh1Ua82qKKMMK05CL7i4wiB2NYc3SfnnCX3RVeA==}
+    dependencies:
+      '@changesets/types': 5.0.0
+      js-yaml: 3.14.1
+    dev: false
 
   /@changesets/pre/1.0.10:
     resolution: {integrity: sha512-cZC1C1wTSC17/TcTWivAQ4LAXz5jEYDuy3UeZiBz1wnTTzMHyTHLLwJi60juhl4hawXunDLw0mwZkcpS8Ivitg==}
@@ -1790,6 +1924,17 @@ packages:
       '@changesets/types': 4.1.0
       '@manypkg/get-packages': 1.1.3
       fs-extra: 7.0.1
+    dev: true
+
+  /@changesets/pre/1.0.11:
+    resolution: {integrity: sha512-CXZnt4SV9waaC9cPLm7818+SxvLKIDHUxaiTXnJYDp1c56xIexx1BNfC1yMuOdzO2a3rAIcZua5Odxr3dwSKfg==}
+    dependencies:
+      '@babel/runtime': 7.16.3
+      '@changesets/errors': 0.1.4
+      '@changesets/types': 5.0.0
+      '@manypkg/get-packages': 1.1.3
+      fs-extra: 7.0.1
+    dev: false
 
   /@changesets/read/0.5.4:
     resolution: {integrity: sha512-12dTx+p5ztFs9QgJDGHRHR6HzTIbHct9S4lK2I/i6Qkz1cNfAPVIbdoMCdbPIWeLank9muMUjiiFmCWJD7tQIg==}
@@ -1802,12 +1947,27 @@ packages:
       chalk: 2.4.2
       fs-extra: 7.0.1
       p-filter: 2.1.0
+    dev: true
 
-  /@changesets/types/4.0.2:
-    resolution: {integrity: sha512-OeDaB7D+WVy/ErymPzFm58IeGvz4DOl+oedyZETfnkfMezF/Uhrm1Ub6MHrO5LcAaQTW+ptDmr0fmaVyoTxgHw==}
+  /@changesets/read/0.5.5:
+    resolution: {integrity: sha512-bzonrPWc29Tsjvgh+8CqJ0apQOwWim0zheeD4ZK44ApSa/GudnZJTODtA3yNOOuQzeZmL0NUebVoHIurtIkA7w==}
+    dependencies:
+      '@babel/runtime': 7.16.3
+      '@changesets/git': 1.3.2
+      '@changesets/logger': 0.0.5
+      '@changesets/parse': 0.3.13
+      '@changesets/types': 5.0.0
+      chalk: 2.4.2
+      fs-extra: 7.0.1
+      p-filter: 2.1.0
+    dev: false
 
   /@changesets/types/4.1.0:
     resolution: {integrity: sha512-LDQvVDv5Kb50ny2s25Fhm3d9QSZimsoUGBsUioj6MC3qbMUCuC8GPIvk/M6IvXx3lYhAs0lwWUQLb+VIEUCECw==}
+
+  /@changesets/types/5.0.0:
+    resolution: {integrity: sha512-IT1kBLSbAgTS4WtpU6P5ko054hq12vk4tgeIFRVE7Vnm4a/wgbNvBalgiKP0MjEXbCkZbItiGQHkCGxYWR55sA==}
+    dev: false
 
   /@changesets/write/0.1.7:
     resolution: {integrity: sha512-6r+tc6u2l5BBIwEAh7ivRYWFir+XKiw0q/6Hx6NJA4dSN5fNu9uyWRQ+IMHCllD9dBcsh+e79sOepc+xT8l28g==}
@@ -1817,6 +1977,17 @@ packages:
       fs-extra: 7.0.1
       human-id: 1.0.2
       prettier: 1.19.1
+    dev: true
+
+  /@changesets/write/0.1.8:
+    resolution: {integrity: sha512-oIHeFVMuP6jf0TPnKPpaFpvvAf3JBc+s2pmVChbeEgQTBTALoF51Z9kqxQfG4XONZPHZnqkmy564c7qohhhhTQ==}
+    dependencies:
+      '@babel/runtime': 7.16.3
+      '@changesets/types': 5.0.0
+      fs-extra: 7.0.1
+      human-id: 1.0.2
+      prettier: 1.19.1
+    dev: false
 
   /@eslint/eslintrc/1.2.1:
     resolution: {integrity: sha512-bxvbYnBPN1Gibwyp6NrpnFzA3YtRL3BBAyEAFVIpNTm2Rn4Vy87GA5M4aSn3InRrlsbX5N0GW7XIx+U4SAEKdQ==}
@@ -2102,7 +2273,7 @@ packages:
     resolution: {integrity: sha512-fo+QhuU3qE/2TQMQmbVMqaQ6EWbMhi4ABWP+O4AM1NqPBuy0OrApV5LO6BrrgnhtAHS2NH6RrVk9OL181tTi8A==}
     dependencies:
       '@babel/runtime': 7.16.3
-      '@changesets/types': 4.0.2
+      '@changesets/types': 4.1.0
       '@manypkg/find-root': 1.1.0
       fs-extra: 8.1.0
       globby: 11.0.4
@@ -3949,7 +4120,7 @@ packages:
     resolution: {integrity: sha512-YJDaCJZEnBmcbw13fvdAM9AwNOJwOzrE4pqMqBq5nFiEqXUqHwlK4B+3pUw6JNvfSPtX05xFHtYy/1ni01eGCw==}
     engines: {node: '>=6 <7 || >=8'}
     dependencies:
-      graceful-fs: 4.2.8
+      graceful-fs: 4.2.9
       jsonfile: 4.0.0
       universalify: 0.1.2
 
@@ -4080,7 +4251,6 @@ packages:
 
   /graceful-fs/4.2.9:
     resolution: {integrity: sha512-NtNxqUcXgpW2iMrfqSfR73Glt39K+BLwWsPs94yR63v45T0Wbej7eRmL5cWfwEgqXnmjQp3zaJTshdRW/qC2ZQ==}
-    dev: true
 
   /grapheme-splitter/1.0.4:
     resolution: {integrity: sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==}
@@ -5190,7 +5360,7 @@ packages:
   /jsonfile/4.0.0:
     resolution: {integrity: sha1-h3Gq4HmbZAdrdmQPygWPnBDjPss=}
     optionalDependencies:
-      graceful-fs: 4.2.8
+      graceful-fs: 4.2.9
 
   /kind-of/6.0.3:
     resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==}
@@ -5280,7 +5450,7 @@ packages:
     resolution: {integrity: sha512-OfCBkGEw4nN6JLtgRidPX6QxjBQGQf72q3si2uvqyFEMbycSFFHwAZeXx6cJgFM9wmLrf9zBwCP3Ivqa+LLZPw==}
     engines: {node: '>=6'}
     dependencies:
-      graceful-fs: 4.2.8
+      graceful-fs: 4.2.9
       js-yaml: 3.14.1
       pify: 4.0.1
       strip-bom: 3.0.0
@@ -6241,6 +6411,12 @@ packages:
     hasBin: true
     dev: true
 
+  /prettier/2.6.2:
+    resolution: {integrity: sha512-PkUpF+qoXTqhOeWL9fu7As8LXsIUZ1WYaJiY/a7McAQzxjk82OF0tibkFXVCDImZtWxbvojFjerkiLb0/q8mew==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
+    dev: true
+
   /pretty-bytes/3.0.1:
     resolution: {integrity: sha1-J9AAjXeAY6C0gRuzXHnxvV1fvM8=}
     engines: {node: '>=0.10.0'}
@@ -6335,7 +6511,7 @@ packages:
     resolution: {integrity: sha512-VIMnQi/Z4HT2Fxuwg5KrY174U1VdUIASQVWXXyqtNRtxSr9IYkn1rsI6Tb6HsrHCmB7gVpNwX6JxPTHcH6IoTA==}
     engines: {node: '>=6'}
     dependencies:
-      graceful-fs: 4.2.8
+      graceful-fs: 4.2.9
       js-yaml: 3.14.1
       pify: 4.0.1
       strip-bom: 3.0.0
