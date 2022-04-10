@@ -1,5 +1,18 @@
 # @fuerte/autosave
 
+## 4.0.0
+
+### Major Changes
+
+- 6c3a1be: remove lite collection
+
+  lite collection has been merged to the regular collection and model has no reference to the collection anymore.
+
+### Patch Changes
+
+- Updated dependencies [6c3a1be]
+  - @fuerte/core@3.0.0
+
 ## 3.0.2
 
 ### Patch Changes
