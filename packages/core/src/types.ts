@@ -1,10 +1,8 @@
-import { Collection } from '../collection/Collection'
 import {
   DuplicateModelStrategy,
   ModelCompareResult
-} from '../collection/collection-config'
-import { Model } from '../model/Model'
-import { Transport } from '../transport/transport'
+} from './collection/collection-config'
+import { Model } from './model/Model'
 
 export type FactoryFn<T, K = any> = (args: K) => T | Promise<T>
 
@@ -13,6 +11,14 @@ export type UnwrapPromise<T> = T extends Promise<infer U> ? U : T
 export type ModelTransportErrors<TSave = any | null, TDelete = any | null> = {
   save: TSave
   delete: TDelete
+}
+
+export interface Transport<TModel extends Model = Model, TDTO = any> {
+  load(config?: any): Promise<{ data: TDTO[] }>
+
+  save(model: TModel, config?: any): Promise<{ data?: any } | void>
+
+  delete(model: TModel, config?: any): Promise<{ data?: any } | void>
 }
 
 /* SAVE TYPES */
@@ -25,7 +31,7 @@ export type TransportSaveConfig<T extends Transport<any>> = Parameters<
 >[1]
 
 export type SaveResult<
-  TModel extends Model<any>,
+  TModel extends Model,
   TTransport extends Transport<TModel>
 > =
   | {
@@ -40,7 +46,7 @@ export type SaveResult<
     }
 
 export type SaveStartCallback<
-  TModel extends Model<any>,
+  TModel extends Model,
   TTransport extends Transport<TModel>
 > = {
   model: TModel
@@ -56,7 +62,7 @@ export type ModelSaveStartCallback<
 }
 
 export type SaveSuccessCallback<
-  TModel extends Model<any>,
+  TModel extends Model,
   TTransport extends Transport<TModel>
 > = {
   response: TransportSaveResponse<TTransport>
@@ -69,7 +75,7 @@ export type ModelSaveSuccessCallback<
 } & ModelSaveStartCallback<TTransport>
 
 export type SaveErrorCallback<
-  TModel extends Model<any>,
+  TModel extends Model,
   TTransport extends Transport<TModel>,
   TError = any
 > = SaveStartCallback<TModel, TTransport> & { error: TError }
@@ -91,7 +97,7 @@ export type TransportDeleteConfig<T extends Transport<any>> = Parameters<
 >[1]
 
 export type DeleteResult<
-  TModel extends Model<any>,
+  TModel extends Model,
   TTransport extends Transport<TModel>
 > =
   | {
@@ -106,7 +112,7 @@ export type DeleteResult<
     }
 
 export type DeleteStartCallback<
-  TModel extends Model<any>,
+  TModel extends Model,
   TTransport extends Transport<TModel>
 > = {
   model: TModel
@@ -120,7 +126,7 @@ export type ModelDeleteStartCallback<TTransport extends Transport<Model>> = {
 }
 
 export type DeleteSuccessCallback<
-  TModel extends Model<any>,
+  TModel extends Model,
   TTransport extends Transport<TModel>
 > = {
   response: TransportDeleteResponse<TTransport>
@@ -131,7 +137,7 @@ export type ModelDeleteSuccessCallback<TTransport extends Transport<Model>> = {
 } & ModelDeleteStartCallback<TTransport>
 
 export type DeleteErrorCallback<
-  TModel extends Model<any>,
+  TModel extends Model,
   TTransport extends Transport<TModel>,
   TError = any
 > = DeleteStartCallback<TModel, TTransport> & { error: TError }
@@ -152,7 +158,7 @@ export type TransportLoadConfig<T extends Transport<any>> = Parameters<
 >[0]
 
 export type LoadResult<
-  TModel extends Model<any>,
+  TModel extends Model,
   TTransport extends Transport<TModel>
 > =
   | {
@@ -169,7 +175,7 @@ export type LoadResult<
     }
 
 export type LoadStartCallback<
-  TModel extends Model<any>,
+  TModel extends Model,
   TTransport extends Transport<TModel>
 > = {
   config: SaveConfig
@@ -177,7 +183,7 @@ export type LoadStartCallback<
 }
 
 export type LoadSuccessCallback<
-  TModel extends Model<any>,
+  TModel extends Model,
   TTransport extends Transport<TModel>
 > = LoadStartCallback<TModel, TTransport> & {
   added: TModel[]
@@ -186,22 +192,10 @@ export type LoadSuccessCallback<
 }
 
 export type LoadErrorCallback<
-  TModel extends Model<any>,
+  TModel extends Model,
   TTransport extends Transport<TModel>,
   E = any
 > = LoadStartCallback<TModel, TTransport> & { error: E }
-
-export type LiteCollectionConfig = {
-  add?: AddConfig
-  remove?: RemoveConfig
-  reset?: ResetConfig
-}
-
-export type RequiredLiteCollectionConfig = {
-  add: Required<AddConfig>
-  remove: Required<RemoveConfig>
-  reset: Required<RemoveConfig>
-}
 
 export type CollectionConfig = {
   save?: SaveConfig
@@ -209,7 +203,8 @@ export type CollectionConfig = {
   load?: LoadConfig
   remove?: RemoveConfig
   reset?: ResetConfig
-} & LiteCollectionConfig
+  add?: AddConfig
+}
 
 export type RequiredCollectionConfig = {
   save: Required<SaveConfig>
@@ -217,7 +212,8 @@ export type RequiredCollectionConfig = {
   load: Required<LoadConfig>
   remove: Required<RemoveConfig>
   reset: Required<ResetConfig>
-} & RequiredLiteCollectionConfig
+  add: Required<AddConfig>
+}
 
 export type ModelInsertPosition = 'start' | 'end'
 
@@ -246,7 +242,7 @@ export interface DeleteConfig {
   destroyOnRemoval?: boolean
 }
 
-type BivariantCompareFn<T extends Model<Collection<any, any, any>>> = {
+type BivariantCompareFn<T extends Model> = {
   bivarianceHack(newModel: T, oldModel: T): keyof typeof ModelCompareResult
 }['bivarianceHack']
 
@@ -254,7 +250,7 @@ export interface LoadConfig {
   duplicateModelStrategy?: keyof typeof DuplicateModelStrategy
   destroyOnRemoval?: boolean
   // https://stackoverflow.com/questions/52667959/what-is-the-purpose-of-bivariancehack-in-typescript-types
-  compareFn?: BivariantCompareFn<Model<Collection<any, any, any>>>
+  compareFn?: BivariantCompareFn<Model>
   insertPosition?: ModelInsertPosition
   reset?: boolean
   destroyOnReset?: false

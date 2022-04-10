@@ -68,7 +68,6 @@ describe('Collection - delete #delete #collection', () => {
     })
 
     expect(model.isDestroyed).toBe(false)
-    expect(model.collection).toBe(collection)
     expect(onDestroySpy).not.toHaveBeenCalled()
   })
 
@@ -264,21 +263,6 @@ describe('Collection - delete #delete #collection', () => {
   })
 
   describe('Delayed insertion in the collection', () => {
-    test('When model is successfuly deleted, removed callback is called', async () => {
-      const transport = fixtures.transport()
-      const collection = fixtures.collection(fixtures.factory(), transport)
-      const model = fixtures.model()
-      const modelOnRemovedSpy = jest.spyOn(model, 'onRemoved')
-      collection.add(model)
-
-      const result = collection.delete(model.cid, {
-        removeImmediately: false
-      })
-      expect(modelOnRemovedSpy).not.toHaveBeenCalled()
-      await result
-      expect(modelOnRemovedSpy).toHaveBeenCalled()
-    })
-
     test('When deleting, we can query the models that are in the process of deleting', async () => {
       const transport = fixtures.transport()
       const collection = fixtures.collection(fixtures.factory(), transport)
@@ -339,7 +323,6 @@ describe('Collection - delete #delete #collection', () => {
 
       expect(collection.models).toHaveLength(1)
       expect(collection.models[0]).toBe(model)
-      expect(model.collection).toBe(collection)
     })
 
     test('After failed deletion, model is not removed', async () => {
@@ -356,7 +339,6 @@ describe('Collection - delete #delete #collection', () => {
 
       expect(collection.models).toHaveLength(1)
       expect(collection.models[0]).toBe(model)
-      expect(model.collection).toBe(collection)
     })
   })
 })

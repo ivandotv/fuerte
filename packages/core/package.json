@@ -26,7 +26,7 @@
     "lint:ci": "pnpm lint:check && pnpm format:check",
     "format": "prettier --write src/**",
     "format:check": "prettier --check src/**",
-    "test": "cross-env NODE_ENV=test jest --verbose --coverage --no-cache",
+    "test": "cross-env NODE_ENV=test jest --verbose --coverage",
     "test:watch": "cross-env NODE_ENV=test jest --watch",
     "test:ci": "cross-env NODE_ENV=test jest --runInBand --ci --coverage --coverageDirectory=coverage",
     "build:prod": "cross-env NODE_ENV=production microbundle --tsconfig ./tsconfig.json  --format modern,cjs,umd  --output dist/prod --globals nanoid/non-secure=nanoid",

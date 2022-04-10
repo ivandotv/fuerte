@@ -7,7 +7,7 @@ import {
   SaveConfig,
   TransportSaveConfig,
   TransportSaveResponse
-} from '../../utils/types'
+} from '../../types'
 import type { TestCollection } from './TestCollection'
 import { TestTransport } from './TestTransport'
 
@@ -17,7 +17,7 @@ export type TestModelData = {
   id?: string
 }
 
-export class TestModel extends Model<TestCollection> {
+export class TestModel extends Model {
   static identityKey = 'id'
 
   foo: string
@@ -51,7 +51,7 @@ export class TestModel extends Model<TestCollection> {
     }
   }
 
-  onSaveSuccess(data: {
+  override onSaveSuccess(data: {
     response: TransportSaveResponse<TestTransport>
     config: SaveConfig
     transportConfig: TransportSaveConfig<TestTransport>
@@ -59,7 +59,7 @@ export class TestModel extends Model<TestCollection> {
     super.onSaveSuccess(data)
   }
 
-  onSaveError(data: {
+  override onSaveError(data: {
     error: any
     config: SaveConfig
     transportConfig: any
@@ -68,31 +68,28 @@ export class TestModel extends Model<TestCollection> {
     super.onSaveError(data)
   }
 
-  onSaveStart(data: { config: SaveConfig; transportConfig: any }): void {
+  override onSaveStart(data: {
+    config: SaveConfig
+    transportConfig: any
+  }): void {
     super.onSaveStart(data)
   }
 
-  override onAdded(c: TestCollection, isLite: boolean): void {
-    super.onAdded(c, isLite)
-  }
-
-  override onRemoved(c: TestCollection, isLite: boolean): void {
-    super.onRemoved(c, isLite)
-  }
-
-  onDeleteStart(data: ModelDeleteStartCallback<TestTransport>): void {
+  override onDeleteStart(data: ModelDeleteStartCallback<TestTransport>): void {
     super.onDeleteStart(data)
   }
 
-  onDeleteSuccess(data: ModelDeleteSuccessCallback<TestTransport>): void {
+  override onDeleteSuccess(
+    data: ModelDeleteSuccessCallback<TestTransport>
+  ): void {
     super.onDeleteSuccess(data)
   }
 
-  onDeleteError(data: ModelDeleteErrorCallback<TestTransport>): void {
+  override onDeleteError(data: ModelDeleteErrorCallback<TestTransport>): void {
     super.onDeleteError(data)
   }
 
-  onDestroy() {
+  override onDestroy() {
     super.onDestroy()
   }
 }

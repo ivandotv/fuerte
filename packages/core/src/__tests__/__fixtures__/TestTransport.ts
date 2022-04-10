@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import { Transport } from '../../transport/transport'
+import { Transport } from '../../types'
 import { TestModel } from './TestModel'
 
 export class TestTransport implements Transport<TestModel> {
@@ -11,17 +11,17 @@ export class TestTransport implements Transport<TestModel> {
     { foo: '5', bar: '5', id: '5' }
   ]
 
-  load(_config: string) {
+  load() {
     return Promise.resolve({
       data: this.data
     })
   }
 
-  save(_model: TestModel, _config?: any) {
+  save(_model: TestModel) {
     return Promise.resolve({ data: { id: nanoid() } })
   }
 
-  delete(_model: TestModel, _config: any): Promise<{ data: any }> {
+  delete(_model: TestModel): Promise<{ data: any }> {
     return Promise.resolve({ data: undefined })
   }
 

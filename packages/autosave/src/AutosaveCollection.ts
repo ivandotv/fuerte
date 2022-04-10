@@ -10,7 +10,7 @@ import { Collection } from '@fuerte/core'
 
 export class AutosaveCollection<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  TModel extends Model<Collection<any, any, any>>,
+  TModel extends Model,
   TFactory extends FactoryFn<TModel>,
   TTransport extends Transport<TModel>
 > extends Collection<TModel, TFactory, TTransport> {

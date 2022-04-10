@@ -8,8 +8,6 @@ import {
   observable
 } from 'mobx'
 import { nanoid } from 'nanoid/non-secure'
-import { LiteCollection } from '../collection/LiteCollection'
-import { Transport } from '../transport/transport'
 import {
   DeleteConfig,
   ModelDeleteErrorCallback,
@@ -19,21 +17,18 @@ import {
   ModelSaveStartCallback,
   ModelSaveSuccessCallback,
   ModelTransportErrors,
-  SaveConfig
-} from '../utils/types'
+  SaveConfig,
+  Transport
+} from '../types'
 import { IdentityError } from './identity-error'
 
 // @ts-expect-error: using return type on a protected method
 type Payload<T extends Model> = ReturnType<T['serialize']>
 
-export abstract class Model<
-  TCollection extends LiteCollection<any, any> = LiteCollection<any, any>
-> {
+export abstract class Model {
   static identityKey = 'cid'
 
   static setIdentityFromResponse = false
-
-  readonly collection: TCollection | undefined
 
   readonly cid: string
 
@@ -110,8 +105,6 @@ export abstract class Model<
       errors: observable,
       saveError: computed,
       deleteError: computed,
-      _onAdded: action,
-      _onRemoved: action,
 
       _onSaveStart: action,
       _onSaveSuccess: action,
@@ -160,31 +153,6 @@ export abstract class Model<
   get deleteError(): any {
     return this.errors.delete
   }
-
-  // @internal
-  _onAdded(collection: TCollection, isLite: boolean): void {
-    if (this.collection && !isLite) {
-      throw new Error('Model can be in only one non "lite" collection')
-    }
-    if (!isLite) {
-      // @ts-expect-error - readonly property
-      this.collection = collection
-    }
-    this.onAdded(collection, isLite)
-  }
-
-  protected onAdded(collection: TCollection, isLite: boolean): void {}
-
-  // @internal
-  _onRemoved(collection: TCollection, isLite: boolean): void {
-    this.onRemoved(collection, isLite)
-    if (collection === this.collection) {
-      // @ts-expect-error - readonly property
-      this.collection = undefined
-    }
-  }
-
-  protected onRemoved(collection: TCollection, isLite: boolean): void {}
 
   get isDeleted(): boolean {
     return this._isDeleted
@@ -334,7 +302,6 @@ export abstract class Model<
   }
 
   protected modelIsNew(): boolean {
-    // return !this.identity
     return this.identity === this.cid || !this.identity
   }
 

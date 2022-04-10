@@ -15,20 +15,7 @@ describe('Model - remove #remove #model', () => {
 
       collection.remove(model.identity)
 
-      expect(model.collection).toBeUndefined()
-    })
-
-    test('removed hook is called', () => {
-      const transport = fixtures.transport()
-      const collection = fixtures.collection(fixtures.factory(), transport)
-      const model = fixtures.model({ id: '1' })
-      const onRemovedSpy = jest.spyOn(model, 'onRemoved')
-      collection.add(model)
-
-      collection.remove(model.identity)
-
-      expect(onRemovedSpy).toHaveBeenCalledTimes(1)
-      expect(onRemovedSpy).toHaveBeenCalledWith(collection, false)
+      expect(collection.getById(model.identity)).toBeUndefined()
     })
 
     test('Destroy method is called by default', () => {

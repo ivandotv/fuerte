@@ -7,7 +7,7 @@ export type TestModelData = {
   id?: string
 }
 
-export class TestModel extends Model<any> {
+export class TestModel extends Model {
   static identityKey = 'id'
 
   foo: string

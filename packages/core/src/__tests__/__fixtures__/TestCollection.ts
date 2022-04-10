@@ -9,7 +9,7 @@ import {
   SaveErrorCallback,
   SaveStartCallback,
   SaveSuccessCallback
-} from '../../utils/types'
+} from '../../types'
 import { testModelFactory } from './TestFactory'
 import { TestModel } from './TestModel'
 import { TestTransport } from './TestTransport'

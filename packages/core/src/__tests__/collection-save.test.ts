@@ -135,30 +135,17 @@ describe('Collection - save #save #collection', () => {
     expect(collection.saving[0]).toBe(model)
   })
 
-  test('When the model is added to the collection and before the save process starts, "onAdded" model hook is called', () => {
-    const transport = fixtures.transport()
-    const collection = fixtures.collection(fixtures.factory(), transport)
-    const model = fixtures.model()
-    const modelOnAddedSpy = jest.spyOn(model, 'onAdded')
-
-    collection.save(model)
-
-    expect(modelOnAddedSpy).toHaveBeenCalled()
-  })
-
   test('If the model is already in the collection, do not add it just save it', async () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const model = fixtures.model()
     collection.add(model)
     const onSaveSuccessSpy = jest.spyOn(collection, 'onSaveSuccess')
-    const onModelAddedSpy = jest.spyOn(model, 'onAdded')
     const onModelSaveStartSpy = jest.spyOn(model, 'onSaveStart')
     const onModelSaveSuccessSpy = jest.spyOn(model, 'onSaveSuccess')
 
     await collection.save(model)
 
-    expect(onModelAddedSpy).not.toHaveBeenCalled()
     expect(onModelSaveStartSpy).toHaveBeenCalledTimes(1)
     expect(onModelSaveSuccessSpy).toHaveBeenCalledTimes(1)
     expect(collection.models).toHaveLength(1)
@@ -266,18 +253,6 @@ describe('Collection - save #save #collection', () => {
 
       expect(collection.saving).toHaveLength(1)
       expect(collection.saving[0]).toBe(model)
-    })
-
-    test('When model is successfuly saved, "onAdded" model hook is called', async () => {
-      const transport = fixtures.transport()
-      const collection = fixtures.collection(fixtures.factory(), transport)
-      const model = fixtures.model()
-      const modelOnAddedSpy = jest.spyOn(model, 'onAdded')
-
-      const result = collection.save(model, { addImmediately: false })
-      expect(modelOnAddedSpy).not.toHaveBeenCalled()
-      await result
-      expect(modelOnAddedSpy).toHaveBeenCalled()
     })
 
     test('Add the model after the successful save', async () => {
