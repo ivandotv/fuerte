@@ -1,6 +1,6 @@
 {
   "name": "@fuerte/core",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "private": false,
   "author": "Ivan Vlatkovic",
   "description": "Backbone.js inspired Mobx library",

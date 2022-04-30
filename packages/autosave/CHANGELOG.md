@@ -1,5 +1,16 @@
 # @fuerte/autosave
 
+## 5.0.0
+
+### Major Changes
+
+- 7d32e25: Update package dependencies, and make all packages of type `module`.
+
+### Patch Changes
+
+- Updated dependencies [7d32e25]
+  - @fuerte/core@4.0.0
+
 ## 4.0.0
 
 ### Major Changes
