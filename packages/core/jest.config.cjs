@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-var-requires  */
-const baseConfig = require('../../jest.config')
+const baseConfig = require('../../jest.config.js')
 
 module.exports = {
   ...baseConfig,
   rootDir: '.',
   projects: undefined,
-  testEnvironment: 'jsdom',
   testMatch: ['<rootDir>/src/**/__tests__/?(*.)+(spec|test).[jt]s?(x)'],
   collectCoverageFrom: [
     '<rootDir>/src/**',

@@ -8,5 +8,5 @@ module.exports = {
     __VERSION__: 'jest-version',
     __BUILD_DATE__: 'jest-build-date',
     __COMMIT_SHA__: 'jest-commit-sha'
-  },
+  }
 }

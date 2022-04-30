@@ -1,8 +1,9 @@
 module.exports = {
-  extends: ['../.eslintrc.js'],
-  plugins: ['jest'],
+  extends: '../../.eslintrc.js',
+  env: {
+    browser: true
+  },
   rules: {
-    '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-unused-vars': [
       'off',
       { varsIgnorePattern: '^_', argsIgnorePattern: '^_', args: 'all' }
