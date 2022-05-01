@@ -1,5 +1,11 @@
 # @fuerte/core
 
+## 4.0.0
+
+### Major Changes
+
+- 7d32e25: Update package dependencies, and make all packages of type `module`.
+
 ## 3.0.0
 
 ### Major Changes
