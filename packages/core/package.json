@@ -36,7 +36,7 @@
     "type:check": "tsc --noEmit true",
     "gen:docs": "rm -rf ./docs/api && typedoc --options typedoc.cjs",
     "prepublishOnly": "pnpm build",
-    "release": "pnpm run prepublishOnly && pnpm changeset publish"
+    "release": "pnpm run prepublishOnly"
   },
   "repository": {
     "type": "git",

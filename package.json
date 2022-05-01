@@ -9,6 +9,7 @@
     "lint": "pnpm multi run lint",
     "lint:ci": "pnpm multi run lint:ci",
     "build": "pnpm multi run build",
+    "gen:docs": "pnpm multi run gen:docs",
     "prepare": "husky install",
     "release": "pnpm multi run prepublishOnly --workspace-concurrency 1 && pnpm changeset publish"
   },
