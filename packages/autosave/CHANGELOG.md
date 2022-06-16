@@ -1,5 +1,13 @@
 # @fuerte/autosave
 
+## 5.0.1
+
+### Patch Changes
+
+- Updated dependencies [ccd88ec]
+- Updated dependencies [ccd88ec]
+  - @fuerte/core@4.0.1
+
 ## 5.0.0
 
 ### Major Changes

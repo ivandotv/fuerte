@@ -1,5 +1,12 @@
 # @fuerte/core
 
+## 4.0.1
+
+### Patch Changes
+
+- ccd88ec: add comments to Model class
+- ccd88ec: add comments to collection class and move methods around
+
 ## 4.0.0
 
 ### Major Changes
