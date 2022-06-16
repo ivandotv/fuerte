@@ -9,7 +9,6 @@ import {
 } from 'mobx'
 import { IdentityError } from '../model/identity-error'
 import { Model } from '../model/Model'
-import { Transport } from '../types'
 import {
   AddConfig,
   CollectionConfig,
@@ -33,6 +32,7 @@ import {
   SaveResult,
   SaveStartCallback,
   SaveSuccessCallback,
+  Transport,
   TransportDeleteConfig,
   TransportDeleteResponse,
   TransportLoadConfig,
@@ -165,14 +165,30 @@ export class Collection<
     })
   }
 
+  /**
+   * Get collection config configuration {@link RequiredCollectionConfig}
+   */
   getConfig(): RequiredCollectionConfig {
     return this.config
   }
 
+  /**
+   * Get collection transport instance {@link Transport}
+   */
   getTransport(): TTransport {
     return this.transport
   }
 
+  /**
+   * Save the model to the collection.
+   * Callbacks: {@link Collection.onSaveStart} {@link Collection.onSaveSuccess} {@link Collection.onSaveError}
+   * will be called depending on the {@link Transport.save} result
+   * When the model is added {@link Collection.onAdded} callback will be called
+   * @param model - model to save
+   * @param config - save configuration to be used {@link SaveConfig}
+   * @param transportConfig - transport configuration to use {@link TransportSaveConfig}
+   * @returns transport save result {@link SaveResult}
+   */
   async save(
     model: TModel,
     config?: SaveConfig,
@@ -317,10 +333,16 @@ export class Collection<
 
   protected onSaveError(data: SaveErrorCallback<TModel, TTransport>): void {}
 
+  /**
+   * Get all models that are currently in the process of deleting
+   */
   get deleting(): TModel[] {
     return [...this._deleting.values()]
   }
 
+  /**
+   * Get all models that are currently in the process of saving
+   */
   get saving(): TModel[] {
     const models: TModel[] = []
     this._saving.forEach((data) => {
@@ -330,6 +352,16 @@ export class Collection<
     return models
   }
 
+  /**
+   * Delete model from the collection by model identity key, or model CID.
+   * Callbacks  {@link Collection.onDeleteStart} {@link Collection.onDeleteSuccess} {@link Collection.onDeleteError}
+   * will be called depending on the {@link Transport.delete} result.
+   * When the model is removed from the collection {@link Collection.onRemoved} callback will be called
+   * @param id  - model id
+   * @param config - delete config to be used {@link DeleteConfig}
+   * @param transportConfig - transport config to be used {@link TransportDeleteConfig}
+   * @returns transport delete result {@link DeleteResult}
+   */
   async delete(
     id: string,
     config?: DeleteConfig,
@@ -459,6 +491,13 @@ export class Collection<
     _data: DeleteErrorCallback<TModel, TTransport>
   ): void {}
 
+  /**
+   * Load initial collection data. It calls {@link Transport.load} method.
+   * Callbacks {@link Collection.onLoadStart} {@link Collection.onLoadSuccess} {@link Collection.onLoadError} will be called
+   * @param config - load configuration {@link LoadConfig}
+   * @param  transportConfig - transport configuration {@link TransportLoadConfig}
+   * @returns transport load result {@link LoadResult}
+   */
   async load(
     config?: LoadConfig,
     transportConfig?: TransportLoadConfig<TTransport>
@@ -598,6 +637,12 @@ export class Collection<
     }
   }
 
+  protected onModelCreateData(
+    data: Parameters<TFactory>[0]
+  ): Parameters<TFactory>[0] | void {
+    return data
+  }
+
   protected onLoadStart(data: LoadStartCallback<TModel, TTransport>): void {}
 
   protected onLoadSuccess(
@@ -606,6 +651,9 @@ export class Collection<
 
   protected onLoadError(data: LoadErrorCallback<TModel, TTransport>): void {}
 
+  /**
+   * Destroys the collection. It calls {@link Model.destroy} on all the models in the collection.
+   */
   destroy(): void {
     this.onDestroy()
 
@@ -620,7 +668,7 @@ export class Collection<
   protected assertIsModel(model: unknown): asserts model is TModel {
     /* eslint-disable-next-line no-prototype-builtins */
     if (!Model.prototype.isPrototypeOf(model as any)) {
-      throw new Error(`model is not instance of Model class`)
+      throw new Error(`model is not an instance of Model class`)
     }
   }
 
@@ -630,6 +678,10 @@ export class Collection<
 
   push(model: TModel): TModel | undefined
 
+  /**
+   * Push model to the collection. Alias for {@link Collection.add}. It does not call {@link Transport.save} method.
+   * @param model - model to push
+   */
   push(model: TModel | TModel[]): TModel | TModel[] | undefined {
     // https://stackoverflow.com/questions/65110771/how-to-have-functions-pass-arguments-with-the-same-overloads
     return this.add(model as any)
@@ -639,6 +691,10 @@ export class Collection<
 
   add(model: TModel): TModel | undefined
 
+  /**
+   * Adds model to the collection at the end. It does not call {@link Transport.save} method.
+   * @param model  - model to add
+   */
   add(model: TModel | TModel[]): TModel | TModel[] | undefined {
     // @ts-expect-error - overload using overload
     return this.addToCollection(model, { insertPosition: 'end' })
@@ -648,11 +704,21 @@ export class Collection<
 
   unshift(model: TModel): TModel | undefined
 
+  /**
+   * Add model to the beginning of the  collection (index 0). It does not call {@link Transport.save} method.
+   * @param model  - model to add
+   */
   unshift(model: TModel | TModel[]): TModel | TModel[] | undefined {
-    // @ts-expect-error - overload using overload
+    // @ts-expect-error - overload using another overload
     return this.addToCollection(model, { insertPosition: 'start' })
   }
 
+  /**
+   * Add model to the collection at the specific index. If index if out of bounds, it will throw.
+   * If the model is successfully added to the collection {@link Collection.onAdded} callback will be executed
+   * @param model - model to add
+   * @param index - at what position in the collection to add the model
+   */
   addAtIndex(model: TModel[], index: number): TModel[]
 
   addAtIndex(model: TModel, index: number): TModel | undefined
@@ -782,6 +848,11 @@ export class Collection<
     return models
   }
 
+  /**
+   * Create new model.
+   * @param data - data for the new model. When the model is created {@link Model.init} method will be called.
+   * @returns newly created model
+   */
   create(data: Parameters<TFactory>[0]): ReturnType<TFactory> {
     const result = this.factory(data)
     if (isPromise(result)) {
@@ -799,6 +870,10 @@ export class Collection<
 
   getById(id: string[]): TModel[] | undefined
 
+  /**
+   * Get model or array of models from the collection by identity key, or model CID.
+   * @param id - identity key or CID
+   */
   getById(id: string | string[]): TModel | TModel[] | undefined {
     if (Array.isArray(id)) {
       return this.resolveModels(id)
@@ -807,26 +882,44 @@ export class Collection<
     return this.resolveModel(id)
   }
 
+  /**
+   * Return all the models in the collection
+   */
   get models(): ReadonlyArray<TModel> {
     return this._models as ReadonlyArray<TModel>
   }
 
+  /**
+   * Get all new models in the collection. New models are the ones that have not been saved to the storage yet via {@link Transport.save}
+   */
   get new(): TModel[] {
     return this.models.filter((model) => {
       return model.isNew
     })
   }
 
+  /**
+   * Get all the "deleted" models. Deleted models are the ones that have been removed from the storage via {@link Transport.delete} but haven't been
+   * removed from the collection yet.
+   */
   get deleted(): TModel[] {
     return this.models.filter((model) => {
       return model.isDeleted
     })
   }
 
+  /**
+   * Get all the models that are currently syncing. Syncing models are the ones that are currently in the process of being "saved", or "deleted" from the storege via {@link Transport.save} or {@link Transport.delete}
+   */
   get syncing(): TModel[] {
     return this.deleting.concat(this.saving)
   }
 
+  /**
+   * Remove the last model in the collection. This method does not call  {@link Transport.delete}
+   * {@link Collection.onRemoved} callback will be called
+   * @param config - remove config {@link RemoveConfig}
+   */
   pop(config?: RemoveConfig): TModel | undefined {
     if (this.models.length > 0) {
       return this.removeFromCollection(
@@ -838,6 +931,11 @@ export class Collection<
     return undefined
   }
 
+  /**
+   * Remove the first model in the collection. This method does not call  {@link Transport.delete}
+   * {@link Collection.onRemoved} callback will be called
+   * @param config - remove config {@link RemoveConfig}
+   */
   shift(config?: RemoveConfig): TModel | undefined {
     if (this.models.length > 0) {
       return this.removeFromCollection(this.models[0], config) as TModel
@@ -846,6 +944,12 @@ export class Collection<
     return undefined
   }
 
+  /**
+   * Remove the model from the collection at specific index. This method does not call  {@link Transport.delete}
+   * {@link Collection.onRemoved} callback will be called
+   * @param index - index in the collection. If index is out of bounds, it will throw
+   * @param config - {@link RemoveConfig}
+   */
   removeAtIndex(index: number, config?: RemoveConfig): TModel | undefined {
     if (index < 0 || index >= this._models.length) {
       return undefined
@@ -859,6 +963,14 @@ export class Collection<
 
   remove(id: string[], config?: RemoveConfig): TModel[]
 
+  /**
+   * Remove the model or array of models from the collection, by model identity key or by model CID.
+   * This method does not call  {@link Transport.delete}.
+   * If the model is removed {@link Collection.onRemoved} callback is called
+   * @param id  - model identity key or CID
+   * @param config  - {@link RemoveConfig}
+   * @returns remove
+   */
   remove(
     id: string | string[],
     config?: RemoveConfig
@@ -945,13 +1057,6 @@ export class Collection<
 
   protected onAdded(model: TModel): void {}
 
-  serialize(): any {
-    return {
-      models: this.serializeModels(),
-      ...this.onSerialize()
-    }
-  }
-
   protected serializeModels(): any[] {
     return this._models.reduce<any[]>((arr, model) => {
       const result = model.payload
@@ -1000,15 +1105,31 @@ export class Collection<
     return [added, removed]
   }
 
+  protected onReset(_added: TModel[], _removed: TModel[]): void {}
+
+  /**
+   * Remove all models from the collection, and optionally add new models to the collection. If no new model data is present, then the collection will just be emptied.
+   * If there is model data, new models will be created and added to the collection.
+   * When models are added {@link Collection.onAdded} and {@link Collection.onModelCreateData} callbacks will be fired.
+   * When models are removed {@link Collection.onRemoved}
+   * {@link Collection.onReset} callback is always called
+   * @param modelData - array of model data to create new models
+   * @param config - {@link ResetConfig}
+   * @returns all the model that have been added and removed.
+   */
   reset<T>(modelData?: T[], config?: ResetConfig): Promise<TModel[][]> {
     return this.resetCollection(modelData, config)
   }
 
-  protected onReset(_added: TModel[], _removed: TModel[]): void {}
-
-  protected onModelCreateData(
-    data: Parameters<TFactory>[0]
-  ): Parameters<TFactory>[0] | void {
-    return data
+  /**
+   * Serializes collection by calling {@link Model.serialize} on each model in the collection.
+   * If you need custom serialization logic you can implement it via {@link Collection.onSerialize} callback
+   * @returns serialize
+   */
+  serialize(): any {
+    return {
+      models: this.serializeModels(),
+      ...this.onSerialize()
+    }
   }
 }

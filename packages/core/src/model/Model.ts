@@ -116,6 +116,8 @@ export abstract class Model {
     })
   }
 
+  protected abstract serialize(): any
+
   // @internal
   init(): void {
     if (this.initialized) return
@@ -125,6 +127,9 @@ export abstract class Model {
   }
 
   // https://alexhisen.gitbook.io/mobx-recipes/use-computedstruct-for-computed-objects
+  /**
+   * Get model payload. Internally returned data is used for saving the model via {@link Transport.save}
+   */
   get payload(): Payload<this> {
     return this.computePayload
   }
@@ -134,42 +139,66 @@ export abstract class Model {
     return this.serialize()
   }
 
-  protected abstract serialize(): any
-
   protected startPayloadCompute(): IReactionDisposer {
     return autorun(() => {
       return this.payload
     })
   }
 
+  /**
+   * Check if model has encountered any errors while saving or deleting
+   */
   get hasErrors(): boolean {
     return !!this.errors.save || !!this.errors.delete
   }
 
+  /**
+   * Get model transport save error
+   */
   get saveError(): any {
     return this.errors.save
   }
 
+  /**
+   * Get model transport delete error
+   */
   get deleteError(): any {
     return this.errors.delete
   }
 
+  /**
+   * Check if the model has been deleted via {@link Transport.delete}
+   * Model can still exist in the collection and be deleted at the same time.
+   */
   get isDeleted(): boolean {
     return this._isDeleted
   }
 
+  /**
+   * Check if the model is in the proces of deleting via {@link Transport.delete} or saving
+   * via {@link Transport.save}
+   */
   get isSyncing(): boolean {
     return this.isSaving || this.isDeleting
   }
 
+  /**
+   * Check if the model is in the proces of deleting via {@link Transport.delete}.
+   */
   get isDeleting(): boolean {
     return this._isDeleting
   }
 
+  /**
+   * Check if the model is in the proces of saving via {@link Transport.save}.
+   */
   get isSaving(): boolean {
     return this._isSaving
   }
 
+  /**
+   * Check if the model {@link Model.destroy} method has been called
+   */
   get isDestroyed(): boolean {
     return this._isDestroyed
   }
@@ -250,6 +279,7 @@ export abstract class Model {
 
   protected onSaveSuccess(data: ModelSaveSuccessCallback): void {}
 
+  //@internal
   _onSaveError({
     error,
     config,
@@ -287,16 +317,26 @@ export abstract class Model {
     return data && data[this.identityKey]
   }
 
+  /**
+   * Get identity value
+   */
   get identity(): string {
     // @ts-expect-error  dynamic key access
     return this[this.identityKey]
   }
 
+  /**
+   * Set new identity value
+   * @param newValue - new value
+   */
   setIdentity(newValue: string): void {
     // @ts-expect-error force setting identifier property on the model
     this[this.identityKey] = newValue
   }
 
+  /**
+   * Check if the model is new. Model is new if it has been created but not yet saved via {@link Transport.save}
+   */
   get isNew(): boolean {
     return this.modelIsNew()
   }
@@ -313,6 +353,7 @@ export abstract class Model {
 
   protected onDeleteStart(data: ModelDeleteStartCallback<Transport>): void {}
 
+  // @internal
   _onDeleteSuccess(data: {
     response: any
     data?: any
@@ -344,6 +385,9 @@ export abstract class Model {
 
   protected onDeleteError(data: ModelDeleteErrorCallback<Transport>): void {}
 
+  /**
+   * Checks if the model is dirty. Model is dirty when properites that are serialized for saving have been changed since the last {@link Transport.save} call.
+   */
   get isDirty(): boolean {
     return this.modelIsDirty()
   }
@@ -359,5 +403,6 @@ export abstract class Model {
     this.payloadActionDisposer()
   }
 
+  // @internal
   onDestroy(): void {}
 }
