@@ -1,6 +1,6 @@
 import { configure } from 'mobx'
 import { Collection } from '../collection/Collection'
-import { CollectionConfig } from '../utils/types'
+import { CollectionConfig } from '../types'
 import { fixtureFactory } from './__fixtures__/fixtureFactory'
 import { testModelFactoryAsync } from './__fixtures__/TestFactory'
 import { TestModel } from './__fixtures__/TestModel'

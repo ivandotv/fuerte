@@ -40,7 +40,7 @@ import {
   TransportSaveConfig,
   TransportSaveResponse
 } from '../types'
-import { ASYNC_STATUS, isPromise, wrapInArray } from '../utils/utils'
+import { ASYNC_STATUS, isPromise, wrapInArray } from '../utils'
 
 export class Collection<
   TModel extends Model,
@@ -668,7 +668,7 @@ export class Collection<
   protected assertIsModel(model: unknown): asserts model is TModel {
     /* eslint-disable-next-line no-prototype-builtins */
     if (!Model.prototype.isPrototypeOf(model as any)) {
-      throw new Error(`model is not an instance of Model class`)
+      throw new Error(`not an instance of Model class`)
     }
   }
 

@@ -1,13 +1,13 @@
 import { configure, runInAction } from 'mobx'
-import { LoadConfig } from '../utils/types'
-import { ASYNC_STATUS } from '../utils/utils'
-import { fixtureFactory } from './__fixtures__/fixtureFactory'
-import { TestCollection } from './__fixtures__/TestCollection'
-import { TestModel, TestModelData } from './__fixtures__/TestModel'
 import {
   DuplicateModelStrategy,
   ModelCompareResult
 } from '../collection/collection-config'
+import { LoadConfig } from '../types'
+import { ASYNC_STATUS } from '../utils'
+import { fixtureFactory } from './__fixtures__/fixtureFactory'
+import { TestCollection } from './__fixtures__/TestCollection'
+import { TestModel, TestModelData } from './__fixtures__/TestModel'
 
 configure({ enforceActions: 'never' })
 
@@ -356,6 +356,7 @@ describe('Collection - load #load #collection', () => {
         original.foo = fooProp
         collection.add(original)
 
+        // @ts-expect-error - transport config
         await collection.load(loadConfig, transportConfig)
 
         expect(compareFn).toHaveBeenCalledTimes(1)
@@ -518,6 +519,7 @@ describe('Collection - load #load #collection', () => {
       const collection = fixtures.collection(fixtures.factory(), transport)
       const loadStartSpy = jest.spyOn(collection, 'onLoadStart')
 
+      // @ts-expect-error transport config
       await collection.load(config, transportConfig)
 
       expect(loadStartSpy).toHaveBeenCalledWith({
@@ -537,6 +539,7 @@ describe('Collection - load #load #collection', () => {
       const onLoadSuccessSpy = jest.spyOn(collection, 'onLoadSuccess')
       jest.spyOn(transport, 'load').mockResolvedValue(response)
 
+      // @ts-expect-error transport config
       await collection.load(config, transportConfig)
 
       expect(onLoadSuccessSpy).toHaveBeenCalledWith({
@@ -559,6 +562,7 @@ describe('Collection - load #load #collection', () => {
       jest.spyOn(transport, 'load').mockRejectedValue(response)
       await collection.save(model)
 
+      // @ts-expect-error transport config
       const result = await collection.load(config, transportConfig)
 
       expect(loadErrorSpy).toHaveBeenCalledWith({

@@ -1,5 +1,5 @@
 import { configure } from 'mobx'
-import { SaveConfig } from '../utils/types'
+import { SaveConfig } from '../types'
 import { fixtureFactory } from './__fixtures__/fixtureFactory'
 
 configure({ enforceActions: 'always' })
@@ -166,6 +166,7 @@ describe('Collection - save #save #collection', () => {
       const collectionSaveStartSpy = jest.spyOn(collection, 'onSaveStart')
       const modelSaveStartSpy = jest.spyOn(model, 'onSaveStart')
 
+      // @ts-expect-error collection config
       await collection.save(model, config, transportConfig)
 
       expect(collectionSaveStartSpy).toHaveBeenCalledWith({
@@ -196,6 +197,7 @@ describe('Collection - save #save #collection', () => {
         .spyOn(transport, 'save')
         .mockImplementation(() => Promise.resolve(response))
 
+      // @ts-expect-error collection config
       await collection.save(model, config, transportConfig)
 
       expect(onSaveSuccessSpy).toHaveBeenCalledWith({
@@ -226,6 +228,7 @@ describe('Collection - save #save #collection', () => {
       const modelSaveErrorSpy = jest.spyOn(model, 'onSaveError')
       jest.spyOn(transport, 'save').mockRejectedValue(response)
 
+      // @ts-expect-error collection config
       const result = await collection.save(model, config, transportConfig)
 
       expect(collectionSaveErrorSpy).toHaveBeenCalledWith({
@@ -301,7 +304,6 @@ describe('Collection - save #save #collection', () => {
       })
 
       expect(collection.models).toHaveLength(0)
-      expect(model.collection).toBeUndefined()
     })
   })
 })

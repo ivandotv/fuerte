@@ -1,4 +1,4 @@
-import { CollectionConfig } from '../../utils/types'
+import { CollectionConfig } from '../../types'
 import { TestCollection } from './TestCollection'
 import { testModelFactory, testModelFactoryAsync } from './TestFactory'
 import { TestModel, TestModelData } from './TestModel'
@@ -24,6 +24,7 @@ export function fixtureFactory() {
       factory = factory || this.factory()
       transport = transport || this.transport()
 
+      // @ts-expect-error - generic error mismatch
       return new TestCollection(factory, transport, config)
     },
     transport(): TestTransport {

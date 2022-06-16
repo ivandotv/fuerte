@@ -1,5 +1,5 @@
 import { configure } from 'mobx'
-import { DeleteConfig } from '../utils/types'
+import { DeleteConfig } from '../types'
 import { fixtureFactory } from './__fixtures__/fixtureFactory'
 
 configure({ enforceActions: 'always' })
@@ -51,7 +51,6 @@ describe('Collection - delete #delete #collection', () => {
     await collection.delete(model.cid, { remove: true, destroyOnRemoval: true })
 
     expect(model.isDestroyed).toBe(true)
-    expect(model.collection).toBeUndefined()
     expect(onDestroySpy).toHaveBeenCalledTimes(1)
   })
 

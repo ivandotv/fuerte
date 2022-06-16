@@ -121,7 +121,9 @@ describe('Collection - add #add #collection', () => {
     const model = { id: 'test' }
 
     // @ts-expect-error - model is not a real model
-    expect(() => collection.add(model)).toThrow(/not instance of Model class/)
+    expect(() => collection.add(model)).toThrow(
+      'not an instance of Model class'
+    )
   })
 
   test('Do not add the model if the client id is not unique', () => {
