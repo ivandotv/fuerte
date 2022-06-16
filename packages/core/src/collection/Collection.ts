@@ -257,10 +257,10 @@ export class Collection<
       // https://twitter.com/BenLesh/status/1365056053243613185
       error?.stack
       // identity from the model could not be set
-      const identityError = error instanceof IdentityError
+      const isIdentityError = error instanceof IdentityError
 
       if (
-        !identityError &&
+        !isIdentityError &&
         !saveConfig.addImmediately &&
         saveConfig.addOnError
       ) {
