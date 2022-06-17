@@ -1,6 +1,6 @@
 {
   "name": "@fuerte/core",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "private": false,
   "author": "Ivan Vlatkovic",
   "description": "Backbone.js and Ember.js inspired Mobx library",
