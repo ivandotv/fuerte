@@ -1,5 +1,11 @@
 # @fuerte/core
 
+## 4.1.0
+
+### Minor Changes
+
+- db8c5b7: move autosave package in to the core
+
 ## 4.0.1
 
 ### Patch Changes
