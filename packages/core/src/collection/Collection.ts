@@ -7,7 +7,6 @@ import {
   reaction,
   runInAction
 } from 'mobx'
-import { IdentityError } from '../model/identity-error'
 import { Model } from '../model/Model'
 import {
   AddConfig,
@@ -257,13 +256,8 @@ export class Collection<
       // https://twitter.com/BenLesh/status/1365056053243613185
       error?.stack
       // identity from the model could not be set
-      const isIdentityError = error instanceof IdentityError
 
-      if (
-        !isIdentityError &&
-        !saveConfig.addImmediately &&
-        saveConfig.addOnError
-      ) {
+      if (!saveConfig.addImmediately && saveConfig.addOnError) {
         this.addToCollection(model, {
           insertPosition: saveConfig.insertPosition
         })
@@ -553,7 +547,9 @@ export class Collection<
         if (!modifiedData) {
           continue
         }
-        const model = await Promise.resolve(this.create(modifiedData))
+        const model = await Promise.resolve(
+          this.createModel(modifiedData, false)
+        )
         if (this.notPresent(model)) {
           modelsToAdd.push(model)
         } else {
@@ -863,6 +859,22 @@ export class Collection<
       result.init()
     }
 
+    return this.createModel(data, true)
+  }
+
+  protected createModel(
+    data: Parameters<TFactory>[0],
+    asNew = true
+  ): ReturnType<TFactory> {
+    const result = this.factory(data)
+    if (isPromise(result)) {
+      result.then((model: TModel) => {
+        model.init(asNew)
+      })
+    } else {
+      result.init(asNew)
+    }
+
     return result as ReturnType<TFactory>
   }
 
@@ -1090,7 +1102,7 @@ export class Collection<
         continue
       }
 
-      const model = await Promise.resolve(this.create(modifiedData))
+      const model = await Promise.resolve(this.createModel(modifiedData))
 
       modelsToAdd.push(model)
     }

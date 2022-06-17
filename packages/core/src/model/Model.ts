@@ -20,7 +20,6 @@ import {
   SaveConfig,
   Transport
 } from '../types'
-import { IdentityError } from './identity-error'
 
 // @ts-expect-error: using return type on a protected method
 type Payload<T extends Model> = ReturnType<T['serialize']>
@@ -28,8 +27,11 @@ type Payload<T extends Model> = ReturnType<T['serialize']>
 export abstract class Model {
   static identityKey = 'cid'
 
-  static setIdentityFromResponse = false
-
+  /**
+   * Cid (client id)  of model
+   * Every model has a unique client id that is used iternally
+   * for tracking the uniqueness of the model
+   */
   readonly cid: string
 
   protected errors: ModelTransportErrors = {
@@ -47,6 +49,8 @@ export abstract class Model {
 
   protected _isDestroyed = false
 
+  protected _isNew = true
+
   protected payloadActionDisposer!: IReactionDisposer
 
   protected initialized = false
@@ -58,8 +62,14 @@ export abstract class Model {
       }
     | undefined
 
-  lastSavedData: Payload<this> | undefined = undefined
+  /**
+   * Last saved data of the model
+   */
+  readonly lastSavedData: Payload<this> | undefined = undefined
 
+  /**
+   * Gets identity key of the model
+   */
   get identityKey(): string {
     return (this.constructor as typeof Model).identityKey
   }
@@ -73,6 +83,7 @@ export abstract class Model {
       | '_isSaving'
       | '_isDestroyed'
       | '_isDeleting'
+      | '_isNew'
       | 'errors'
       | 'computePayload'
       | 'lastSavedData'
@@ -95,6 +106,8 @@ export abstract class Model {
       lastSavedData: observable,
 
       isNew: computed,
+      _isNew: observable,
+      setIsNew: action,
 
       computePayload: computed.struct,
       payload: computed,
@@ -119,16 +132,18 @@ export abstract class Model {
   protected abstract serialize(): any
 
   // @internal
-  init(): void {
+  init(asNew = true): void {
     if (this.initialized) return
     this.payloadActionDisposer = this.startPayloadCompute()
+    // @ts-expect-error -read only
     this.lastSavedData = this.payload
     this.initialized = true
+    this._isNew = asNew
   }
 
   // https://alexhisen.gitbook.io/mobx-recipes/use-computedstruct-for-computed-objects
   /**
-   * Get model payload. Internally returned data is used for saving the model via {@link Transport.save}
+   * data that mirrors the data returned by the `serialize` method. Transport layer should use this data for saving the model.
    */
   get payload(): Payload<this> {
     return this.computePayload
@@ -242,6 +257,7 @@ export abstract class Model {
       token === this.pendingSaveCall?.token ||
       this.pendingSaveCall?.state === 'pending'
     ) {
+      // @ts-expect-error - read only
       this.lastSavedData = savedData
     }
 
@@ -250,25 +266,7 @@ export abstract class Model {
       this.pendingSaveCall.state = 'resolved'
     }
 
-    if (
-      this.isNew &&
-      (this.constructor as typeof Model).setIdentityFromResponse
-    ) {
-      const identityValue = this.extractIdentityValue(
-        response?.data,
-        config,
-        transportConfig
-      )
-
-      if (!identityValue) {
-        throw new IdentityError(`Can't set identity key: ${this.identityKey}`)
-      }
-
-      this.setIdentity(identityValue)
-
-      // @ts-expect-error - dynamic key access
-      this.lastSavedData[this.identityKey] = this.identity
-    }
+    this._isNew = false
 
     this.onSaveSuccess({
       config,
@@ -309,14 +307,6 @@ export abstract class Model {
 
   protected onSaveError(data: ModelSaveErrorCallback<Payload<this>>): void {}
 
-  protected extractIdentityValue(
-    data: any | undefined,
-    config: any, // collection save config
-    transportConfig: any // transportConfig - save
-  ): string | undefined {
-    return data && data[this.identityKey]
-  }
-
   /**
    * Get identity value
    */
@@ -338,11 +328,18 @@ export abstract class Model {
    * Check if the model is new. Model is new if it has been created but not yet saved via {@link Transport.save}
    */
   get isNew(): boolean {
-    return this.modelIsNew()
+    return this._isNew
   }
 
-  protected modelIsNew(): boolean {
-    return this.identity === this.cid || !this.identity
+  /**
+   * Set `isNew` property on the model. This method should generally not be used by the client code.
+   * Transport layer can check this property in order to determine if it should use `POST` or `PATCH` methods
+   * for persistence.
+   *
+   * @param isNew - true if the model should be marked as new
+   */
+  setIsNew(isNew: boolean): void {
+    this._isNew = isNew
   }
 
   // @internal

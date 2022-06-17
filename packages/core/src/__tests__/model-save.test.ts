@@ -1,6 +1,5 @@
 import { configure, runInAction } from 'mobx'
 import { fixtureFactory } from './__fixtures__/fixtureFactory'
-import { TestModel } from './__fixtures__/TestModel'
 
 configure({ enforceActions: 'never' })
 
@@ -33,9 +32,6 @@ describe('Model - save #save #model', () => {
 })
 
 test('When model is saved, it is not new anymore', async () => {
-  const original = TestModel.setIdentityFromResponse
-  TestModel.setIdentityFromResponse = true
-
   const model = fixtures.model()
 
   const collection = fixtures.collection()
@@ -44,9 +40,6 @@ test('When model is saved, it is not new anymore', async () => {
   expect(model.isNew).toBe(true)
 
   await collection.save(model)
-
-  // I know, static props are bad for unit testing
-  TestModel.setIdentityFromResponse = original
 
   expect(model.isNew).toBe(false)
 })

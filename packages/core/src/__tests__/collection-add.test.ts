@@ -209,8 +209,6 @@ describe('Collection - add #add #collection', () => {
 
         static identityKey = 'isbn'
 
-        static setIdentityFromResponse = true
-
         constructor() {
           super()
           makeObservable(this, {
