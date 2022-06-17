@@ -1,5 +1,5 @@
 import { configure } from 'mobx'
-import { fixtureFactory } from '../../__tests__/__fixtures__/fixtureFactory'
+import { fixtureFactory } from './__fixtures__/fixtureFactory'
 
 configure({ enforceActions: 'always' })
 

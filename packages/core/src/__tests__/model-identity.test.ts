@@ -1,7 +1,7 @@
 import { configure } from 'mobx'
-import { fixtureFactory } from '../../__tests__/__fixtures__/fixtureFactory'
-import { TestModel } from '../../__tests__/__fixtures__/TestModel'
-import { IdentityError } from '../identity-error'
+import { fixtureFactory } from './__fixtures__/fixtureFactory'
+import { TestModel } from './__fixtures__/TestModel'
+import { IdentityError } from '../model/identity-error'
 
 configure({ enforceActions: 'always', reactionRequiresObservable: true })
 

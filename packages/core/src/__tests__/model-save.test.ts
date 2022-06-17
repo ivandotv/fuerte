@@ -1,6 +1,6 @@
 import { configure, runInAction } from 'mobx'
-import { fixtureFactory } from '../../__tests__/__fixtures__/fixtureFactory'
-import { TestModel } from '../../__tests__/__fixtures__/TestModel'
+import { fixtureFactory } from './__fixtures__/fixtureFactory'
+import { TestModel } from './__fixtures__/TestModel'
 
 configure({ enforceActions: 'never' })
 

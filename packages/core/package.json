@@ -3,7 +3,7 @@
   "version": "4.0.1",
   "private": false,
   "author": "Ivan Vlatkovic",
-  "description": "Backbone.js inspired Mobx library",
+  "description": "Backbone.js and Ember.js inspired Mobx library",
   "type": "module",
   "main": "./dist/prod/index.cjs",
   "module": "./dist/prod/index.modern.js",
