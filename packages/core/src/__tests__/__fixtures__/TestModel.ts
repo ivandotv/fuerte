@@ -1,12 +1,11 @@
+import { randomUUID } from 'crypto'
 import { makeObservable, observable } from 'mobx'
-import { Collection } from '../../collection/Collection'
 import { Model } from '../../model/Model'
 import {
   ModelDeleteErrorCallback,
   ModelDeleteStartCallback,
   ModelDeleteSuccessCallback,
   SaveConfig,
-  SaveResult,
   TransportSaveConfig,
   TransportSaveResponse
 } from '../../types'
@@ -32,7 +31,7 @@ export class TestModel extends Model<TestCollection> {
     super()
     this.foo = foo
     this.bar = bar
-    this.id = id
+    this.id = id ?? randomUUID()
 
     makeObservable(this, {
       foo: observable,
@@ -97,20 +96,3 @@ export class TestModel extends Model<TestCollection> {
     super.onDestroy()
   }
 }
-
-// const model = new TestModel()
-
-// // model.collection.load()
-// const result = model
-//   .save({
-//     local: true
-//   })
-//   .then((result) => result.response?.data.id)
-
-// const coll = new TestCollection()
-
-// coll.save(model)
-
-// type ExtractTransport<P> = P extends Collection<any, any, infer T> ? T : never
-
-// type AA = ExtractTransport<TestCollection>
