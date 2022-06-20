@@ -1,14 +1,16 @@
 import { makeObservable, observable } from 'mobx'
+import { Collection } from '../../collection/Collection'
 import { Model } from '../../model/Model'
 import {
   ModelDeleteErrorCallback,
   ModelDeleteStartCallback,
   ModelDeleteSuccessCallback,
   SaveConfig,
+  SaveResult,
   TransportSaveConfig,
   TransportSaveResponse
 } from '../../types'
-import type { TestCollection } from './TestCollection'
+import { TestCollection } from './TestCollection'
 import { TestTransport } from './TestTransport'
 
 export type TestModelData = {
@@ -17,8 +19,8 @@ export type TestModelData = {
   id?: string
 }
 
-export class TestModel extends Model {
-  static identityKey = 'id'
+export class TestModel extends Model<TestCollection> {
+  static override identityKey = 'id'
 
   foo: string
 
@@ -50,6 +52,8 @@ export class TestModel extends Model {
       id: this.id ?? ''
     }
   }
+
+  protected override onRemoved(collection: TestCollection): void {}
 
   override onSaveSuccess(data: {
     response: TransportSaveResponse<TestTransport>
@@ -93,3 +97,20 @@ export class TestModel extends Model {
     super.onDestroy()
   }
 }
+
+// const model = new TestModel()
+
+// // model.collection.load()
+// const result = model
+//   .save({
+//     local: true
+//   })
+//   .then((result) => result.response?.data.id)
+
+// const coll = new TestCollection()
+
+// coll.save(model)
+
+// type ExtractTransport<P> = P extends Collection<any, any, infer T> ? T : never
+
+// type AA = ExtractTransport<TestCollection>

@@ -10,7 +10,7 @@ import { debounceReaction } from '../utils'
 import { Collection } from './Collection'
 
 export class AutosaveCollection<
-  TModel extends Model,
+  TModel extends Model<Collection<any, any, any>>,
   TFactory extends FactoryFn<TModel>,
   TTransport extends Transport<TModel>
 > extends Collection<TModel, TFactory, TTransport> {

@@ -166,7 +166,6 @@ describe('Collection - save #save #collection', () => {
       const collectionSaveStartSpy = jest.spyOn(collection, 'onSaveStart')
       const modelSaveStartSpy = jest.spyOn(model, 'onSaveStart')
 
-      // @ts-expect-error collection config
       await collection.save(model, config, transportConfig)
 
       expect(collectionSaveStartSpy).toHaveBeenCalledWith({
@@ -197,7 +196,6 @@ describe('Collection - save #save #collection', () => {
         .spyOn(transport, 'save')
         .mockImplementation(() => Promise.resolve(response))
 
-      // @ts-expect-error collection config
       await collection.save(model, config, transportConfig)
 
       expect(onSaveSuccessSpy).toHaveBeenCalledWith({
@@ -263,6 +261,8 @@ describe('Collection - save #save #collection', () => {
       const collection = fixtures.collection(fixtures.factory(), transport)
       const model = fixtures.model()
 
+      // @ts-expect-error - internal callback test
+      const onAddedSpy = jest.spyOn(model, 'onAdded')
       const promise = collection.save(model, { addImmediately: false })
 
       expect(collection.models).toHaveLength(0)
@@ -271,6 +271,8 @@ describe('Collection - save #save #collection', () => {
 
       expect(collection.models).toHaveLength(1)
       expect(collection.models[0]).toBe(model)
+      expect(onAddedSpy).toHaveBeenCalledTimes(1)
+      expect(onAddedSpy).toHaveBeenCalledWith(collection)
     })
 
     test('Add the model after the failed save', async () => {
@@ -281,6 +283,9 @@ describe('Collection - save #save #collection', () => {
       const collection = fixtures.collection(fixtures.factory(), transport)
       const model = fixtures.model()
 
+      // @ts-expect-error - internal callback test
+      const onAddedSpy = jest.spyOn(model, 'onAdded')
+
       await collection.save(model, {
         addImmediately: false,
         addOnError: true
@@ -288,6 +293,8 @@ describe('Collection - save #save #collection', () => {
 
       expect(collection.models).toHaveLength(1)
       expect(collection.models[0]).toBe(model)
+      expect(onAddedSpy).toHaveBeenCalledTimes(1)
+      expect(onAddedSpy).toHaveBeenCalledWith(collection)
     })
 
     test('Do not add the model after the failed save', async () => {
@@ -297,6 +304,8 @@ describe('Collection - save #save #collection', () => {
         .mockImplementation(() => Promise.reject(false))
       const collection = fixtures.collection(fixtures.factory(), transport)
       const model = fixtures.model()
+      // @ts-expect-error - internal callback test
+      const onAddedSpy = jest.spyOn(model, 'onAdded')
 
       await collection.save(model, {
         addImmediately: false,
@@ -304,6 +313,7 @@ describe('Collection - save #save #collection', () => {
       })
 
       expect(collection.models).toHaveLength(0)
+      expect(onAddedSpy).not.toHaveBeenCalled()
     })
   })
 })

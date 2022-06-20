@@ -8,7 +8,6 @@ const fixtures = fixtureFactory()
 
 beforeAll(() => {
   TestModel.identityKey = 'id'
-  TestModel.setIdentityFromResponse = true
 })
 
 describe('Model #model', () => {
