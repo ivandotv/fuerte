@@ -18,7 +18,8 @@ describe('Model - save #save #model', () => {
   test('When the model properties change, model payload property is updated', () => {
     const newFooValue = 'new foo'
     const newBarValue = 'new bar'
-    const model = fixtures.model()
+    const id = '123'
+    const model = fixtures.model({ id })
 
     model.foo = newFooValue
     model.bar = newBarValue
@@ -26,7 +27,7 @@ describe('Model - save #save #model', () => {
     expect(model.payload).toStrictEqual({
       foo: newFooValue,
       bar: newBarValue,
-      id: ''
+      id
     })
   })
 })

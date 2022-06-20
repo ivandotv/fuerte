@@ -17,11 +17,11 @@ export class TestTransport implements Transport<TestModel> {
     })
   }
 
-  save(_model: TestModel, config: any) {
+  save(_model: TestModel, config?: any) {
     return Promise.resolve({ data: { id: nanoid() } })
   }
 
-  delete(_model: TestModel, config: any): Promise<{ data: any }> {
+  delete(_model: TestModel, config: any) {
     return Promise.resolve({ data: undefined })
   }
 

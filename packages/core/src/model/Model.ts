@@ -11,6 +11,7 @@ import { nanoid } from 'nanoid/non-secure'
 import { Collection } from '../collection/Collection'
 import {
   DeleteConfig,
+  DeleteResult,
   ExtractTransport,
   ModelDeleteErrorCallback,
   ModelDeleteStartCallback,
@@ -19,13 +20,13 @@ import {
   ModelSaveStartCallback,
   ModelSaveSuccessCallback,
   ModelTransportErrors,
+  Payload,
   SaveConfig,
   SaveResult,
   Transport
 } from '../types'
 
-// @ts-expect-error: using return type on a protected method
-type Payload<T extends Model> = ReturnType<T['serialize']>
+const collectionError = 'Model is not part of the collection'
 
 export abstract class Model<
   TCollection extends Collection<any, any, any> = Collection<any, any, any>
@@ -136,7 +137,7 @@ export abstract class Model<
     })
   }
 
-  protected abstract serialize(): any
+  abstract serialize(): any
 
   //TODO - add collection
   // @internal
@@ -270,6 +271,25 @@ export abstract class Model<
     this.onSaveStart({ config, transportConfig })
   }
 
+  /**
+   * Get the collection the model is part of
+   */
+  getCollection(): TCollection | undefined {
+    return this.collection
+  }
+
+  /**
+   * Save the model by calling {@link Collection.save}. If the model is not part of the collection, it will throw
+   * @param config - transport configuration from the collection transport.
+   */
+  async save<TConfig = Parameters<ExtractTransport<TCollection>['save']>[1]>(
+    config: TConfig
+  ): Promise<SaveResult<this, ExtractTransport<TCollection>>> {
+    if (!this.collection) throw new Error(collectionError)
+
+    return await this.collection!.save(this, undefined, config)
+  }
+
   protected onSaveStart(data: ModelSaveStartCallback): void {}
 
   // @internal
@@ -373,6 +393,20 @@ export abstract class Model<
    */
   setIsNew(isNew: boolean): void {
     this._isNew = isNew
+  }
+
+  /**
+   * Delete the model by calling {@link Collection.delete}. If the model is not part of the collection, it will throw
+   * @param config - transport configuration from the collection transport.
+   */
+  async delete<
+    TConfig = Parameters<ExtractTransport<TCollection>['delete']>[1]
+  >(
+    config: TConfig
+  ): Promise<DeleteResult<this, ExtractTransport<TCollection>>> {
+    if (!this.collection) throw new Error(collectionError)
+
+    return await this.collection!.delete(this.cid, undefined, config)
   }
 
   // @internal
