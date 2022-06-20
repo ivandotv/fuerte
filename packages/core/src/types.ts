@@ -1,3 +1,4 @@
+import { Collection } from './collection/Collection'
 import {
   DuplicateModelStrategy,
   ModelCompareResult
@@ -267,3 +268,9 @@ export type AutosaveCollectionConfig = CollectionConfig & {
 export type RequiredAutosaveCollectionConfig = RequiredCollectionConfig & {
   autoSave: Required<AutoSaveConfig>
 }
+
+export type ExtractTransport<P> = P extends Collection<any, any, infer T>
+  ? T
+  : never
+
+export type Payload<T extends Model> = ReturnType<T['serialize']>
