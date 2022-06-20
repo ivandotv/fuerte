@@ -7,6 +7,7 @@ module.exports = {
       'off',
       { varsIgnorePattern: '^_', argsIgnorePattern: '^_', args: 'all' }
     ],
-    '@typescript-eslint/no-empty-function': 'off'
+    '@typescript-eslint/no-empty-function': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off'
   }
 }
