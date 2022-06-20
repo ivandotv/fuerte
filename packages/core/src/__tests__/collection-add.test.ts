@@ -161,6 +161,18 @@ describe('Collection - add #add #collection', () => {
     expect(result).toEqual(models)
   })
 
+  test('model "onAdded" callback is called', () => {
+    const collection = fixtures.collection()
+    const model = fixtures.model({ id: '1' })
+
+    // @ts-expect-error - internal callback test
+    const onAddedSpy = jest.spyOn(model, 'onAdded')
+    collection.add(model)
+
+    expect(onAddedSpy).toHaveBeenCalledTimes(1)
+    expect(onAddedSpy).toHaveBeenCalledWith(collection)
+  })
+
   test('Retrieve the added model', async () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
@@ -172,7 +184,7 @@ describe('Collection - add #add #collection', () => {
     expect(found).toBe(model)
   })
 
-  test('When models are added, added hook is called', () => {
+  test('When models are added, added callback is called', () => {
     const transport = fixtures.transport()
     const collection = fixtures.collection(fixtures.factory(), transport)
     const models = modelPool.slice(0, 5)
@@ -240,8 +252,6 @@ describe('Collection - add #add #collection', () => {
         }
 
         static identityKey = 'isbn'
-
-        static setIdentityFromResponse = true
       }
 
       const model = new Test('1')

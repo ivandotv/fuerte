@@ -8,8 +8,10 @@ import {
   observable
 } from 'mobx'
 import { nanoid } from 'nanoid/non-secure'
+import { Collection } from '../collection/Collection'
 import {
   DeleteConfig,
+  ExtractTransport,
   ModelDeleteErrorCallback,
   ModelDeleteStartCallback,
   ModelDeleteSuccessCallback,
@@ -18,14 +20,19 @@ import {
   ModelSaveSuccessCallback,
   ModelTransportErrors,
   SaveConfig,
+  SaveResult,
   Transport
 } from '../types'
 
 // @ts-expect-error: using return type on a protected method
 type Payload<T extends Model> = ReturnType<T['serialize']>
 
-export abstract class Model {
+export abstract class Model<
+  TCollection extends Collection<any, any, any> = Collection<any, any, any>
+> {
   static identityKey = 'cid'
+
+  private collection?: TCollection
 
   /**
    * Cid (client id)  of model
@@ -131,9 +138,11 @@ export abstract class Model {
 
   protected abstract serialize(): any
 
+  //TODO - add collection
   // @internal
-  init(asNew = true): void {
+  init(asNew = true, collection?: TCollection): void {
     if (this.initialized) return
+    this.collection = collection
     this.payloadActionDisposer = this.startPayloadCompute()
     // @ts-expect-error -read only
     this.lastSavedData = this.payload
@@ -217,6 +226,30 @@ export abstract class Model {
   get isDestroyed(): boolean {
     return this._isDestroyed
   }
+
+  //@internal
+  _onAdded(collection: TCollection): void {
+    this.collection = collection
+    this.onAdded(collection)
+  }
+
+  /**
+   * Callback that is fired when the model is added to the collection.
+   * @param collection - collection that contains the model
+   */
+  protected onAdded(collection: TCollection): void {}
+
+  //@internal
+  _onRemoved(collection: TCollection): void {
+    this.collection = undefined
+    this.onRemoved(collection)
+  }
+
+  /**
+   * Callback that is fired when the model is removed from the collection.
+   * @param collection - collection from which the model was removed
+   */
+  protected onRemoved(collection: TCollection): void {}
 
   // @internal
   _onSaveStart({

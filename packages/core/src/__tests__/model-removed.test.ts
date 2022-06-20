@@ -29,5 +29,18 @@ describe('Model - remove #remove #model', () => {
       expect(model.isDestroyed).toBe(true)
       expect(onDestroyedSpy).toHaveBeenCalledTimes(1)
     })
+
+    test('"onRemoved" callback is called', () => {
+      const collection = fixtures.collection()
+      const model = fixtures.model({ id: '1' })
+
+      // @ts-expect-error - internal callback test
+      const onRemovedSpy = jest.spyOn(model, 'onRemoved')
+      collection.add(model)
+      collection.remove(model.identity)
+
+      expect(onRemovedSpy).toHaveBeenCalledTimes(1)
+      expect(onRemovedSpy).toHaveBeenCalledWith(collection)
+    })
   })
 })

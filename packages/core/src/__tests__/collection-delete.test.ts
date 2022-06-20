@@ -281,6 +281,10 @@ describe('Collection - delete #delete #collection', () => {
       const transport = fixtures.transport()
       const collection = fixtures.collection(fixtures.factory(), transport)
       const model = fixtures.model()
+
+      // @ts-expect-error - internal callback test
+      const onRemovedSpy = jest.spyOn(model, 'onRemoved')
+
       collection.add(model)
 
       const result = collection.delete(model.cid, {
@@ -290,6 +294,8 @@ describe('Collection - delete #delete #collection', () => {
       expect(collection.models).toHaveLength(1)
       await result
       expect(collection.models).toHaveLength(0)
+      expect(onRemovedSpy).toHaveBeenCalledTimes(1)
+      expect(onRemovedSpy).toHaveBeenCalledWith(collection)
     })
 
     test('After failed deletion, model is removed from the collection', async () => {
@@ -299,15 +305,20 @@ describe('Collection - delete #delete #collection', () => {
       const model = fixtures.model()
       collection.add(model)
 
+      // @ts-expect-error - internal callback test
+      const onRemovedSpy = jest.spyOn(model, 'onRemoved')
+
       await collection.delete(model.cid, {
         removeImmediately: false,
         removeOnError: true
       })
 
       expect(collection.models).toHaveLength(0)
+      expect(onRemovedSpy).toHaveBeenCalledTimes(1)
+      expect(onRemovedSpy).toHaveBeenCalledWith(collection)
     })
 
-    test('After successfull deletion, model is removed', async () => {
+    test('After successfull deletion, model is not removed', async () => {
       const transport = fixtures.transport()
       jest
         .spyOn(transport, 'delete')
@@ -316,12 +327,16 @@ describe('Collection - delete #delete #collection', () => {
       const model = fixtures.model()
       collection.add(model)
 
+      // @ts-expect-error - internal callback test
+      const onRemovedSpy = jest.spyOn(model, 'onRemoved')
+
       await collection.delete(model.cid, {
         remove: false
       })
 
       expect(collection.models).toHaveLength(1)
       expect(collection.models[0]).toBe(model)
+      expect(onRemovedSpy).not.toHaveBeenCalled()
     })
 
     test('After failed deletion, model is not removed', async () => {
@@ -331,6 +346,9 @@ describe('Collection - delete #delete #collection', () => {
       const model = fixtures.model()
       collection.add(model)
 
+      // @ts-expect-error - internal callback test
+      const onRemovedSpy = jest.spyOn(model, 'onRemoved')
+
       await collection.delete(model.cid, {
         removeImmediately: false,
         removeOnError: false
@@ -338,6 +356,7 @@ describe('Collection - delete #delete #collection', () => {
 
       expect(collection.models).toHaveLength(1)
       expect(collection.models[0]).toBe(model)
+      expect(onRemovedSpy).not.toHaveBeenCalled()
     })
   })
 })

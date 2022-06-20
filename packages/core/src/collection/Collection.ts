@@ -767,6 +767,7 @@ export class Collection<
       this.startTracking(model)
 
       this.onAdded(model)
+      model._onAdded(this)
     }
 
     // add models to the collection
@@ -1024,14 +1025,15 @@ export class Collection<
     const removed: TModel[] = []
     const currentCount = this._models.length
 
-    const handleRemoval = (m: TModel): void => {
-      removed.push(m)
-      this.stopTracking(m)
-      // this.notifyRemoved(m)
+    const handleRemoval = (model: TModel): void => {
+      removed.push(model)
+      this.stopTracking(model)
+
       if (config?.destroy) {
-        m.destroy()
+        model.destroy()
       }
-      this.onRemoved(m)
+      this.onRemoved(model)
+      model._onRemoved(this)
     }
     // optimize for only one element
     if (modelCids.size === 1) {
