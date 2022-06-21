@@ -180,7 +180,7 @@ describe('Collection - add #add #collection', () => {
     const model = fixtures.model({ foo: 'foo', bar: 'bar', id: '1' })
 
     collection.add(model)
-    const found = collection.getById(model.identity)
+    const found = collection.getByIdentity(model.identity)
 
     expect(found).toBe(model)
   })
@@ -233,11 +233,11 @@ describe('Collection - add #add #collection', () => {
       const model = new Test()
       collection.add(model)
 
-      expect(collection.getById(newIdentity)).toBeUndefined()
+      expect(collection.getByIdentity(newIdentity)).toBeUndefined()
 
       model.setIdentity(newIdentity)
 
-      expect(collection.getById(newIdentity)).toBe(model)
+      expect(collection.getByIdentity(newIdentity)).toBe(model)
     })
 
     test('When model identity changes, get the model by new identity value', () => {
@@ -258,10 +258,10 @@ describe('Collection - add #add #collection', () => {
       const model = new Test('1')
       collection.add(model)
 
-      expect(collection.getById(model.identity)).toBe(model)
+      expect(collection.getByIdentity(model.identity)).toBe(model)
 
       model.setIdentity(newIdentityValue)
-      expect(collection.getById(newIdentityValue)).toBe(model)
+      expect(collection.getByIdentity(newIdentityValue)).toBe(model)
     })
   })
 })

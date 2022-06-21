@@ -50,7 +50,7 @@ describe('Model #model', () => {
 
     expect(transportSaveSpy).toHaveBeenCalledTimes(1)
     expect(transportSaveSpy).toHaveBeenCalledWith(model, transportConfg)
-    expect(collection.getById(model.identity)).toBe(model)
+    expect(collection.getByIdentity(model.identity)).toBe(model)
   })
 
   test('calling model.save will throw if the model is not a part of the collection', async () => {

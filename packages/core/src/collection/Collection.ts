@@ -871,15 +871,15 @@ export class Collection<
     return result as ReturnType<TFactory>
   }
 
-  getById(id: string): TModel | undefined
+  getByIdentity(id: string): TModel | undefined
 
-  getById(id: string[]): TModel[] | undefined
+  getByIdentity(id: string[]): TModel[] | undefined
 
   /**
    * Get model or array of models from the collection by identity key, or model CID.
    * @param id - identity key or CID
    */
-  getById(id: string | string[]): TModel | TModel[] | undefined {
+  getByIdentity(id: string | string[]): TModel | TModel[] | undefined {
     if (Array.isArray(id)) {
       return this.resolveModels(id)
     }

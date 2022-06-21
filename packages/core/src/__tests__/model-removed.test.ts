@@ -15,7 +15,7 @@ describe('Model - remove #remove #model', () => {
 
       collection.remove(model.identity)
 
-      expect(collection.getById(model.identity)).toBeUndefined()
+      expect(collection.getByIdentity(model.identity)).toBeUndefined()
     })
 
     test('Destroy method is called by default', () => {

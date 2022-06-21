@@ -227,7 +227,6 @@ describe('Collection - save #save #collection', () => {
       const modelSaveErrorSpy = jest.spyOn(model, 'onSaveError')
       jest.spyOn(transport, 'save').mockRejectedValue(response)
 
-      // @ts-expect-error collection config
       const result = await collection.save(model, config, transportConfig)
 
       expect(collectionSaveErrorSpy).toHaveBeenCalledWith({
