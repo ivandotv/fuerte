@@ -468,4 +468,8 @@ export abstract class Model<
 
   // @internal
   onDestroy(): void {}
+
+  toJSON(): Payload<this> {
+    return this.payload
+  }
 }

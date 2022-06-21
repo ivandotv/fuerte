@@ -118,4 +118,10 @@ describe('Model #model', () => {
 
     expect(model.isNew).toBe(false)
   })
+
+  test('model toJSON method equals model payload', () => {
+    const model = fixtures.model()
+
+    expect(model.toJSON()).toBe(model.payload)
+  })
 })
