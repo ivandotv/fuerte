@@ -1,6 +1,6 @@
 import { configure, makeObservable, observable } from 'mobx'
-import { fixtureFactory } from './__fixtures__/fixtureFactory'
-import { TestModel } from './__fixtures__/TestModel'
+import { fixtureFactory } from '../__fixtures__/fixtureFactory'
+import { TestModel } from '../__fixtures__/TestModel'
 
 configure({ enforceActions: 'always' })
 
@@ -220,7 +220,7 @@ describe('Collection - add #add #collection', () => {
       class Test extends TestModel {
         isbn: string | undefined
 
-        static identityKey = 'isbn'
+        static override identityKey = 'isbn'
 
         constructor() {
           super()
@@ -252,7 +252,7 @@ describe('Collection - add #add #collection', () => {
           })
         }
 
-        static identityKey = 'isbn'
+        static override identityKey = 'isbn'
       }
 
       const model = new Test('1')

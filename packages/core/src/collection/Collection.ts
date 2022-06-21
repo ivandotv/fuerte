@@ -41,6 +41,18 @@ import {
 } from '../types'
 import { ASYNC_STATUS, isPromise, wrapInArray } from '../utils'
 
+export const DuplicateModelStrategy = {
+  KEEP_NEW: 'KEEP_NEW',
+  KEEP_OLD: 'KEEP_OLD',
+  COMPARE: 'COMPARE'
+} as const
+
+export const ModelCompareResult = {
+  KEEP_NEW: 'KEEP_NEW',
+  KEEP_OLD: 'KEEP_OLD',
+  KEEP_BOTH: 'KEEP_BOTH'
+} as const
+
 export class Collection<
   TModel extends Model,
   TFactory extends FactoryFn<TModel>,
@@ -1136,8 +1148,8 @@ export class Collection<
    * @returns If you want to add additional data to the serialization, return the data from the callback, and it will be
    * added to the serialized object.
    */
-  protected onSerialize(): Record<string, any> {
-    return undefined as unknown as Record<string, any>
+  protected onSerialize(): Record<string, any> | void {
+    return undefined
   }
 
   protected async resetCollection<T>(

@@ -1,9 +1,9 @@
 import { configure } from 'mobx'
-import { Collection } from '../collection/Collection'
-import { CollectionConfig } from '../types'
-import { fixtureFactory } from './__fixtures__/fixtureFactory'
-import { testModelFactoryAsync } from './__fixtures__/TestFactory'
-import { TestModel } from './__fixtures__/TestModel'
+import { Collection } from '../../collection/Collection'
+import { CollectionConfig } from '../../types'
+import { fixtureFactory } from '../__fixtures__/fixtureFactory'
+import { testModelFactoryAsync } from '../__fixtures__/TestFactory'
+import { TestModel } from '../__fixtures__/TestModel'
 
 configure({ enforceActions: 'always' })
 

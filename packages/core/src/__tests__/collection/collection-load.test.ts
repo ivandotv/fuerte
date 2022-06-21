@@ -2,12 +2,12 @@ import { configure, runInAction } from 'mobx'
 import {
   DuplicateModelStrategy,
   ModelCompareResult
-} from '../collection/collection-config'
-import { LoadConfig } from '../types'
-import { ASYNC_STATUS } from '../utils'
-import { fixtureFactory } from './__fixtures__/fixtureFactory'
-import { TestCollection } from './__fixtures__/TestCollection'
-import { TestModel, TestModelData } from './__fixtures__/TestModel'
+} from '../../collection/Collection'
+import { LoadConfig } from '../../types'
+import { ASYNC_STATUS } from '../../utils'
+import { fixtureFactory } from '../__fixtures__/fixtureFactory'
+import { TestCollection } from '../__fixtures__/TestCollection'
+import { TestModel, TestModelData } from '../__fixtures__/TestModel'
 
 configure({ enforceActions: 'never' })
 
@@ -235,7 +235,7 @@ describe('Collection - load #load #collection', () => {
       })
 
       class Test extends TestCollection {
-        onModelCreateData(_data: TestModelData): TestModelData {
+        override onModelCreateData(_data: TestModelData): TestModelData {
           return modifiedData
         }
       }
@@ -254,7 +254,7 @@ describe('Collection - load #load #collection', () => {
         data: fixtures.rawModelData.slice(0, 1)
       })
       class Test extends TestCollection {
-        onModelCreateData(_data: TestModelData): void {}
+        override onModelCreateData(_data: TestModelData): void {}
       }
       const collection = new Test(fixtures.factory(), fixtures.transport())
 

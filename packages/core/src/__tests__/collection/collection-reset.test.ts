@@ -1,7 +1,7 @@
 import { configure } from 'mobx'
-import { fixtureFactory } from './__fixtures__/fixtureFactory'
-import { TestCollection } from './__fixtures__/TestCollection'
-import { TestModelData } from './__fixtures__/TestModel'
+import { fixtureFactory } from '../__fixtures__/fixtureFactory'
+import { TestCollection } from '../__fixtures__/TestCollection'
+import { TestModelData } from '../__fixtures__/TestModel'
 
 configure({ enforceActions: 'always' })
 
@@ -100,7 +100,7 @@ describe('Collection - reset #reset #collection', () => {
       bar: 'modified'
     }
     class Test extends TestCollection {
-      onModelCreateData(_data: TestModelData): TestModelData {
+      override onModelCreateData(_data: TestModelData): TestModelData {
         return modelData
       }
     }
@@ -113,7 +113,7 @@ describe('Collection - reset #reset #collection', () => {
 
   test('If the model the creation data callback returns a falsy value, skip model creation', async () => {
     class Test extends TestCollection {
-      onModelCreateData(_data: TestModelData): void {}
+      override onModelCreateData(_data: TestModelData): void {}
     }
     const collection = new Test(fixtures.factory(), fixtures.transport())
 

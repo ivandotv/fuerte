@@ -1,6 +1,6 @@
 import { configure } from 'mobx'
-import { fixtureFactory } from './__fixtures__/fixtureFactory'
-import { TestModel } from './__fixtures__/TestModel'
+import { fixtureFactory } from '../__fixtures__/fixtureFactory'
+import { TestModel } from '../__fixtures__/TestModel'
 
 configure({ enforceActions: 'observed' })
 

@@ -1,6 +1,6 @@
 import { configure } from 'mobx'
-import { DeleteConfig } from '../types'
-import { fixtureFactory } from './__fixtures__/fixtureFactory'
+import { DeleteConfig } from '../../types'
+import { fixtureFactory } from '../__fixtures__/fixtureFactory'
 
 configure({ enforceActions: 'always' })
 
@@ -282,7 +282,6 @@ describe('Collection - delete #delete #collection', () => {
       const collection = fixtures.collection(fixtures.factory(), transport)
       const model = fixtures.model()
 
-      // @ts-expect-error - internal callback test
       const onRemovedSpy = jest.spyOn(model, 'onRemoved')
 
       collection.add(model)
@@ -305,7 +304,6 @@ describe('Collection - delete #delete #collection', () => {
       const model = fixtures.model()
       collection.add(model)
 
-      // @ts-expect-error - internal callback test
       const onRemovedSpy = jest.spyOn(model, 'onRemoved')
 
       await collection.delete(model.cid, {
@@ -327,7 +325,6 @@ describe('Collection - delete #delete #collection', () => {
       const model = fixtures.model()
       collection.add(model)
 
-      // @ts-expect-error - internal callback test
       const onRemovedSpy = jest.spyOn(model, 'onRemoved')
 
       await collection.delete(model.cid, {
@@ -346,7 +343,6 @@ describe('Collection - delete #delete #collection', () => {
       const model = fixtures.model()
       collection.add(model)
 
-      // @ts-expect-error - internal callback test
       const onRemovedSpy = jest.spyOn(model, 'onRemoved')
 
       await collection.delete(model.cid, {

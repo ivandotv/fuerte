@@ -52,47 +52,33 @@ export class TestModel extends Model<TestCollection> {
     }
   }
 
-  protected override onRemoved(collection: TestCollection): void {}
+  override onRemoved(collection: TestCollection): void {}
 
   override onSaveSuccess(data: {
     response: TransportSaveResponse<TestTransport>
     config: SaveConfig
     transportConfig: TransportSaveConfig<TestTransport>
-  }): void {
-    super.onSaveSuccess(data)
-  }
+  }): void {}
 
   override onSaveError(data: {
     error: any
     config: SaveConfig
     transportConfig: any
     dataToSave: any
-  }): void {
-    super.onSaveError(data)
-  }
+  }): void {}
 
   override onSaveStart(data: {
     config: SaveConfig
     transportConfig: any
-  }): void {
-    super.onSaveStart(data)
-  }
+  }): void {}
 
-  override onDeleteStart(data: ModelDeleteStartCallback<TestTransport>): void {
-    super.onDeleteStart(data)
-  }
+  override onDeleteStart(data: ModelDeleteStartCallback<TestTransport>): void {}
 
   override onDeleteSuccess(
     data: ModelDeleteSuccessCallback<TestTransport>
-  ): void {
-    super.onDeleteSuccess(data)
-  }
+  ): void {}
 
-  override onDeleteError(data: ModelDeleteErrorCallback<TestTransport>): void {
-    super.onDeleteError(data)
-  }
+  override onDeleteError(data: ModelDeleteErrorCallback<TestTransport>): void {}
 
-  override onDestroy() {
-    super.onDestroy()
-  }
+  // override onDestroy() {}
 }

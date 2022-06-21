@@ -1,4 +1,5 @@
-import { CollectionConfig } from '../../types'
+import { AutosaveCollectionConfig, CollectionConfig } from '../../types'
+import { TestAutosaveCollection } from './TestAutosaveCollection'
 import { TestCollection } from './TestCollection'
 import { testModelFactory, testModelFactoryAsync } from './TestFactory'
 import { TestModel, TestModelData } from './TestModel'
@@ -24,8 +25,18 @@ export function fixtureFactory() {
       factory = factory || this.factory()
       transport = transport || this.transport()
 
-      // @ts-expect-error - generic error mismatch
-      return new TestCollection(factory, transport, config)
+      return new TestCollection(factory!, transport!, config)
+    },
+    autoSaveCollection(
+      factory?: typeof testModelFactory,
+      transport?: TestTransport,
+      config?: AutosaveCollectionConfig
+    ) {
+      config = config || {}
+      factory = factory || this.factory()
+      transport = transport || this.transport()
+
+      return new TestAutosaveCollection(factory!, transport!, config)
     },
     transport(): TestTransport {
       return new TestTransport()

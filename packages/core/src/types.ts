@@ -1,8 +1,8 @@
-import { Collection } from './collection/Collection'
 import {
+  Collection,
   DuplicateModelStrategy,
   ModelCompareResult
-} from './collection/collection-config'
+} from './collection/Collection'
 import { Model } from './model/Model'
 
 export type FactoryFn<T, K = any> = (args: K) => T | Promise<T>

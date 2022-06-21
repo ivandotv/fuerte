@@ -1,6 +1,6 @@
 import { configure } from 'mobx'
-import { fixtureFactory } from './__fixtures__/fixtureFactory'
-import { TestModel } from './__fixtures__/TestModel'
+import { fixtureFactory } from '../__fixtures__/fixtureFactory'
+import { TestModel } from '../__fixtures__/TestModel'
 
 configure({ enforceActions: 'always', reactionRequiresObservable: true })
 
@@ -10,7 +10,7 @@ describe('Model - identity #identity #model', () => {
   test('Set model identity key', () => {
     const identityKey = 'isbn'
     class Test extends TestModel {
-      static identityKey = identityKey
+      static override identityKey = identityKey
     }
 
     const model = new Test()
@@ -32,7 +32,7 @@ describe('Model - identity #identity #model', () => {
   test('If not set in the configuration, do not try to extract identity value from the response', async () => {
     const newId = '123'
     class Test extends TestModel {
-      static identityKey = 'id'
+      static override identityKey = 'id'
 
       static setIdentityFromResponse = false
     }
