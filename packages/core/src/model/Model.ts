@@ -237,6 +237,7 @@ export abstract class Model<
    * Callback that is fired when the model is added to the collection.
    * @param collection - collection that contains the model
    */
+  //@internal
   protected onAdded(collection: TCollection): void {}
 
   //@internal
@@ -249,6 +250,7 @@ export abstract class Model<
    * Callback that is fired when the model is removed from the collection.
    * @param collection - collection from which the model was removed
    */
+  //@internal
   protected onRemoved(collection: TCollection): void {}
 
   // @internal
@@ -289,6 +291,12 @@ export abstract class Model<
     return await this.collection!.save(this, undefined, config)
   }
 
+  /**
+   * Callback that is executed when {@link Model.save} process starts.
+   *
+   * @param data -  @see {@link ModelSaveStartCallback}
+   */
+  //@internal
   protected onSaveStart(data: ModelSaveStartCallback): void {}
 
   // @internal
@@ -327,6 +335,11 @@ export abstract class Model<
     })
   }
 
+  /**
+   * Callback that is called when {@link Model.save} executes successfully
+   * @param data - @see {@link ModelSaveSuccessCallback}
+   */
+  //@internal
   protected onSaveSuccess(data: ModelSaveSuccessCallback): void {}
 
   //@internal
@@ -357,6 +370,11 @@ export abstract class Model<
     })
   }
 
+  /**
+   * Callback that is excuted when {@link Model.save} call finishes with error
+   * @param data - @see {@link ModelSaveErrorCallback}
+   */
+  //@internal
   protected onSaveError(data: ModelSaveErrorCallback<Payload<this>>): void {}
 
   /**
@@ -414,6 +432,11 @@ export abstract class Model<
     this.onDeleteStart(data)
   }
 
+  /**
+   * Callback that is called when {@link Model.delete} method starts executing
+   * @param data - @see {@link ModelDeleteStartCallback}
+   */
+  //@internal
   protected onDeleteStart(data: ModelDeleteStartCallback<Transport>): void {}
 
   // @internal
@@ -429,10 +452,16 @@ export abstract class Model<
     this.onDeleteSuccess(data)
   }
 
+  /**
+   * Callback that is executed when {@link Model.delete} method finishes executing successfully
+   * @param data - @see {@link ModelDeleteSuccessCallback}
+   */
+  //@internal
   protected onDeleteSuccess(
     data: ModelDeleteSuccessCallback<Transport>
   ): void {}
 
+  //@internal
   _onDeleteError(data: {
     error: any
     data?: any
@@ -446,6 +475,11 @@ export abstract class Model<
     this.onDeleteError(data)
   }
 
+  /**
+   * Callback that is executed when {@link Model.delete} method executes with error
+   * @param data - @see {@link ModelDeleteErrorCallback}
+   */
+  //@internal
   protected onDeleteError(data: ModelDeleteErrorCallback<Transport>): void {}
 
   /**
@@ -459,16 +493,22 @@ export abstract class Model<
     return !equal(this.lastSavedData, this.payload)
   }
 
-  // @internal
   destroy(): void {
     this.onDestroy()
     this._isDestroyed = true
     this.payloadActionDisposer()
   }
 
+  /**
+   * Callback that is executed when the model is destroyed
+   */
   // @internal
   onDestroy(): void {}
 
+  /**
+   * Custom model toJSON method. Use {@link Model.serialize} if you want to serialize the model.
+   * @returns json
+   */
   toJSON(): Payload<this> {
     return this.payload
   }
