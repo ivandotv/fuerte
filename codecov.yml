@@ -28,11 +28,3 @@ flags:
     paths:
       - packages/core/
     carryforward: true
-  autosave:
-    paths:
-      - packages/autosave/
-    carryforward: true
-  transport-idb:
-    paths:
-      - packages/transport-idb/
-    carryforward: true
