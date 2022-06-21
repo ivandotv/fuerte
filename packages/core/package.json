@@ -33,7 +33,7 @@
     "build:prod": "cross-env NODE_ENV=production microbundle --tsconfig ./tsconfig.json  --format modern,cjs  --output dist/prod/index.js",
     "build:dev": "cross-env NODE_ENV=development microbundle --define process.env.NODE_ENV=development --tsconfig ./tsconfig.json --generateTypes false --format modern --output dist/dev/index.js",
     "build": "rm -rf ./dist && pnpm build:dev && pnpm build:prod",
-    "type:check": "tsc --noEmit true",
+    "type:check": "tsc --project ./tsconfig-type-check.json",
     "gen:docs": "rm -rf ./docs/api && typedoc --options typedoc.cjs",
     "prepublishOnly": "pnpm build",
     "release": "pnpm run prepublishOnly"
