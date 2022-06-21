@@ -139,7 +139,6 @@ export abstract class Model<
 
   abstract serialize(): any
 
-  //TODO - add collection
   // @internal
   init(asNew = true, collection?: TCollection): void {
     if (this.initialized) return
@@ -386,7 +385,7 @@ export abstract class Model<
 
   /**
    * Set `isNew` property on the model. This method should generally not be used by the client code.
-   * Transport layer can check this property in order to determine if it should use `POST` or `PATCH` methods
+   * Transport layer could use this property in order to determine if it should use `POST` or `PATCH` methods
    * for persistence.
    *
    * @param isNew - true if the model should be marked as new

@@ -21,7 +21,7 @@ export class TestTransport implements Transport<TestModel> {
     return Promise.resolve({ data: { id: nanoid() } })
   }
 
-  delete(_model: TestModel, config: any) {
+  delete(_model: TestModel, config: any): Promise<{ data: any }> {
     return Promise.resolve({ data: undefined })
   }
 

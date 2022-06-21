@@ -77,6 +77,23 @@ describe('Model #model', () => {
     expect(collection.models).toHaveLength(0)
   })
 
+  test('when there is a delete error, it can be retrieved later from the model', async () => {
+    const transport = fixtures.transport()
+    const collection = fixtures.collection(fixtures.factory(), transport)
+    const model = fixtures.model()
+
+    const errorResponse = 'internal_server_error'
+    jest
+      .spyOn(transport, 'delete')
+      .mockImplementation(() => Promise.reject(errorResponse))
+    await collection.save(model)
+
+    await model.delete(undefined)
+
+    expect(model.deleteError).toBe(errorResponse)
+    expect(model.hasErrors).toBe(true)
+  })
+
   test('calling model.delete will throw if the model is not a part of the collection', async () => {
     const model = fixtures.model()
 
@@ -92,5 +109,13 @@ describe('Model #model', () => {
     collection.add(model)
 
     expect(model.getCollection()).toBe(collection)
+  })
+
+  test('model "isNew" property can be changed', () => {
+    const model = fixtures.model()
+
+    model.setIsNew(false)
+
+    expect(model.isNew).toBe(false)
   })
 })

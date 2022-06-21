@@ -19,65 +19,33 @@ export class TestCollection extends Collection<
   typeof testModelFactory,
   TestTransport
 > {
-  onReset(added: TestModel[], removed: TestModel[], fromLoad = false): void {
-    super.onReset(added, removed)
-  }
+  onReset(added: TestModel[], removed: TestModel[], fromLoad = false): void {}
 
-  onRemoved(model: TestModel): void {
-    super.onRemoved(model)
-  }
+  onRemoved(model: TestModel): void {}
 
-  onAdded(model: TestModel): void {
-    super.onAdded(model)
-  }
+  onAdded(model: TestModel): void {}
 
-  onModelCreateData(data: any): void {
-    super.onModelCreateData(data)
+  onSaveSuccess(data: SaveSuccessCallback<TestModel, TestTransport>): void {}
 
-    return data
-  }
+  onSaveStart(data: SaveStartCallback<TestModel, TestTransport>): void {}
 
-  onSaveSuccess(data: SaveSuccessCallback<TestModel, TestTransport>): void {
-    super.onSaveSuccess(data)
-  }
+  onSaveError(data: SaveErrorCallback<TestModel, TestTransport>): void {}
 
-  onSaveStart(data: SaveStartCallback<TestModel, TestTransport>): void {
-    super.onSaveStart(data)
-  }
+  onDeleteStart(data: DeleteStartCallback<TestModel, TestTransport>): void {}
 
-  onSaveError(data: SaveErrorCallback<TestModel, TestTransport>): void {
-    super.onSaveError(data)
-  }
+  onDeleteSuccess(
+    data: DeleteSuccessCallback<TestModel, TestTransport>
+  ): void {}
 
-  onDeleteStart(data: DeleteStartCallback<TestModel, TestTransport>): void {
-    super.onDeleteStart(data)
-  }
+  onDeleteError(data: DeleteErrorCallback<TestModel, TestTransport>): void {}
 
-  onDeleteSuccess(data: DeleteSuccessCallback<TestModel, TestTransport>): void {
-    super.onDeleteSuccess(data)
-  }
+  onLoadStart(data: LoadStartCallback<TestModel, TestTransport>): void {}
 
-  onDeleteError(data: DeleteErrorCallback<TestModel, TestTransport>): void {
-    super.onDeleteError(data)
-  }
+  onLoadSuccess(data: LoadSuccessCallback<TestModel, TestTransport>): void {}
 
-  onLoadStart(data: LoadStartCallback<TestModel, TestTransport>): void {
-    super.onLoadStart(data)
-  }
+  onLoadError(data: LoadErrorCallback<TestModel, TestTransport>): void {}
 
-  onLoadSuccess(data: LoadSuccessCallback<TestModel, TestTransport>): void {
-    super.onLoadSuccess(data)
-  }
+  onSerialize() {}
 
-  onLoadError(data: LoadErrorCallback<TestModel, TestTransport>): void {
-    super.onLoadError(data)
-  }
-
-  onSerialize() {
-    super.onSerialize()
-  }
-
-  onDestroy() {
-    super.onDestroy()
-  }
+  onDestroy() {}
 }

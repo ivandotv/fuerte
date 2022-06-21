@@ -70,16 +70,15 @@ describe('Collection #collection', () => {
     expect(model.bar).toBe(modelData.bar)
     expect(model.id).toBe(modelData.id)
   })
-  test('Create the model via the create method', () => {
+  test('When model is created it is not added to the collection', () => {
     const collection = fixtures.collection()
     const modelData = { foo: 'new foo', bar: 'new bar', id: 'new id' }
 
     const model = collection.create(modelData)
 
     expect(model).toBeInstanceOf(TestModel)
-    expect(model.foo).toBe(modelData.foo)
-    expect(model.bar).toBe(modelData.bar)
-    expect(model.id).toBe(modelData.id)
+    expect(model.getCollection()).toBeUndefined()
+    expect(collection.models).toHaveLength(0)
   })
 
   test('Retrieve new models', () => {

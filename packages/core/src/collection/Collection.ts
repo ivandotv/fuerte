@@ -548,7 +548,7 @@ export class Collection<
           continue
         }
         const model = await Promise.resolve(
-          this.createModel(modifiedData, false)
+          this._create(modifiedData, false, this)
         )
         if (this.notPresent(model)) {
           modelsToAdd.push(model)
@@ -851,29 +851,21 @@ export class Collection<
    * @returns newly created model
    */
   create(data: Parameters<TFactory>[0]): ReturnType<TFactory> {
-    const result = this.factory(data)
-    if (isPromise(result)) {
-      result.then((model: TModel) => {
-        model.init()
-      })
-    } else {
-      result.init()
-    }
-
-    return this.createModel(data, true)
+    return this._create(data, true)
   }
 
-  protected createModel(
+  protected _create(
     data: Parameters<TFactory>[0],
-    asNew = true
+    asNew = true,
+    collection?: this
   ): ReturnType<TFactory> {
     const result = this.factory(data)
     if (isPromise(result)) {
       result.then((model: TModel) => {
-        model.init(asNew)
+        model.init(asNew, collection)
       })
     } else {
-      result.init(asNew)
+      result.init(asNew, collection)
     }
 
     return result as ReturnType<TFactory>
@@ -1104,7 +1096,9 @@ export class Collection<
         continue
       }
 
-      const model = await Promise.resolve(this.createModel(modifiedData))
+      const model = await Promise.resolve(
+        this._create(modifiedData, true, this)
+      )
 
       modelsToAdd.push(model)
     }
