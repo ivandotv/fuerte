@@ -19,33 +19,53 @@ export class TestCollection extends Collection<
   typeof testModelFactory,
   TestTransport
 > {
-  onReset(added: TestModel[], removed: TestModel[], fromLoad = false): void {}
+  override onReset(
+    added: TestModel[],
+    removed: TestModel[],
+    fromLoad = false
+  ): void {}
 
-  onRemoved(model: TestModel): void {}
+  override onRemoved(model: TestModel): void {}
 
-  onAdded(model: TestModel): void {}
+  override onAdded(model: TestModel): void {}
 
-  onSaveSuccess(data: SaveSuccessCallback<TestModel, TestTransport>): void {}
+  override onSaveSuccess(
+    data: SaveSuccessCallback<TestModel, TestTransport>
+  ): void {}
 
-  onSaveStart(data: SaveStartCallback<TestModel, TestTransport>): void {}
+  override onSaveStart(
+    data: SaveStartCallback<TestModel, TestTransport>
+  ): void {}
 
-  onSaveError(data: SaveErrorCallback<TestModel, TestTransport>): void {}
+  override onSaveError(
+    data: SaveErrorCallback<TestModel, TestTransport>
+  ): void {}
 
-  onDeleteStart(data: DeleteStartCallback<TestModel, TestTransport>): void {}
+  override onDeleteStart(
+    data: DeleteStartCallback<TestModel, TestTransport>
+  ): void {}
 
-  onDeleteSuccess(
+  override onDeleteSuccess(
     data: DeleteSuccessCallback<TestModel, TestTransport>
   ): void {}
 
-  onDeleteError(data: DeleteErrorCallback<TestModel, TestTransport>): void {}
+  override onDeleteError(
+    data: DeleteErrorCallback<TestModel, TestTransport>
+  ): void {}
 
-  onLoadStart(data: LoadStartCallback<TestModel, TestTransport>): void {}
+  override onLoadStart(
+    data: LoadStartCallback<TestModel, TestTransport>
+  ): void {}
 
-  onLoadSuccess(data: LoadSuccessCallback<TestModel, TestTransport>): void {}
+  override onLoadSuccess(
+    data: LoadSuccessCallback<TestModel, TestTransport>
+  ): void {}
 
-  onLoadError(data: LoadErrorCallback<TestModel, TestTransport>): void {}
+  override onLoadError(
+    data: LoadErrorCallback<TestModel, TestTransport>
+  ): void {}
 
-  onSerialize() {}
+  override onSerialize() {}
 
-  onDestroy() {}
+  override onDestroy() {}
 }

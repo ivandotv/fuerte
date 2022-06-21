@@ -11,9 +11,7 @@ module.exports = {
     '!<rootDir>/src/index.ts',
     '!<rootDir>/src/__tests__/**',
     '!<rootDir>/src/scratch/**',
-    '!<rootDir>/src/**/__tests__/**',
     '!<rootDir>/src/**/__fixtures__/**',
-    '!<rootDir>/src/transport/transport.ts',
     '!<rootDir>/src/**/*.d.ts'
   ]
 }

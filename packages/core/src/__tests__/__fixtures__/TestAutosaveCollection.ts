@@ -1,4 +1,4 @@
-import { AutosaveCollection } from '../../../collection/AutosaveCollection'
+import { AutosaveCollection } from '../../collection/AutosaveCollection'
 import { testModelFactory } from './TestFactory'
 import { TestModel } from './TestModel'
 import { TestTransport } from './TestTransport'
@@ -8,15 +8,11 @@ export class TestAutosaveCollection extends AutosaveCollection<
   typeof testModelFactory,
   TestTransport
 > {
-  autoSave(payload: { model: TestModel; data: any }): void {
+  override autoSave(payload: { model: TestModel; data: any }): void {
     return super.autoSave(payload)
   }
 
-  onStartAutoSave(models: TestModel[]): void {
-    super.onStartAutoSave(models)
-  }
+  override onStartAutoSave(models: TestModel[]): void {}
 
-  onStopAutoSave(models: TestModel[]): void {
-    super.onStopAutoSave(models)
-  }
+  override onStopAutoSave(models: TestModel[]): void {}
 }

@@ -1,6 +1,6 @@
 import { configure } from 'mobx'
-import { SaveConfig } from '../types'
-import { fixtureFactory } from './__fixtures__/fixtureFactory'
+import { SaveConfig } from '../../types'
+import { fixtureFactory } from '../__fixtures__/fixtureFactory'
 
 configure({ enforceActions: 'always' })
 

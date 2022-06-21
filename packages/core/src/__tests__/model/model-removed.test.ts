@@ -1,5 +1,5 @@
 import { configure } from 'mobx'
-import { fixtureFactory } from './__fixtures__/fixtureFactory'
+import { fixtureFactory } from '../__fixtures__/fixtureFactory'
 
 configure({ enforceActions: 'always' })
 
@@ -34,7 +34,7 @@ describe('Model - remove #remove #model', () => {
       const collection = fixtures.collection()
       const model = fixtures.model({ id: '1' })
 
-      // @ts-expect-error - internal callback test
+      model.onDestroy
       const onRemovedSpy = jest.spyOn(model, 'onRemoved')
       collection.add(model)
       collection.remove(model.identity)
