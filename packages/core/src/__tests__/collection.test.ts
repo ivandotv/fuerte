@@ -126,7 +126,7 @@ describe('Collection #collection', () => {
 
       collection.add(model)
 
-      const result = collection.getById(id)
+      const result = collection.getByIdentity(id)
 
       expect(result).toBe(model)
     })
@@ -140,7 +140,7 @@ describe('Collection #collection', () => {
 
       collection.add([model, modelTwo])
 
-      const result = collection.getById([id, idTwo])
+      const result = collection.getByIdentity([id, idTwo])
 
       expect(result).toStrictEqual([model, modelTwo])
     })
@@ -149,7 +149,7 @@ describe('Collection #collection', () => {
       const collection = fixtures.collection()
       const id = 'new-id'
 
-      const result = collection.getById(id)
+      const result = collection.getByIdentity(id)
 
       expect(result).toBeUndefined()
     })
@@ -159,7 +159,7 @@ describe('Collection #collection', () => {
       const id = 'new-id'
       const idTwo = 'new-id-2'
 
-      const result = collection.getById([id, idTwo])
+      const result = collection.getByIdentity([id, idTwo])
 
       expect(result).toStrictEqual([])
     })
