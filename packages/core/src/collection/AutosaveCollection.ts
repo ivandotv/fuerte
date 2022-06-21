@@ -163,12 +163,20 @@ export class AutosaveCollection<
     }
   }
 
+  /**
+   * Callback that is called when {@link AutosaveCollection.stopAutoSave} method has been executed
+   * @param models - the array of models for which the auto save process has been stopped.
+   */
   protected onStopAutoSave(models: TModel[]): void {}
 
+  /**
+   * Callback that is called when {@link AutosaveCollection.startAutoSave} method is executed
+   * @param models - the array of models for which the auto save process has been started
+   */
   protected onStartAutoSave(models: TModel[]): void {}
 
   /**
-   * Destroy the collecion
+   * Destroy the collection
    * @see {@link Collection.destroy}
    */
   override destroy(): void {

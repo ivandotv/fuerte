@@ -319,12 +319,24 @@ export class Collection<
     >
   }
 
+  /**
+   * Callback for when {@link Collection.save} process starts
+   * @param data - @see {@link SaveStartCallback}
+   */
   protected onSaveStart(data: SaveStartCallback<TModel, TTransport>): void {}
 
+  /**
+   * Callback for when  {@link Collection.save} process completes successfully
+   * @param data  - @see {@link SaveSuccessCallback}
+   */
   protected onSaveSuccess(
     data: SaveSuccessCallback<TModel, TTransport>
   ): void {}
 
+  /**
+   * Callback for when {@link Collection.delete} process completes with error.
+   * @param data - @see {@link SaveErrorCallback}
+   */
   protected onSaveError(data: SaveErrorCallback<TModel, TTransport>): void {}
 
   /**
@@ -473,14 +485,26 @@ export class Collection<
     }
   }
 
+  /**
+   * Callback for when  {@link Collection.delete} process starts
+   * @param data  - @see {@link DeleteStartCallback}
+   */
   protected onDeleteStart(
     data: DeleteStartCallback<TModel, TTransport>
   ): void {}
 
+  /**
+   * Callback for when  {@link Collection.delete} process completes successfully
+   * @param data - @see {@link DeleteSuccessCallback}
+   */
   protected onDeleteSuccess(
     data: DeleteSuccessCallback<TModel, TTransport>
   ): void {}
 
+  /**
+   * Callback for when  {@link Collection.delete} process completes with errors
+   * @param data - @see {@link DeleteErrorCallback}
+   */
   protected onDeleteError(
     _data: DeleteErrorCallback<TModel, TTransport>
   ): void {}
@@ -633,18 +657,37 @@ export class Collection<
     }
   }
 
+  /**
+   * Callback for when the collection is about to create a new model. This callback firest only on {@link Collection.reset} and {@link Collection.load} methods.
+   * If will not fire when the model is created via {@link Collection.create}
+   *
+   * @param data - same data as the arguments to the factory that the collection is using
+   * @returns - modified data. If no data is returned from the callback, model will not be created
+   */
   protected onModelCreateData(
     data: Parameters<TFactory>[0]
   ): Parameters<TFactory>[0] | void {
     return data
   }
 
+  /**
+   * Callback for when {@link Collection.load} starts
+   * @param data - @see {@link LoadStartCallback}
+   */
   protected onLoadStart(data: LoadStartCallback<TModel, TTransport>): void {}
 
+  /**
+   * Callback for when {@link Collection.load} completes successfully
+   * @param data - @see {@link LoadSuccessCallback}
+   */
   protected onLoadSuccess(
     data: LoadSuccessCallback<TModel, TTransport>
   ): void {}
 
+  /**
+   * Callback for when {@link Collection.load} completes with errors
+   * @param data - @see {@link LoadErrorCallback}
+   */
   protected onLoadError(data: LoadErrorCallback<TModel, TTransport>): void {}
 
   /**
@@ -668,6 +711,9 @@ export class Collection<
     }
   }
 
+  /**
+   * Callback for when the  {@link Collection.destroy} method is called
+   */
   protected onDestroy(): void {}
 
   push(model: TModel[]): TModel[]
@@ -1059,8 +1105,16 @@ export class Collection<
     return Array.isArray(model) ? removed : removed[0]
   }
 
+  /**
+   * Callback that is called every time the model is removed from to the collection
+   * @param model - model that has been removed from the collection
+   */
   protected onRemoved(model: TModel): void {}
 
+  /**
+   * Callback that is called every time the model is added to the collection
+   * @param model - model that has been added to the collection
+   */
   protected onAdded(model: TModel): void {}
 
   protected serializeModels(): any[] {
@@ -1074,7 +1128,17 @@ export class Collection<
     }, [])
   }
 
-  protected onSerialize(): any {}
+  /**
+   * Callback that is called when {@link Collection.serialize} method is executed.
+   * By Default collection serializes all the models in the callection by calling {@link Model.serialize}.
+   * It returns an object with the `models` property which contains all the serialized models.
+   *
+   * @returns If you want to add additional data to the serialization, return the data from the callback, and it will be
+   * added to the serialized object.
+   */
+  protected onSerialize(): Record<string, any> {
+    return undefined as unknown as Record<string, any>
+  }
 
   protected async resetCollection<T>(
     data?: T[],
@@ -1113,7 +1177,12 @@ export class Collection<
     return [added, removed]
   }
 
-  protected onReset(_added: TModel[], _removed: TModel[]): void {}
+  /**
+   * Callback that is called when the collection has been reset.
+   * @param added - newly added models
+   * @param removed - models that have been removed
+   */
+  protected onReset(added: TModel[], removed: TModel[]): void {}
 
   /**
    * Remove all models from the collection, and optionally add new models to the collection. If no new model data is present, then the collection will just be emptied.
