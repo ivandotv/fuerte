@@ -96,5 +96,3 @@ export class TestModel extends Model<TestCollection> {
     super.onDestroy()
   }
 }
-
-const model = new TestModel()

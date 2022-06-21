@@ -133,6 +133,11 @@ describe('Collection - load #load #collection', () => {
         expect.objectContaining({ foo: 'oldModelTwo' })
       ])
     )
+
+    for (const model of result.added!) {
+      expect(model.getCollection()).toBe(collection)
+    }
+
     expect(collection.models).toHaveLength(fixtures.rawModelData.length)
   })
 

@@ -28,6 +28,7 @@ describe('Collection - add #add #collection', () => {
     expect(collection.models).toHaveLength(1)
     expect(collection.models[0]).toBe(model)
     expect(addedModel).toBe(model)
+    expect(addedModel?.getCollection()).toBe(collection)
   })
 
   test('When adding a single model, return undefined if the model is already in the collection', () => {

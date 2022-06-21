@@ -26,6 +26,7 @@ describe('Collection - save #save #collection', () => {
     await collection.save(model)
 
     expect(collection.models[0]).toBe(model)
+    expect(model.getCollection()).toBe(collection)
   })
 
   test('When save is in progress, we can retrieve all the models that are in the process of saving', async () => {

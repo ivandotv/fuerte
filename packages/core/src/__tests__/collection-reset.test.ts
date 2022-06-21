@@ -47,6 +47,10 @@ describe('Collection - reset #reset #collection', () => {
     await collection.reset(fixtures.rawModelData)
 
     expect(collection.models).toHaveLength(fixtures.rawModelData.length)
+    expect(collection.models).toHaveLength(fixtures.rawModelData.length)
+    for (const model of collection.models) {
+      expect(model.getCollection()).toBe(collection)
+    }
   })
 
   test('If the collection is not empty, clear it', async () => {
