@@ -5,9 +5,8 @@ import {
 } from './collection/Collection'
 import { Model } from './model/Model'
 
+/** Factory function  that creates the {@link Model} */
 export type FactoryFn<T, K = any> = (args: K) => T | Promise<T>
-
-export type UnwrapPromise<T> = T extends Promise<infer U> ? U : T
 
 export type ModelTransportErrors<TSave = any | null, TDelete = any | null> = {
   save: TSave
@@ -23,7 +22,7 @@ export interface Transport<TModel extends Model = Model, TDTO = any> {
 }
 
 /* SAVE TYPES */
-export type TransportSaveResponse<T extends Transport<any>> = UnwrapPromise<
+export type TransportSaveResponse<T extends Transport<any>> = Awaited<
   ReturnType<T['save']>
 >
 
@@ -89,7 +88,7 @@ export type ModelSaveErrorCallback<
 
 /* DELETE TYPES */
 
-export type TransportDeleteResponse<T extends Transport<any>> = UnwrapPromise<
+export type TransportDeleteResponse<T extends Transport<any>> = Awaited<
   ReturnType<T['delete']>
 >
 
@@ -150,7 +149,7 @@ export type ModelDeleteErrorCallback<
 
 /* LOAD TYPES */
 
-export type TransportLoadResponse<T extends Transport<any>> = UnwrapPromise<
+export type TransportLoadResponse<T extends Transport<any>> = Awaited<
   ReturnType<T['load']>
 >
 
