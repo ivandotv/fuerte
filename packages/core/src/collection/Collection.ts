@@ -239,6 +239,7 @@ export class Collection<
     let hasError = false
     let error
     let result
+
     try {
       response = await this.transportSave(model, transportConfig)
     } catch (e) {
@@ -418,44 +419,32 @@ export class Collection<
         destroy: deleteConfig.destroyOnRemoval
       })
     }
+    this._deleting.set(model.cid, model)
+
+    this.onDeleteStart({
+      model,
+      config: deleteConfig,
+      transportConfig: transportConfig
+    })
+    model._onDeleteStart({
+      config: deleteConfig,
+      transportConfig: transportConfig
+    })
+
+    let response!: TransportDeleteResponse<TTransport>
+    let hasError = false
+    let error
+    let result
+
     try {
-      this._deleting.set(model.cid, model)
+      response = await this.transportDelete(model, transportConfig)
+    } catch (e) {
+      e?.stack
+      error = e
+      hasError = true
+    }
 
-      this.onDeleteStart({
-        model,
-        config: deleteConfig,
-        transportConfig: transportConfig
-      })
-      model._onDeleteStart({
-        config: deleteConfig,
-        transportConfig: transportConfig
-      })
-
-      const response = await this.transportDelete(model, transportConfig)
-
-      if (deleteConfig.remove && !deleteConfig.removeImmediately) {
-        this.removeFromCollection(model, {
-          destroy: deleteConfig.destroyOnRemoval
-        })
-      }
-      this.onDeleteSuccess({
-        model,
-        response,
-        config: deleteConfig,
-        transportConfig: transportConfig
-      })
-      model._onDeleteSuccess({
-        response,
-        config: deleteConfig,
-        transportConfig: transportConfig
-      })
-
-      return {
-        response,
-        model,
-        error: undefined
-      }
-    } catch (error) {
+    if (hasError) {
       if (
         deleteConfig.remove &&
         !deleteConfig.removeImmediately &&
@@ -484,11 +473,36 @@ export class Collection<
         model: undefined,
         error
       }
-    } finally {
-      runInAction(() => {
-        this._deleting.delete(model.cid)
+    } else {
+      if (deleteConfig.remove && !deleteConfig.removeImmediately) {
+        this.removeFromCollection(model, {
+          destroy: deleteConfig.destroyOnRemoval
+        })
+      }
+      this.onDeleteSuccess({
+        model,
+        response,
+        config: deleteConfig,
+        transportConfig: transportConfig
       })
+      model._onDeleteSuccess({
+        response,
+        config: deleteConfig,
+        transportConfig: transportConfig
+      })
+
+      result = {
+        response,
+        model,
+        error: undefined
+      }
     }
+
+    runInAction(() => {
+      this._deleting.delete(model.cid)
+    })
+
+    return result
   }
 
   protected modelCanBeDeleted(model?: TModel): asserts model is TModel {
