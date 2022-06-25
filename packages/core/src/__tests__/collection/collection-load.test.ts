@@ -474,12 +474,12 @@ describe('Collection - load #load #collection', () => {
         original.setIdentity(fixtures.rawModelData[0].id)
         collection.add(original)
 
-        const result = await collection.load({
-          duplicateModelStrategy: DuplicateModelStrategy.COMPARE,
-          compareFn
-        })
-
-        expect((result.error as Error).message).toMatch(/non unique identity/)
+        await expect(
+          collection.load({
+            duplicateModelStrategy: DuplicateModelStrategy.COMPARE,
+            compareFn
+          })
+        ).rejects.toThrow(/non unique identity/)
       })
 
       test('If the compare function returns a non recognized result, throw error', async () => {
@@ -494,17 +494,15 @@ describe('Collection - load #load #collection', () => {
         original.foo = fooProp
         collection.add(original)
 
-        const result = await collection.load({
-          duplicateModelStrategy: DuplicateModelStrategy.COMPARE,
-          // @ts-expect-error - itentionally return wrong result
-          compareFn: () => {
-            return 'non_recognized_result'
-          }
-        })
-
-        expect((result.error as Error).message).toMatch(
-          /Invalid compare result/
-        )
+        await expect(
+          collection.load({
+            duplicateModelStrategy: DuplicateModelStrategy.COMPARE,
+            // @ts-expect-error - itentionally return wrong result
+            compareFn: () => {
+              return 'non_recognized_result'
+            }
+          })
+        ).rejects.toThrow(/Invalid compare result/)
       })
     })
   })

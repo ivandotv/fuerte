@@ -564,15 +564,43 @@ export class Collection<
       ...config
     }
 
+    this.loadStatus = 'PENDING'
+    this.onLoadStart({
+      config: loadConfig,
+      transportConfig
+    })
+
+    let response!: TransportLoadResponse<TTransport>
+    let hasError = false
+    let error: any
+    let result
     try {
-      this.loadStatus = 'PENDING'
-      this.onLoadStart({
-        config: loadConfig,
-        transportConfig
+      response = await this.transportLoad(transportConfig)
+    } catch (e) {
+      e?.stack
+      error = e
+      hasError = true
+    }
+
+    if (hasError) {
+      runInAction(() => {
+        this.loadError = error
+        this.loadStatus = 'REJECTED'
       })
 
-      const response = await this.transportLoad(transportConfig)
+      this.onLoadError({
+        config: loadConfig,
+        transportConfig,
+        error
+      })
 
+      result = {
+        error,
+        response: undefined,
+        added: undefined,
+        removed: undefined
+      }
+    } else {
       runInAction(() => {
         this.loadStatus = 'RESOLVED'
       })
@@ -664,34 +692,15 @@ export class Collection<
         removed
       })
 
-      return {
+      result = {
         response,
         added,
         removed,
         error: undefined
       }
-    } catch (error) {
-      // fix closure leaks - read error stack
-      // https://twitter.com/BenLesh/status/1365056053243613185
-      error?.stack
-      runInAction(() => {
-        this.loadError = error
-        this.loadStatus = 'REJECTED'
-      })
-
-      this.onLoadError({
-        config: loadConfig,
-        transportConfig,
-        error
-      })
-
-      return {
-        error,
-        response: undefined,
-        added: undefined,
-        removed: undefined
-      }
     }
+
+    return result
   }
 
   /**
