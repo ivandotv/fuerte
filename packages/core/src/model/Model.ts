@@ -36,9 +36,8 @@ export abstract class Model<
   private collection?: TCollection
 
   /**
-   * Cid (client id)  of model
-   * Every model has a unique client id that is used iternally
-   * for tracking the uniqueness of the model
+   * Cid (client id) of the model
+   * Every model has a unique client id that is used iternally for tracking the uniqueness of the model.
    */
   readonly cid: string
 
@@ -170,28 +169,28 @@ export abstract class Model<
   }
 
   /**
-   * Check if model has encountered any errors while saving or deleting
+   * Checks if the model has encountered any errors while saving or deleting.
    */
   get hasErrors(): boolean {
     return !!this.errors.save || !!this.errors.delete
   }
 
   /**
-   * Get model transport save error
+   * Gets the model transport save error.
    */
   get saveError(): any {
     return this.errors.save
   }
 
   /**
-   * Get model transport delete error
+   * Gets the model transport delete error.
    */
   get deleteError(): any {
     return this.errors.delete
   }
 
   /**
-   * Check if the model has been deleted via {@link Transport.delete}
+   * Checks if the model has been deleted via {@link Transport.delete}
    * Model can still exist in the collection and be deleted at the same time.
    */
   get isDeleted(): boolean {
@@ -199,29 +198,33 @@ export abstract class Model<
   }
 
   /**
-   * Check if the model is in the proces of deleting via {@link Transport.delete} or saving
-   * via {@link Transport.save}
+   * Checks if the model is in the proces of deleting  or saving.
+   *
+   * @see {@link Collection.delete}
+   * @see  {@link Collection.save}
    */
   get isSyncing(): boolean {
     return this.isSaving || this.isDeleting
   }
 
   /**
-   * Check if the model is in the proces of deleting via {@link Transport.delete}.
+   * Checks if the model is in the proces of deleting.
+   * @see {@link Collection.delete}
    */
   get isDeleting(): boolean {
     return this._isDeleting
   }
 
   /**
-   * Check if the model is in the proces of saving via {@link Transport.save}.
+   * Check if the model is in the proces of saving.
+   * @see {@link Collection.save}.
    */
   get isSaving(): boolean {
     return this._isSaving
   }
 
   /**
-   * Check if the model {@link Model.destroy} method has been called
+   * Checks if the model {@link Model.destroy} method has been called.
    */
   get isDestroyed(): boolean {
     return this._isDestroyed
@@ -234,7 +237,7 @@ export abstract class Model<
   }
 
   /**
-   * Callback that is fired when the model is added to the collection.
+   * Callback for when the model is added to the collection.
    * @param collection - collection that contains the model
    */
   protected onAdded(collection: TCollection): void {}
@@ -246,7 +249,7 @@ export abstract class Model<
   }
 
   /**
-   * Callback that is fired when the model is removed from the collection.
+   * Callback for when the model is removed from the collection.
    * @param collection - collection from which the model was removed
    */
   protected onRemoved(collection: TCollection): void {}
@@ -271,15 +274,16 @@ export abstract class Model<
   }
 
   /**
-   * Get the collection the model is part of
+   * Gets the collection the model is part of
    */
   getCollection(): TCollection | undefined {
     return this.collection
   }
 
   /**
-   * Save the model by calling {@link Collection.save}. If the model is not part of the collection, it will throw
-   * @param config - transport configuration from the collection transport.
+   * Saves the model by calling {@link Collection.save}. If the model is not part of the collection, it will throw.
+   * @param config - transport configuration the collection transport.
+   * @see {@link Collection.save}
    */
   async save<TConfig = Parameters<ExtractTransport<TCollection>['save']>[1]>(
     config: TConfig
@@ -290,7 +294,7 @@ export abstract class Model<
   }
 
   /**
-   * Callback that is executed when {@link Model.save} process starts.
+   * Callback for when {@link Model.save} process starts.
    *
    * @param data -  @see {@link ModelSaveStartCallback}
    */
@@ -333,7 +337,7 @@ export abstract class Model<
   }
 
   /**
-   * Callback that is called when {@link Model.save} executes successfully
+   * Callback for when {@link Model.save} executes successfully.
    * @param data - @see {@link ModelSaveSuccessCallback}
    */
   protected onSaveSuccess(data: ModelSaveSuccessCallback): void {}
@@ -367,13 +371,14 @@ export abstract class Model<
   }
 
   /**
-   * Callback that is excuted when {@link Model.save} call finishes with error
+   * Callback for when {@link Model.save} call fails
    * @param data - @see {@link ModelSaveErrorCallback}
+   * @see {@link ModelSaveErrorCallback}
    */
   protected onSaveError(data: ModelSaveErrorCallback<Payload<this>>): void {}
 
   /**
-   * Get identity value
+   * Gets the model identity value.
    */
   get identity(): string {
     // @ts-expect-error  dynamic key access
@@ -381,7 +386,7 @@ export abstract class Model<
   }
 
   /**
-   * Set new identity value
+   * Sets the model new identity value.
    * @param newValue - new value
    */
   setIdentity(newValue: string): void {
@@ -390,14 +395,15 @@ export abstract class Model<
   }
 
   /**
-   * Check if the model is new. Model is new if it has been created but not yet saved via {@link Transport.save}
+   * Checks if the model is new. Model is new if it has been created but not yet saved.
+   * @see {@link Collection.save}
    */
   get isNew(): boolean {
     return this._isNew
   }
 
   /**
-   * Set `isNew` property on the model. This method should generally not be used by the client code.
+   * Sets the `isNew` property on the model. This method should not be used by the client code.
    * Transport layer could use this property in order to determine if it should use `POST` or `PATCH` methods
    * for persistence.
    *
@@ -408,8 +414,8 @@ export abstract class Model<
   }
 
   /**
-   * Delete the model by calling {@link Collection.delete}. If the model is not part of the collection, it will throw
-   * @param config - transport configuration from the collection transport.
+   * Deletes the model by calling {@link Collection.delete}. If the model is not part of the collection, it will throw.
+   * @param config - transport configuration for the collection transport.
    */
   async delete<
     TConfig = Parameters<ExtractTransport<TCollection>['delete']>[1]
@@ -428,7 +434,7 @@ export abstract class Model<
   }
 
   /**
-   * Callback that is called when {@link Model.delete} method starts executing
+   * Callback for when {@link Model.delete} method starts executing.
    * @param data - @see {@link ModelDeleteStartCallback}
    */
   protected onDeleteStart(data: ModelDeleteStartCallback<Transport>): void {}
@@ -447,7 +453,7 @@ export abstract class Model<
   }
 
   /**
-   * Callback that is executed when {@link Model.delete} method finishes executing successfully
+   * Callback for when {@link Model.delete} method finishes executing successfully.
    * @param data - @see {@link ModelDeleteSuccessCallback}
    */
   protected onDeleteSuccess(
@@ -469,7 +475,7 @@ export abstract class Model<
   }
 
   /**
-   * Callback that is executed when {@link Model.delete} method executes with error
+   * Callback for when {@link Model.delete} method executes with error
    * @param data - @see {@link ModelDeleteErrorCallback}
    */
   protected onDeleteError(data: ModelDeleteErrorCallback<Transport>): void {}
@@ -485,6 +491,9 @@ export abstract class Model<
     return !equal(this.lastSavedData, this.payload)
   }
 
+  /**
+   * Destroys the model. It stops all internal processes of the model.
+   */
   destroy(): void {
     this.onDestroy()
     this._isDestroyed = true
@@ -492,7 +501,7 @@ export abstract class Model<
   }
 
   /**
-   * Callback that is executed when the model is destroyed
+   * Callback when the model is destroyed
    */
   // @internal
   onDestroy(): void {}

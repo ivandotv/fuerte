@@ -35,7 +35,7 @@ export class AutosaveCollection<
   }
 
   /**
-   * Return collection confing {@link RequiredAutosaveCollectionConfig}
+   * Returns collection configuration {@link RequiredAutosaveCollectionConfig}
    *
    */
   override getConfig(): RequiredAutosaveCollectionConfig {
@@ -69,7 +69,7 @@ export class AutosaveCollection<
   startAutoSave(models: TModel[]): TModel[]
 
   /**
-   * Starts auto save for provided models.  If called without models the process will be started for all the models in the collection.
+   * Starts auto save for the provided models. If called without models the process will be started for all the models in the collection.
    * {@link AutosaveCollection.onStartAutoSave} callback
    * will be called with all the models for which the autosave process has been started.
    * @param models - model to start autosave process
@@ -128,9 +128,9 @@ export class AutosaveCollection<
 
   /**
    * Stops auto save process for provided models. If called without models, the process will be stopped
-   * for all the models in the collection
+   * for all the models in the collection.
    * {@link AutosaveCollection.onStopAutoSave} callback
-   * will be called with all the models for which the autosave process has been stopped
+   * will be called with all the models for which the autosave process has been stopped.
    * @param models - models to stop the autosave process
    * @returns models that have autosave process stopped
    */
@@ -164,19 +164,19 @@ export class AutosaveCollection<
   }
 
   /**
-   * Callback that is called when {@link AutosaveCollection.stopAutoSave} method has been executed
+   * Callback for when {@link AutosaveCollection.stopAutoSave} method has been executed.
    * @param models - the array of models for which the auto save process has been stopped.
    */
   protected onStopAutoSave(models: TModel[]): void {}
 
   /**
-   * Callback that is called when {@link AutosaveCollection.startAutoSave} method is executed
+   * Callback for when {@link AutosaveCollection.startAutoSave} method is executed.
    * @param models - the array of models for which the auto save process has been started
    */
   protected onStartAutoSave(models: TModel[]): void {}
 
   /**
-   * Destroy the collection
+   * Destroys the collection.
    * @see {@link Collection.destroy}
    */
   override destroy(): void {
@@ -186,7 +186,7 @@ export class AutosaveCollection<
   }
 
   /**
-   * Check if autosave process is enabled for a particular model
+   * Checks if autosave process is enabled for a particular model.
    * @param cid  - model cid
    * @returns true if the process is enabled
    */

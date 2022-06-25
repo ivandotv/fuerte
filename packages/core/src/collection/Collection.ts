@@ -185,21 +185,21 @@ export class Collection<
   }
 
   /**
-   * Get collection config configuration {@link RequiredCollectionConfig}
+   * Gets collection configuration {@link RequiredCollectionConfig}
    */
   getConfig(): RequiredCollectionConfig {
     return this.config
   }
 
   /**
-   * Get collection transport instance {@link Transport}
+   * Gets collection transport instance {@link Transport}
    */
   getTransport(): TTransport {
     return this.transport
   }
 
   /**
-   * Save the model to the collection.
+   * Saves the model to the collection.
    * Callbacks: {@link Collection.onSaveStart} {@link Collection.onSaveSuccess} {@link Collection.onSaveError}
    * will be called depending on the {@link Transport.save} result
    * When the model is added {@link Collection.onAdded} callback will be called
@@ -352,13 +352,13 @@ export class Collection<
   }
 
   /**
-   * Callback for when {@link Collection.save} process starts
+   * Callback when {@link Collection.save} process starts
    * @param data - @see {@link SaveStartCallback}
    */
   protected onSaveStart(data: SaveStartCallback<TModel, TTransport>): void {}
 
   /**
-   * Callback for when  {@link Collection.save} process completes successfully
+   * Callback when  {@link Collection.save} process completes successfully
    * @param data  - @see {@link SaveSuccessCallback}
    */
   protected onSaveSuccess(
@@ -366,20 +366,20 @@ export class Collection<
   ): void {}
 
   /**
-   * Callback for when {@link Collection.delete} process completes with error.
+   * Callback when {@link Collection.delete} process completes with error.
    * @param data - @see {@link SaveErrorCallback}
    */
   protected onSaveError(data: SaveErrorCallback<TModel, TTransport>): void {}
 
   /**
-   * Get all models that are currently in the process of deleting
+   * Gets all models that are currently in the process of deleting
    */
   get deleting(): TModel[] {
     return [...this._deleting.values()]
   }
 
   /**
-   * Get all models that are currently in the process of saving
+   * Gets all models that are currently in the process of saving
    */
   get saving(): TModel[] {
     const models: TModel[] = []
@@ -391,7 +391,7 @@ export class Collection<
   }
 
   /**
-   * Delete model from the collection by model identity key, or model CID.
+   * Deletes model from the collection by model identity key, or model CID.
    * Callbacks  {@link Collection.onDeleteStart} {@link Collection.onDeleteSuccess} {@link Collection.onDeleteError}
    * will be called depending on the {@link Transport.delete} result.
    * When the model is removed from the collection {@link Collection.onRemoved} callback will be called
@@ -531,7 +531,7 @@ export class Collection<
   }
 
   /**
-   * Callback for when  {@link Collection.delete} process starts
+   * Callback when  {@link Collection.delete} process starts
    * @param data  - @see {@link DeleteStartCallback}
    */
   protected onDeleteStart(
@@ -539,7 +539,7 @@ export class Collection<
   ): void {}
 
   /**
-   * Callback for when  {@link Collection.delete} process completes successfully
+   * Callback when {@link Collection.delete} process completes successfully
    * @param data - @see {@link DeleteSuccessCallback}
    */
   protected onDeleteSuccess(
@@ -551,11 +551,11 @@ export class Collection<
    * @param data - @see {@link DeleteErrorCallback}
    */
   protected onDeleteError(
-    _data: DeleteErrorCallback<TModel, TTransport>
+    data: DeleteErrorCallback<TModel, TTransport>
   ): void {}
 
   /**
-   * Load initial collection data. It calls {@link Transport.load} method.
+   * Loads initial collection data. It calls {@link Transport.load} method.
    * Callbacks {@link Collection.onLoadStart} {@link Collection.onLoadSuccess} {@link Collection.onLoadError} will be called
    * @param config - load configuration {@link LoadConfig}
    * @param  transportConfig - transport configuration {@link TransportLoadConfig}
@@ -713,9 +713,10 @@ export class Collection<
 
   /**
    * Callback for when the collection is about to create a new model. This callback firest only on {@link Collection.reset} and {@link Collection.load} methods.
-   * If will not fire when the model is created via {@link Collection.create}
+   * It will not fire when the model is created via {@link Collection.create}
    *
-   * @param data - same data as the arguments to the factory that the collection is using
+   * @param data - same data as the arguments to the factory function that the collection is using
+   * @see {@link FactoryFn}
    * @returns - modified data. If no data is returned from the callback, model will not be created
    */
   protected onModelCreateData(
@@ -725,7 +726,7 @@ export class Collection<
   }
 
   /**
-   * Callback for when {@link Collection.load} starts
+   * Callback when {@link Collection.load} starts
    * @param data - @see {@link LoadStartCallback}
    */
   protected onLoadStart(data: LoadStartCallback<TModel, TTransport>): void {}
@@ -739,7 +740,7 @@ export class Collection<
   ): void {}
 
   /**
-   * Callback for when {@link Collection.load} completes with errors
+   * Callback when {@link Collection.load} completes with errors
    * @param data - @see {@link LoadErrorCallback}
    */
   protected onLoadError(data: LoadErrorCallback<TModel, TTransport>): void {}
@@ -766,7 +767,7 @@ export class Collection<
   }
 
   /**
-   * Callback for when the  {@link Collection.destroy} method is called
+   * Callback when the  {@link Collection.destroy} method is called
    */
   protected onDestroy(): void {}
 
@@ -775,7 +776,7 @@ export class Collection<
   push(model: TModel): TModel | undefined
 
   /**
-   * Push model to the collection. Alias for {@link Collection.add}. It does not call {@link Transport.save} method.
+   * Pushes the model to the collection. Alias for {@link Collection.add}. It does not call {@link Transport.save} method.
    * @param model - model to push
    */
   push(model: TModel | TModel[]): TModel | TModel[] | undefined {
@@ -788,7 +789,7 @@ export class Collection<
   add(model: TModel): TModel | undefined
 
   /**
-   * Adds model to the collection at the end. It does not call {@link Transport.save} method.
+   * Adds the model to the collection at the end. It does not call {@link Transport.save} method.
    * @param model  - model to add
    */
   add(model: TModel | TModel[]): TModel | TModel[] | undefined {
@@ -801,7 +802,7 @@ export class Collection<
   unshift(model: TModel): TModel | undefined
 
   /**
-   * Add model to the beginning of the  collection (index 0). It does not call {@link Transport.save} method.
+   * Adds the model to the beginning of the  collection (index 0). It does not call {@link Transport.save} method.
    * @param model  - model to add
    */
   unshift(model: TModel | TModel[]): TModel | TModel[] | undefined {
@@ -810,7 +811,7 @@ export class Collection<
   }
 
   /**
-   * Add model to the collection at the specific index. If index if out of bounds, it will throw.
+   * Adds model to the collection at the specific index. If index if out of bounds, it will throw.
    * If the model is successfully added to the collection {@link Collection.onAdded} callback will be executed
    * @param model - model to add
    * @param index - at what position in the collection to add the model
@@ -946,8 +947,9 @@ export class Collection<
   }
 
   /**
-   * Create new model.
+   * Creates new model.
    * @param data - data for the new model. When the model is created {@link Model.init} method will be called.
+   * @see {@link FactoryFn}
    * @returns newly created model
    */
   create(data: Parameters<TFactory>[0]): ReturnType<TFactory> {
@@ -976,7 +978,7 @@ export class Collection<
   getByIdentity(id: string[]): TModel[] | undefined
 
   /**
-   * Get model or array of models from the collection by identity key, or model CID.
+   * Gets the model or array of models from the collection by identity key, or model CID.
    * @param id - identity key or CID
    */
   getByIdentity(id: string | string[]): TModel | TModel[] | undefined {
@@ -988,14 +990,15 @@ export class Collection<
   }
 
   /**
-   * Return all the models in the collection
+   * Returns all the models in the collection
    */
   get models(): ReadonlyArray<TModel> {
     return this._models as ReadonlyArray<TModel>
   }
 
   /**
-   * Get all new models in the collection. New models are the ones that have not been saved to the storage yet via {@link Transport.save}
+   * Gets all new models in the collection. New models are the ones that have not been saved to the storage yet.
+   * @see {@link Transport.save}
    */
   get new(): TModel[] {
     return this.models.filter((model) => {
@@ -1004,8 +1007,9 @@ export class Collection<
   }
 
   /**
-   * Get all the "deleted" models. Deleted models are the ones that have been removed from the storage via {@link Transport.delete} but haven't been
+   * Gets all the "deleted" models. Deleted models are the ones that have been removed from the storage but haven't been
    * removed from the collection yet.
+   * @see {@link Transport.delete}
    */
   get deleted(): TModel[] {
     return this.models.filter((model) => {
@@ -1014,14 +1018,17 @@ export class Collection<
   }
 
   /**
-   * Get all the models that are currently syncing. Syncing models are the ones that are currently in the process of being "saved", or "deleted" from the storege via {@link Transport.save} or {@link Transport.delete}
+   * Gets all the models that are currently syncing. Syncing models are the ones that are currently in the process of being "saved", or "deleted" from the storege.
+   * @see {@link Transport.save}
+   * @see {@link Transport.delete}
    */
   get syncing(): TModel[] {
     return this.deleting.concat(this.saving)
   }
 
   /**
-   * Remove the last model in the collection. This method does not call  {@link Transport.delete}
+   * Removes the last model in the collection.
+   * This method does not call {@link Transport.delete}
    * {@link Collection.onRemoved} callback will be called
    * @param config - remove config {@link RemoveConfig}
    */
@@ -1037,7 +1044,7 @@ export class Collection<
   }
 
   /**
-   * Remove the first model in the collection. This method does not call  {@link Transport.delete}
+   * Removes the first model in the collection. This method does not call {@link Transport.delete}
    * {@link Collection.onRemoved} callback will be called
    * @param config - remove config {@link RemoveConfig}
    */
@@ -1050,7 +1057,7 @@ export class Collection<
   }
 
   /**
-   * Remove the model from the collection at specific index. This method does not call  {@link Transport.delete}
+   * Removes the model from the collection at specific index. This method does not call {@link Transport.delete}
    * {@link Collection.onRemoved} callback will be called
    * @param index - index in the collection. If index is out of bounds, it will throw
    * @param config - {@link RemoveConfig}
@@ -1069,12 +1076,12 @@ export class Collection<
   remove(id: string[], config?: RemoveConfig): TModel[]
 
   /**
-   * Remove the model or array of models from the collection, by model identity key or by model CID.
+   * Removes the model or array of models from the collection by model identity key or by model CID.
    * This method does not call  {@link Transport.delete}.
    * If the model is removed {@link Collection.onRemoved} callback is called
    * @param id  - model identity key or CID
    * @param config  - {@link RemoveConfig}
-   * @returns remove
+   * @returns removed models
    */
   remove(
     id: string | string[],
@@ -1162,12 +1169,14 @@ export class Collection<
   /**
    * Callback that is called every time the model is removed from to the collection
    * @param model - model that has been removed from the collection
+   * @see {@link Collection.remove}
    */
   protected onRemoved(model: TModel): void {}
 
   /**
    * Callback that is called every time the model is added to the collection
    * @param model - model that has been added to the collection
+   * @see {@link Collection.add}
    */
   protected onAdded(model: TModel): void {}
 
@@ -1180,18 +1189,6 @@ export class Collection<
 
       return arr
     }, [])
-  }
-
-  /**
-   * Callback that is called when {@link Collection.serialize} method is executed.
-   * By Default collection serializes all the models in the callection by calling {@link Model.serialize}.
-   * It returns an object with the `models` property which contains all the serialized models.
-   *
-   * @returns If you want to add additional data to the serialization, return the data from the callback, and it will be
-   * added to the serialized object.
-   */
-  protected onSerialize(): Record<string, any> | void {
-    return undefined
   }
 
   protected async resetCollection<T>(
@@ -1239,14 +1236,14 @@ export class Collection<
   protected onReset(added: TModel[], removed: TModel[]): void {}
 
   /**
-   * Remove all models from the collection, and optionally add new models to the collection. If no new model data is present, then the collection will just be emptied.
+   * Removes all the models from the collection and optionally adds new models to the collection. If no new model data is present, then the collection will just be emptied.
    * If there is model data, new models will be created and added to the collection.
    * When models are added {@link Collection.onAdded} and {@link Collection.onModelCreateData} callbacks will be fired.
    * When models are removed {@link Collection.onRemoved}
    * {@link Collection.onReset} callback is always called
    * @param modelData - array of model data to create new models
    * @param config - {@link ResetConfig}
-   * @returns all the model that have been added and removed.
+   * @returns all the models that have been added and removed.
    */
   reset<T>(modelData?: T[], config?: ResetConfig): Promise<TModel[][]> {
     return this.resetCollection(modelData, config)
@@ -1262,5 +1259,17 @@ export class Collection<
       models: this.serializeModels(),
       ...this.onSerialize()
     }
+  }
+
+  /**
+   * Callback that is called when {@link Collection.serialize} method is executed.
+   * By default collection serializes all the models that it holds by calling {@link Model.serialize}.
+   * It returns an object with the `models` property which contains all the serialized models.
+   *
+   * @returns If you want to add additional data to the serialization, return the data from the callback, and it will be
+   * added to the serialized object.
+   */
+  protected onSerialize(): Record<string, any> | void {
+    return undefined
   }
 }
