@@ -222,20 +222,61 @@ export class Collection<
       this._saving.set(model.cid, { token: token, model })
     })
     const dataToSave = model.payload
+    // try {
+    this.onSaveStart({
+      model,
+      config: saveConfig,
+      transportConfig
+    })
+    // model.clearSaveError()
+    model._onSaveStart({
+      config: saveConfig,
+      transportConfig,
+      token
+    })
+
+    let response!: TransportSaveResponse<TTransport>
+    let hasError = false
+    let error
+    let result
     try {
-      this.onSaveStart({
+      response = await this.transportSave(model, transportConfig)
+    } catch (e) {
+      // fix closure leaks - read error stack
+      // https://twitter.com/BenLesh/status/1365056053243613185
+      e?.stack
+      error = e
+      hasError = true
+    }
+
+    if (hasError) {
+      if (!saveConfig.addImmediately && saveConfig.addOnError) {
+        this.addToCollection(model, {
+          insertPosition: saveConfig.insertPosition
+        })
+      }
+
+      this.onSaveError({
         model,
+        error,
         config: saveConfig,
         transportConfig
       })
-      // model.clearSaveError()
-      model._onSaveStart({
+
+      model._onSaveError({
+        error,
         config: saveConfig,
         transportConfig,
-        token
+        token,
+        dataToSave
       })
 
-      const response = await this.transportSave(model, transportConfig)
+      result = {
+        error,
+        model: undefined,
+        response: undefined
+      }
+    } else {
       // add it to the collection after save
       if (!saveConfig.addImmediately) {
         this.addToCollection(model, {
@@ -258,51 +299,21 @@ export class Collection<
         token
       })
 
-      return {
+      result = {
         response,
         model,
         error: undefined
       }
-    } catch (error) {
-      // fix closure leaks - read error stack
-      // https://twitter.com/BenLesh/status/1365056053243613185
-      error?.stack
-      // identity from the model could not be set
-
-      if (!saveConfig.addImmediately && saveConfig.addOnError) {
-        this.addToCollection(model, {
-          insertPosition: saveConfig.insertPosition
-        })
-      }
-
-      this.onSaveError({
-        model,
-        error,
-        config: saveConfig,
-        transportConfig
-      })
-
-      model._onSaveError({
-        error,
-        config: saveConfig,
-        transportConfig,
-        token,
-        dataToSave
-      })
-
-      return {
-        error,
-        model: undefined,
-        response: undefined
-      }
-    } finally {
-      const tokenData = this._saving.get(model.cid)
-      if (tokenData?.token === token) {
-        runInAction(() => {
-          this._saving.delete(model.cid)
-        })
-      }
     }
+
+    const tokenData = this._saving.get(model.cid)
+    if (tokenData?.token === token) {
+      runInAction(() => {
+        this._saving.delete(model.cid)
+      })
+    }
+
+    return result
   }
 
   protected transportSave(
