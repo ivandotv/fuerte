@@ -30,7 +30,7 @@ export class AutosaveCollection<
     this.config.autoSave = {
       enabled: false,
       debounce: 0,
-      ...(config?.autoSave ? config.autoSave : undefined)
+      ...(config?.autoSave || undefined)
     }
   }
 

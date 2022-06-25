@@ -41,15 +41,23 @@ import {
 } from '../types'
 import { ASYNC_STATUS, isPromise, wrapInArray } from '../utils'
 
+/** Dupicate model strategies*/
 export const DuplicateModelStrategy = {
+  /** keep the new model*/
   KEEP_NEW: 'KEEP_NEW',
+  /** keep the old model*/
   KEEP_OLD: 'KEEP_OLD',
+  /** use compare function*/
   COMPARE: 'COMPARE'
 } as const
 
+/** Model compare results*/
 export const ModelCompareResult = {
+  /** keep the new model*/
   KEEP_NEW: 'KEEP_NEW',
+  /** keep the old model*/
   KEEP_OLD: 'KEEP_OLD',
+  /** keep both models. Make sure they have different identities*/
   KEEP_BOTH: 'KEEP_BOTH'
 } as const
 
