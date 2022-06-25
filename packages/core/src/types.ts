@@ -436,7 +436,7 @@ export type ResetConfig = {
 /** Collection save configuration
  * @see {@link Collection.save}
  */
-export interface SaveConfig {
+export type SaveConfig = {
   /** Model insert position {@link ModelInsertpPosition}*/
   insertPosition?: ModelInsertPosition
   /** Should the model be added immediately, before {@link Collection.save} process completes*/
@@ -448,7 +448,7 @@ export interface SaveConfig {
 /** Collection delete configuration
  * @see {@link Collection.delete}
  */
-export interface DeleteConfig {
+export type DeleteConfig = {
   /** Should the model be removed when deleted*/
   remove?: boolean
   /** Should the model be removed immediately, before {@link Collection.delete} process completes*/
@@ -462,7 +462,7 @@ export interface DeleteConfig {
 /** Collection load configuration
  * @see {@link Collection.load}
  */
-export interface LoadConfig {
+export type LoadConfig = {
   /** How to handle duplicate models in the collection {@link DuplicateModelStrategy}*/
   duplicateModelStrategy?: keyof typeof DuplicateModelStrategy
   /** should removed models be destroyed {@link Model.destroy}*/
