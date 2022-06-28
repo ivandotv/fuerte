@@ -540,3 +540,5 @@ export type Payload<T extends Model> = ReturnType<T['serialize']>
 type BivariantCompareFn<T extends Model> = {
   bivarianceHack(newModel: T, oldModel: T): keyof typeof ModelCompareResult
 }['bivarianceHack']
+
+export type FactoryData<T extends (data: any) => any> = Parameters<T>[0]

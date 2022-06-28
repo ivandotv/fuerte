@@ -16,6 +16,7 @@ import {
   DeleteResult,
   DeleteStartCallback,
   DeleteSuccessCallback,
+  FactoryData,
   FactoryFn,
   LoadConfig,
   LoadErrorCallback,
@@ -712,16 +713,15 @@ export class Collection<
   }
 
   /**
-   * Callback for when the collection is about to create a new model. This callback firest only on {@link Collection.reset} and {@link Collection.load} methods.
+   * Callback for when the collection is about to create a new model. This callback fires only on {@link Collection.reset} and {@link Collection.load} methods.
    * It will not fire when the model is created via {@link Collection.create}
-   *
    * @param data - same data as the arguments to the factory function that the collection is using
    * @see {@link FactoryFn}
    * @returns - modified data. If no data is returned from the callback, model will not be created
    */
   protected onModelCreateData(
-    data: Parameters<TFactory>[0]
-  ): Parameters<TFactory>[0] | void {
+    data: FactoryData<TFactory>
+  ): FactoryData<TFactory> | void {
     return data
   }
 
@@ -952,12 +952,12 @@ export class Collection<
    * @see {@link FactoryFn}
    * @returns newly created model
    */
-  create(data: Parameters<TFactory>[0]): ReturnType<TFactory> {
+  create(data: FactoryData<TFactory>): ReturnType<TFactory> {
     return this._create(data, true)
   }
 
   protected _create(
-    data: Parameters<TFactory>[0],
+    data: FactoryData<TFactory>,
     asNew = true,
     collection?: this
   ): ReturnType<TFactory> {
@@ -1254,7 +1254,7 @@ export class Collection<
    * If you need custom serialization logic you can implement it via {@link Collection.onSerialize} callback
    * @returns serialize
    */
-  serialize(): any {
+  serialize(): Record<string, any> {
     return {
       models: this.serializeModels(),
       ...this.onSerialize()

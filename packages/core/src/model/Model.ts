@@ -375,7 +375,7 @@ export abstract class Model<
    * @param data - @see {@link ModelSaveErrorCallback}
    * @see {@link ModelSaveErrorCallback}
    */
-  protected onSaveError(data: ModelSaveErrorCallback<Payload<this>>): void {}
+  protected onSaveError(data: ModelSaveErrorCallback<Model>): void {}
 
   /**
    * Gets the model identity value.
