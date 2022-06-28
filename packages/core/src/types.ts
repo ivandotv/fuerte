@@ -463,18 +463,24 @@ export type DeleteConfig = {
  * @see {@link Collection.load}
  */
 export type LoadConfig = {
-  /** How to handle duplicate models in the collection {@link DuplicateModelStrategy}*/
+  /** How to handle duplicate models in the collection {@link DuplicateModelStrategy}
+   *
+   * There is a possibility that the same model is loaded twice in case of multiple calls to
+   * {@link Collection.load}. In that case you can decide which model to keep.
+   */
   duplicateModelStrategy?: keyof typeof DuplicateModelStrategy
   /** should removed models be destroyed {@link Model.destroy}*/
   destroyOnRemoval?: boolean
-
   /** how should old and new models with the same identity be compared {@link ModelCompareResult}*/
   compareFn?: BivariantCompareFn<Model>
-  /** model insert position {@link ModelInsertPosition}*/
+  /** where should the newly loaded models be added inside the collection (at the start or at the end) {@link ModelInsertPosition}*/
   insertPosition?: ModelInsertPosition
-  /** should the collection be reset when new models are added*/
+  /**
+   * Default behavior is it for the loaded models to be added alongside the existing models in the collection.
+   * Alternative behavior is to empty the collection before adding the new models.
+   * `true` if the collection should be reset when new models are loaded*/
   reset?: boolean
-  /** if the collection is reset after {@link Collection.load} should the removed models be destroyed {@link Model.destroy}*/
+  /** if the collection is reset after {@link Collection.load} finished, removed models will be destroyed via {@link Model.destroy}*/
   destroyOnReset?: false
 }
 
