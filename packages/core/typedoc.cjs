@@ -2,7 +2,7 @@ module.exports = {
   theme: 'markdown',
   readme: 'none',
   excludePrivate: true,
-  excludeInternal: true,
+  excludeInternal: false,
   excludeProtected: true,
   exclude: ['./src/globals.d.ts', './src/__tests__'],
   out: 'docs/api',
