@@ -166,7 +166,6 @@ describe('Collection - add #add #collection', () => {
     const collection = fixtures.collection()
     const model = fixtures.model({ id: '1' })
 
-    // @ts-expect-error - internal callback test
     const onAddedSpy = jest.spyOn(model, 'onAdded')
     collection.add(model)
 

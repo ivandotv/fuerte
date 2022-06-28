@@ -3,6 +3,7 @@ import {
   DeleteErrorCallback,
   DeleteStartCallback,
   DeleteSuccessCallback,
+  FactoryData,
   LoadErrorCallback,
   LoadStartCallback,
   LoadSuccessCallback,
@@ -68,4 +69,14 @@ export class TestCollection extends Collection<
   override onSerialize() {}
 
   override onDestroy() {}
+
+  override onModelCreateData(
+    data: FactoryData<typeof testModelFactory>
+  ): void | {
+    foo?: string | undefined
+    bar?: string | undefined
+    id?: string | undefined
+  } {
+    return data
+  }
 }

@@ -261,7 +261,6 @@ describe('Collection - save #save #collection', () => {
       const collection = fixtures.collection(fixtures.factory(), transport)
       const model = fixtures.model()
 
-      // @ts-expect-error - internal callback test
       const onAddedSpy = jest.spyOn(model, 'onAdded')
       const promise = collection.save(model, { addImmediately: false })
 
@@ -283,7 +282,6 @@ describe('Collection - save #save #collection', () => {
       const collection = fixtures.collection(fixtures.factory(), transport)
       const model = fixtures.model()
 
-      // @ts-expect-error - internal callback test
       const onAddedSpy = jest.spyOn(model, 'onAdded')
 
       await collection.save(model, {
@@ -304,7 +302,7 @@ describe('Collection - save #save #collection', () => {
         .mockImplementation(() => Promise.reject(false))
       const collection = fixtures.collection(fixtures.factory(), transport)
       const model = fixtures.model()
-      // @ts-expect-error - internal callback test
+
       const onAddedSpy = jest.spyOn(model, 'onAdded')
 
       await collection.save(model, {

@@ -29,7 +29,7 @@ describe('Collection - reset #reset #collection', () => {
     expect(result).toEqual([collection.models, models])
   })
 
-  test('Reset callback is called with all added and removed models', async () => {
+  test('Reset callback is called with all the added and removed models', async () => {
     const collection = fixtures.collection()
     const onResetSpy = jest.spyOn(collection, 'onReset')
     const models = modelPool.splice(0, 2)

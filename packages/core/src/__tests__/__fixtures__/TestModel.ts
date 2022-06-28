@@ -5,9 +5,9 @@ import {
   ModelDeleteErrorCallback,
   ModelDeleteStartCallback,
   ModelDeleteSuccessCallback,
-  SaveConfig,
-  TransportSaveConfig,
-  TransportSaveResponse
+  ModelSaveErrorCallback,
+  ModelSaveStartCallback,
+  ModelSaveSuccessCallback
 } from '../../types'
 import { TestCollection } from './TestCollection'
 import { TestTransport } from './TestTransport'
@@ -40,10 +40,6 @@ export class TestModel extends Model<TestCollection> {
     })
   }
 
-  testMethod(b: boolean): boolean {
-    return b
-  }
-
   serialize() {
     return {
       foo: this.foo,
@@ -54,23 +50,15 @@ export class TestModel extends Model<TestCollection> {
 
   override onRemoved(collection: TestCollection): void {}
 
-  override onSaveSuccess(data: {
-    response: TransportSaveResponse<TestTransport>
-    config: SaveConfig
-    transportConfig: TransportSaveConfig<TestTransport>
-  }): void {}
+  override onAdded(collection: TestCollection): void {}
 
-  override onSaveError(data: {
-    error: any
-    config: SaveConfig
-    transportConfig: any
-    dataToSave: any
-  }): void {}
+  override onSaveStart(data: ModelSaveStartCallback<TestTransport>): void {}
 
-  override onSaveStart(data: {
-    config: SaveConfig
-    transportConfig: any
-  }): void {}
+  override onSaveSuccess(data: ModelSaveSuccessCallback<TestTransport>): void {}
+
+  override onSaveError(
+    data: ModelSaveErrorCallback<TestModel, TestTransport>
+  ): void {}
 
   override onDeleteStart(data: ModelDeleteStartCallback<TestTransport>): void {}
 
@@ -80,5 +68,5 @@ export class TestModel extends Model<TestCollection> {
 
   override onDeleteError(data: ModelDeleteErrorCallback<TestTransport>): void {}
 
-  // override onDestroy() {}
+  override onDestroy(): void {}
 }
