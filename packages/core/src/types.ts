@@ -485,8 +485,8 @@ export type LoadConfig = {
 }
 
 /**
- *  Collection autosave configuration
- * @see {@link AutosaveCollection}
+ *  Collection autosave configuration.
+ * @see {@link CollectionConfig}
  */
 export type AutosaveCollectionConfig = CollectionConfig & {
   autoSave?: {
