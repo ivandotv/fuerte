@@ -1,5 +1,30 @@
 # @fuerte/core
 
+## 5.0.0
+
+### Major Changes
+
+- ebee7da: refactor exported Typescript types
+  refactor `AutosaveCollectionConfig`
+- 8a3bf02: If the model is added in to the collection when it is initialized, assign `collection` property to the model.
+- 368b8d3: Remove "set identity from response" functionality.
+
+  There is too much magic going on with that.
+
+- dcdacd1: Remove `Collection.loadStatus` and implement `Collection.loading` which is a simple boolean flag property.
+- 464fa7d: Rename `Collection.getById` to `getByIdentity'
+
+### Minor Changes
+
+- 9885620: Implement model save and delete methods.
+
+  Model now has a reference to the collection. Collection can be
+  retrieved via `model.getCollection()`
+
+- 515ec40: Add `onRemoved` and `onAdded` callbacks to the `Model` class.
+- aeaa369: Implement `toJSON` method for the model.
+  Internally this method return `model.payload`
+
 ## 4.1.0
 
 ### Minor Changes
