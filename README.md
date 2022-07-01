@@ -49,8 +49,7 @@ The `Collection` part of the library is inspired by [Backbone.js](https://backbo
 
 [Mobx](mobx.js.org/) is used for the reactivity so we don't concern ourselves with integrating the library with different frontend frameworks.
 
-TODO - bundle phobia link
-This abstraction on top of the Mobx will cost you an additional [~4.5KB](https://bundlephobia.com/package/@fuerte/core), and I think it's worth it.
+This abstraction on top of the Mobx will cost you an additional [~4.3KB](https://bundlephobia.com/package/@fuerte/core), and I think it's worth it.
 
 ## Installation
 
