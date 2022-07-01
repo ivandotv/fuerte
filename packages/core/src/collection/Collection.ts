@@ -40,7 +40,7 @@ import {
   TransportSaveConfig,
   TransportSaveResponse
 } from '../types'
-import { ASYNC_STATUS, isPromise, wrapInArray } from '../utils'
+import { isPromise, wrapInArray } from '../utils'
 
 /** Dupicate model strategies*/
 export const DuplicateModelStrategy = {
@@ -69,7 +69,7 @@ export class Collection<
 > {
   loadError = undefined
 
-  loadStatus: keyof typeof ASYNC_STATUS = 'IDLE'
+  loading = false
 
   // holds models that are immediately removed while deleting
   _deleting: Map<string, TModel> = new Map()
@@ -168,7 +168,7 @@ export class Collection<
       onLoadStart: action,
       onLoadSuccess: action,
       onLoadError: action,
-      loadStatus: observable,
+      loading: observable,
       loadError: observable,
       add: action,
       _models: observable.shallow,
@@ -573,7 +573,8 @@ export class Collection<
       ...config
     }
 
-    this.loadStatus = 'PENDING'
+    this.loading = true
+
     this.onLoadStart({
       config: loadConfig,
       transportConfig
@@ -591,10 +592,13 @@ export class Collection<
       hasError = true
     }
 
+    runInAction(() => {
+      this.loading = false
+    })
+
     if (hasError) {
       runInAction(() => {
         this.loadError = error
-        this.loadStatus = 'REJECTED'
       })
 
       this.onLoadError({
@@ -610,10 +614,6 @@ export class Collection<
         removed: undefined
       }
     } else {
-      runInAction(() => {
-        this.loadStatus = 'RESOLVED'
-      })
-
       // run reset instead of the rest of the load function
       if (loadConfig.reset) {
         const [added, removed] = await this.resetCollection(response.data, {

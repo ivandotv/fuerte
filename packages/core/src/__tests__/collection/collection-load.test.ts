@@ -4,7 +4,6 @@ import {
   ModelCompareResult
 } from '../../collection/Collection'
 import { LoadConfig } from '../../types'
-import { ASYNC_STATUS } from '../../utils'
 import { fixtureFactory } from '../__fixtures__/fixtureFactory'
 import { TestCollection } from '../__fixtures__/TestCollection'
 import { TestModel, TestModelData } from '../__fixtures__/TestModel'
@@ -66,11 +65,11 @@ describe('Collection - load #load #collection', () => {
 
     const result = collection.load()
 
-    expect(collection.loadStatus).toBe(ASYNC_STATUS.PENDING)
+    expect(collection.loading).toBe(true)
 
     await result
 
-    expect(collection.loadStatus).toBe(ASYNC_STATUS.RESOLVED)
+    expect(collection.loading).toBe(false)
   })
 
   test('When load fails, error can be retrived via instance property', async () => {
@@ -81,7 +80,7 @@ describe('Collection - load #load #collection', () => {
 
     await collection.load()
 
-    expect(collection.loadStatus).toBe(ASYNC_STATUS.REJECTED)
+    expect(collection.loading).toBe(false)
     expect(collection.loadError).toBe(response)
   })
 

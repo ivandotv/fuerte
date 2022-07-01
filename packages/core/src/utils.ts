@@ -15,13 +15,6 @@ export function assertCollectionExists(
   }
 }
 
-export const ASYNC_STATUS = {
-  PENDING: 'PENDING',
-  RESOLVED: 'RESOLVED',
-  REJECTED: 'REJECTED',
-  IDLE: 'IDLE'
-} as const
-
 const isObject = (value: unknown): boolean =>
   value !== null && (typeof value === 'object' || typeof value === 'function')
 
@@ -34,32 +27,6 @@ export function isPromise<T>(value: Promise<T> | T): value is Promise<T> {
       // @ts-expect-error - value might not be a promise
       typeof value.catch === 'function')
   )
-}
-
-export function unwrapResult<T extends { error: any }>(
-  result: T
-): Omit<
-  Extract<
-    T,
-    {
-      error: 0 | '' | false | undefined | null
-    }
-  >,
-  'error'
-> {
-  const data = result
-
-  if (data.error) {
-    throw data.error
-  }
-
-  // https://stackoverflow.com/questions/69378795/narrow-down-the-return-result-based-on-a-property-value
-  const { error, ...ret } = result as Extract<
-    T,
-    { error: 0 | '' | false | undefined | null }
-  >
-
-  return ret
 }
 
 export function debounceReaction<T>(
