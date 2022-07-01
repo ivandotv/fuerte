@@ -536,8 +536,10 @@ export type ExtractTransport<T> = T extends Collection<any, any, infer T>
  * */
 export type Payload<T extends Model> = ReturnType<T['serialize']>
 
-// https://stackoverflow.com/questions/52667959/what-is-the-purpose-of-bivariancehack-in-typescript-types
-type BivariantCompareFn<T extends Model> = {
+/** Bivariant hack for for {@link ModelCompareResult}
+ *  @see https://stackoverflow.com/questions/52667959/what-is-the-purpose-of-bivariancehack-in-typescript-types
+ */
+export type BivariantCompareFn<T extends Model> = {
   bivarianceHack(newModel: T, oldModel: T): keyof typeof ModelCompareResult
 }['bivarianceHack']
 
