@@ -17,7 +17,7 @@
   "dependencies": {
     "@changesets/cli": "^2.23.0",
     "husky": "^8.0.1",
-    "lint-staged": "^13.0.1",
+    "lint-staged": "^14.0.0",
     "prettier": "^2.7.1",
     "typedoc": "^0.25.0"
   }
