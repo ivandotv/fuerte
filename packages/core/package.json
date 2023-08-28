@@ -83,7 +83,7 @@
     "shx": "^0.3.4",
     "typedoc": "^0.25.0",
     "typedoc-plugin-markdown": "^3.12.1",
-    "typescript": "^4.6.4"
+    "typescript": "^5.0.0"
   },
   "peerDependencies": {
     "mobx": "^6.5.0"
